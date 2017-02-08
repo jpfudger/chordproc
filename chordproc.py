@@ -262,23 +262,21 @@ class CRD_chord():
         return self.string
 
 class CRD_tuning():
-    def __init__(self,string):
-        self.line   = string
+    def __init__(self,input_string):
+        self.input_string = input_string
         self.tuning = None
-        self.name   = self.identify_name()
-        self.root   = None
-        self.offset = None
-        if not self.tuning:
-            self.tuning = self.extract_tuning()
-        self.calculate_offset()
-        #print(string + ' => ' + self.tuning)
-    def extract_tuning(self):
-        first = self.line.strip().split(':')[1].strip()
-        m = re.match( '([abcdefgABCDEFG#]+).*', first )
-        if m:
-            return m.group(1)
-        return None
-    def note_offset(self,root,note):
+        self._name = None
+
+        if not self.name():
+            # extract tuning candidate
+            splits = input_string.strip().split(':')
+            candidate = splits[0] if len(splits) == 1 else splits[1]
+            m = re.match( '([abcdefgABCDEFG#]+).*', candidate.strip() )
+            if m:
+                self.tuning = m.group(1)
+            else:
+                raise ValueError
+    def __note_offset(self,root,note):
         if '#' in note + root:
             notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
         else:
@@ -287,8 +285,8 @@ class CRD_tuning():
         root_index = notes.index(root)
         notes = notes[root_index:]
         return notes.index(note)
-    def tuning_to_note_list(self,tuning_string):
-        chars = list(tuning_string)
+    def note_list(self):
+        chars = list(self.tuning)
         notes = []
         for char in chars:
             if re.match( '[A-G]', char ):
@@ -296,55 +294,57 @@ class CRD_tuning():
             else:
                 notes[-1] += char
         return notes
-    def calculate_offset(self):
-        tuning = self.tuning_to_note_list(self.tuning)
-
-        previous = tuning[0]
+    def offset(self):
+        nl = self.note_list()
+        previous = nl[0]
         encoded = [ previous ]
 
-        for note in tuning[1:]:
-            offset = self.note_offset( previous, note ) 
+        for note in nl[1:]:
+            offset = self.__note_offset( previous, note ) 
             encoded.append(offset)
             previous = note
 
-        self.root = encoded[0]
-        self.offset = ''.join( [str(x) for x in encoded[1:] ] )
-    def identify_name(self):
-        name = None
-        maps = [ [ 'DGDGBD',  'open G' ],
-                 [ 'DGDGBbD', 'open Gm' ],
-                 [ 'DADF#AD', 'open D' ],
-                 [ 'DADFAD',  'open Dm' ],
-                 [ 'DADGBE',  'drop D' ],
-                 [ 'CADGBE',  'drop C' ],
-                 [ 'CGDGBE',  'drop C' ],
-                 [ 'DADGBD',  'double drop D' ],
-                 [ 'EADGBE',  'standard' ],
-               ]
-        if 'standard' in self.line.lower():
-            self.tuning = 'EADGBE'
-            name = 'standard'
-        else:
-            for m in maps:
-                if m[0].lower() in self.line.lower():
-                    self.tuning = m[0]
-                    name = m[1]
-                elif m[1].lower() in self.line.lower():
-                    self.tuning = m[0]
-                    name = m[1]
-        return name
+        return ''.join( [str(x) for x in encoded[1:] ] )
+    def root(self):
+        return self.note_list()[0]
+    def name(self):
+        # also sets self.tuning if successful
+        if not self._name:
+            self._name = None
+            maps = [ [ 'DGDGBD',  'open G' ],
+                     [ 'DGDGBbD', 'open Gm' ],
+                     [ 'DADF#AD', 'open D' ],
+                     [ 'DADFAD',  'open Dm' ],
+                     [ 'DADGBE',  'drop D' ],
+                     [ 'CADGBE',  'drop C' ],
+                     [ 'CGDGBE',  'drop C' ],
+                     [ 'DADGBD',  'double drop D' ],
+                     [ 'EADGBE',  'standard' ],
+                   ]
+            if 'standard' in self.input_string.lower():
+                self.tuning = 'EADGBE'
+                self._name = 'standard'
+            else:
+                for m in maps:
+                    if m[0].lower() in self.input_string.lower():
+                        self.tuning = m[0]
+                        self._name = m[1]
+                    elif m[1].lower() in self.input_string.lower():
+                        self.tuning = m[0]
+                        self._name = m[1]
+        return self._name
     def standard(self):
-        return self.name and self.name.lower() == 'standard'
+        return self._name and self._name.lower() == 'standard'
     def summary(self):
         tuning_pad = 12 - len(self.tuning)
         name_pad = 15 
-        if self.name:
-            name_pad -= len(self.name)
+        if self._name:
+            name_pad -= len(self._name)
 
         string = self.tuning + ' ' + ( '_' * tuning_pad )
-        string += ' [' + self.offset + '] __'
-        if self.name:
-            string += self.name
+        string += ' [' + self.offset() + '] __'
+        if self._name:
+            string += self._name
         string += '_' * name_pad
 
         return string
@@ -565,18 +565,18 @@ class CRD_data():
                     for song in album.songs:
                         if song.tuning:
                             try:
-                                offsets = [ x.tuning.offset for x in self.tunings ]
-                                pos = offsets.index(song.tuning.offset)
+                                offsets = [ x.tuning.offset() for x in self.tunings ]
+                                pos = offsets.index(song.tuning.offset())
                             except:
                                 tuning_artist = CRD_artist(song.tuning.summary())
                                 tuning_artist.add_album('Misc')
                                 tuning_artist.tuning = song.tuning
-                                tuning_artist.fname = song.tuning.offset + '.html'
+                                tuning_artist.fname = song.tuning.offset() + '.html'
                                 self.tunings.append(tuning_artist)
                                 pos = len(self.tunings)-1
                             self.tunings[pos].albums[0].songs.append(song)
             # sort by offset => similar tuning appear next to each other
-            self.tunings.sort(key=lambda x: x.tuning.offset)
+            self.tunings.sort(key=lambda x: x.tuning.offset())
         return self.tunings
     def make_html(self):
         artist_lines  = [ '<html>', '<body>', '<head>' ]
