@@ -256,7 +256,7 @@ class CRD_chord():
                 if not self.root:
                     newchord = '/' + newbass.lower()
                 else:
-                    newchord = newchord[:len(self.bass)] + '/' + newbass.lower()
+                    newchord = newchord[:-len(self.bass)-1] + '/' + newbass.lower()
 
         return newchord       
     def is_chord(self):
