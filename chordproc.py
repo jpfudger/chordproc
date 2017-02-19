@@ -363,23 +363,37 @@ class CRD_song():
         self.album = None
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
-    def is_chord_line(self,line):
-        ignorewords = [ ' ', 'intro', 'twice', 'outro', 'x\d*' ]
-        reducedline = line
-        for iw in ignorewords:
-            reducedline = re.sub( iw, '', reducedline, flags=re.I )
-        chordchars = 'ABCDEFGabcdefg#majMAJdimIV+-suo0123456789\\/*():|.'
-        ischordline = re.match( '\A[' + chordchars + ']*\Z', reducedline )
-        if ischordline:
-            return True
-        return False
     def is_comment_line(self,line):
         commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus' ]
         for cw in commentwords:
             if cw.lower() in line.lower():
                 return True
         return False
+    def strip_delimeters(self,word):
+        starter = ''
+        ender = ''
+        chars = [ '|', '-' ]
+
+        # Some charts use | and - to for timing, 
+        # so we need to strip them off before chord processing,
+        # and save them for reapplying afterwards
+
+        for x in chars:
+            if word.startswith(x):
+                word = word[1:]
+                starter = x
+                break
+
+        for x in chars:
+            if word.endswith(x):
+                word = word[:-1]
+                ender = x
+                break
+
+        return word, starter, ender
     def markup_chord_line(self,line):
+        if self.is_comment_line(line):
+            return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', line ) + '</div>'
         splits = re.split( r'(\s+)', line)
         # this splits the line at start/end of whitespace regions,
         # so that contiguous whitespace counts as a word
@@ -390,15 +404,19 @@ class CRD_song():
                 pass
             elif word.isspace():
                 formatted += re.sub( ' ', '&nbsp;', word )
-            elif word == '|':
+            elif word in [ '|', '-' ]:
                 formatted += word
+            elif re.match( '\(?\s*[xX]\s*\d+\s*\)?', word ):
+                # this is to match (x4) for repetition
+                formatted += '<div class=commentline>' + word + '</div>'
             else:
+                word, starter, ender = self.strip_delimeters(word)
                 chord = CRD_chord(word)
                 if chord.is_chord():
-                    formatted += '<div class=chordline>' + chord.format(0) + '</div>'
+                    formatted += starter + '<div class=chordline>' + chord.format(0) + '</div>' + ender
                 else:
                     got_a_not_chord = True
-                    formatted += word
+                    formatted += starter + word + ender
         if got_a_not_chord:
             return '<br>' + re.sub( ' ', '&nbsp;', line )
         return formatted
