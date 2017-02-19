@@ -210,56 +210,59 @@ class CRD_album():
 class CRD_chord():
     def __init__(self,string):
         self.string = string
-        self.tone = None
-        self.flavour = ''
-        self.colour = ''
-        self.bass = ''
-        self.other = None
-        return identify()
-    def identify():
+        self.root = None
+        self.bass = None
+        self.__identify()
+    def __identify(self):
         tones = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G' ]
         flats = [ 'Ab', 'Bb', 'Db', 'Eb', 'Gb' ]
         sharps = [ 'A#', 'C#', 'D#', 'F#', 'G#' ]
 
-        for t in sharps + flats + tones:
-            if self.string.startswith(t):
-                self.tone = t
+        allnotes = [ n.lower() for n in ( sharps + flats + tones ) ]
+
+        for t in allnotes:
+            if self.string.lower().startswith(t):
+                self.root = t
                 break
 
-        if self.tone == self.string:
-            return True
-
-        flavours = [ 'm', 'M', 'min', 'maj', 'MIN', 'MAJ' ]
-
-        for f in flavours:
-            if self.string.startswith( self.tone + f ):
-                self.flavour = f
+        for t in allnotes:
+            if self.string.lower().endswith( '/' + t) or self.string.lower().endswith( '\\' + t):
+                self.bass = t
                 break
+    def __notes(self,which):
+        notes = [ 'A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab' ]
+        if '#' in which:
+            notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
+        return notes + notes
+    def format(self,transpose=0):
+        newchord = self.string
 
-        # number after flavour:
+        if self.is_chord():
+            if self.root:
+                notes = self.__notes(self.root)
+                lowernotes = [ n.lower() for n in notes ]
 
-        m = re.match( self.tone + self.flavour + '(\d+).*', self.string )
-        if m:
-            self.colour = m.group(1)
+                rootindex = lowernotes.index(self.root.lower())
+                newroot = notes[rootindex + transpose]
+                newchord = newroot + newchord[len(self.root):]
 
-        for t in sharps + flats + tones:
-            if self.string.lower().endswith( '/' + t.lower() ):
-                self.bass = '/' + t.lower()
-                break
-            if self.string.lower().endswith( '\\' + t.lower() ):
-                self.bass = '/' + t.lower()
-                break
+            if self.bass:
+                notes = self.__notes(self.bass)
+                lowernotes = [ n.lower() for n in notes ]
 
-        if self.string == self.tone + self.flavour + self.colour + self.bass:
-            return True
-        else:
-            m_other = re.match( self.tone + self.flavour + self.colour + '(.*)' + self.bass, self.string )
-            if m_other:
-                self.other = m_other.group(1)
-    
-        return False
-    def __str__(self):
-        return self.string
+                bassindex = lowernotes.index(self.bass.lower())
+                newbass = notes[bassindex + transpose]
+
+                if not self.root:
+                    newchord = '/' + newbass.lower()
+                else:
+                    newchord = newchord[:len(self.bass)] + '/' + newbass.lower()
+
+        return newchord       
+    def is_chord(self):
+        if self.root == None and self.bass == None:
+            return False
+        return True
 
 class CRD_tuning():
     def __init__(self,input_string):
@@ -377,17 +380,28 @@ class CRD_song():
                 return True
         return False
     def markup_chord_line(self,line):
-        newline = re.sub( ' ', '&nbsp;', line )
-        if self.is_chord_line(line):
-            for X in [ 'A', 'B', 'C', 'D', 'E', 'F', 'G' ]:
-                newline = re.sub( '\\b(' + X + '[#bmoajindsu+-123456789]*)\\b', 
-                                  '<div class=chordline>\\1</div>', 
-                                  newline, flags=re.I)
-            # i don't know why this is necessary...
-            newline = re.sub( '#', '<div class=chordline>#</div>', newline )
-        elif self.is_comment_line(line):
-            newline = '<div class=commentline>' + newline + '</div>'
-        return '<br>' + newline
+        splits = re.split( r'(\s+)', line)
+        # this splits the line at start/end of whitespace regions,
+        # so that contiguous whitespace counts as a word
+        formatted = '<br>'
+        got_a_not_chord = False
+        for word in splits:
+            if word == '':
+                pass
+            elif word.isspace():
+                formatted += re.sub( ' ', '&nbsp;', word )
+            elif word == '|':
+                formatted += word
+            else:
+                chord = CRD_chord(word)
+                if chord.is_chord():
+                    formatted += '<div class=chordline>' + chord.format(0) + '</div>'
+                else:
+                    got_a_not_chord = True
+                    formatted += word
+        if got_a_not_chord:
+            return '<br>' + re.sub( ' ', '&nbsp;', line )
+        return formatted
     def format_song_lines(self):
         formatted = [ self.markup_chord_line(line) for line in self.lines ]
         return formatted
