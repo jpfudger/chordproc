@@ -364,7 +364,9 @@ class CRD_song():
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
     def is_comment_line(self,line):
-        commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus' ]
+        if line.strip().startswith('%'):
+            return True
+        commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus', '---' ]
         for cw in commentwords:
             if cw.lower() in line.lower():
                 return True
@@ -431,13 +433,16 @@ class CRD_song():
                 self.tuning = CRD_tuning(line)
                 if self.tuning.standard():
                     self.tuning = None
+    def longest_line(self):
+        lengths = [ len(l) for l in self.lines ]
+        return max(lengths)
     def html(self,add_artist=False):
         lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
         name = ''
         if add_artist:
             name = ' (%s)' % self.artist
         lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, self.title + name) ]
-        if len(self.lines) > 100:
+        if len(self.lines) > 100 and self.longest_line() <= 83:
             lines += [ '<div class=chords_3col>' ]
         elif len(self.lines) > 50:
             lines += [ '<div class=chords_2col>' ]
