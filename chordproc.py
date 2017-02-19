@@ -365,16 +365,22 @@ class CRD_song():
         self.title_sort = re.sub( '\AThe\s+', '', title)
     def is_comment_line(self,line):
         if line.strip().startswith('%'):
+            # suddenly decide % is the comchar
             return True
-        commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus', '---' ]
+        commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus' ]
         for cw in commentwords:
             if cw.lower() in line.lower():
                 return True
+
+        if re.match( '.*[0-9xX]{6,}.*', line ):
+            # chord descriptions (e.g. 0x0434) should always be commented
+            return True
+
         return False
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
-        chars = [ '|', '-' ]
+        chars = [ '|', '-', '[', ']' ]
 
         # Some charts use | and - to for timing, 
         # so we need to strip them off before chord processing,
@@ -392,6 +398,11 @@ class CRD_song():
                 ender = x
                 break
 
+        if starter == '[' and ender == ']':
+            # Ignore []'s delimiting chords
+            starter = ''
+            ender = '  '
+
         return word, starter, ender
     def markup_chord_line(self,line):
         if self.is_comment_line(line):
@@ -404,6 +415,10 @@ class CRD_song():
         for word in splits:
             if word == '':
                 pass
+            elif '---' in word:
+                # disables highlighting on tab lines
+                got_a_not_chord = True
+                formatted += word
             elif word.isspace():
                 formatted += re.sub( ' ', '&nbsp;', word )
             elif word in [ '|', '-' ]:
