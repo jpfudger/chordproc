@@ -262,6 +262,15 @@ class CRD_chord():
     def is_chord(self):
         if self.root == None and self.bass == None:
             return False
+
+        nochord_chars = [ 'l', 'k', 't' ]
+
+        for c in nochord_chars:
+            if c in self.string.lower():
+                self.root = None
+                self.bass = None
+                return False
+
         return True
 
 class CRD_tuning():
@@ -367,7 +376,7 @@ class CRD_song():
         if line.strip().startswith('%'):
             # suddenly decide % is the comchar
             return True
-        commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus' ]
+        commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus', 'solo' ]
         for cw in commentwords:
             if cw.lower() in line.lower():
                 return True
@@ -380,7 +389,7 @@ class CRD_song():
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
-        chars = [ '|', '-', '[', ']' ]
+        chars = [ '|', '-', '[', ']', '{', '}' ]
 
         # Some charts use | and - to for timing, 
         # so we need to strip them off before chord processing,
@@ -399,9 +408,14 @@ class CRD_song():
                 break
 
         if starter == '[' and ender == ']':
-            # Ignore []'s delimiting chords
+            # Ignore [] delimiting chords
             starter = ''
             ender = '  '
+
+        # if starter == '{' and ender == '}' ):
+        #     # Ignore {} delimiting chords
+        #     starter = ''
+        #     ender = '  '
 
         return word, starter, ender
     def markup_chord_line(self,line):
@@ -421,7 +435,9 @@ class CRD_song():
                 formatted += word
             elif word.isspace():
                 formatted += re.sub( ' ', '&nbsp;', word )
-            elif word in [ '|', '-' ]:
+            elif word in [ '|', '-', '%', 'n.c.' ]:
+                # | and - are used for timing (and are also allowed as starter/ender delimieters)
+                # % is sometimes used for repetition.
                 formatted += word
             elif re.match( '\(?\s*[xX]\s*\d+\s*\)?', word ):
                 # this is to match (x4) for repetition
@@ -520,10 +536,10 @@ class CRD_data():
         songs = []
         lines = []
         try:
-            with open(path,encoding='utf8') as f:
+            with open(path,encoding='ascii') as f:
                 lines = f.readlines()
         except:
-            print("Failed to process " + path)
+            print("Failed to process " + path + " (non-ASCII character?)")
         level = 0
         this_artist = None
         this_album  = None
