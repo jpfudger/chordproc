@@ -263,7 +263,12 @@ class CRD_chord():
         if self.root == None and self.bass == None:
             return False
 
-        nochord_chars = [ 'l', 'k', 't' ]
+        if len(self.string) > 10:
+            self.root = None
+            self.bass = None
+            return False
+
+        nochord_chars = [ 'l', 'k', 't', 'h', 'gg' ]
 
         for c in nochord_chars:
             if c in self.string.lower():
@@ -376,7 +381,8 @@ class CRD_song():
         if line.strip().startswith('%'):
             # suddenly decide % is the comchar
             return True
-        commentwords = [ 'intro', 'twice', 'capo', '=', 'note', 'verse', 'chorus', 'solo' ]
+
+        commentwords = [ 'intro', 'outro', 'twice', 'capo', '=', 'note:', 'verse', 'chorus', 'solo', 'tuning' ]
         for cw in commentwords:
             if cw.lower() in line.lower():
                 return True
@@ -389,7 +395,7 @@ class CRD_song():
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
-        chars = [ '|', '-', '[', ']', '{', '}' ]
+        chars = [ '*', '|', '-', '[', ']', '{', '}' ]
 
         # Some charts use | and - to for timing, 
         # so we need to strip them off before chord processing,
@@ -433,9 +439,12 @@ class CRD_song():
                 # disables highlighting on tab lines
                 got_a_not_chord = True
                 formatted += word
+            elif ',' in word:
+                got_a_not_chord = True
+                formatted += word
             elif word.isspace():
                 formatted += re.sub( ' ', '&nbsp;', word )
-            elif word in [ '|', '-', '%', 'n.c.' ]:
+            elif word in [ '|', '-', '%', 'n.c.', '*' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
