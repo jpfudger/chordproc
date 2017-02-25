@@ -372,23 +372,53 @@ class CRD_song():
         self.artist = artist
         self.fpath = fpath
         self.index = index
+        self.offset = 0
         self.lines = []
         self.tuning = None
         self.album = None
+        self.fingerings = {}
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
+    def add_fingering(self,chord,fingering):
+        #print( chord.format(self.offset).ljust(16) + ' : ' + fingering ) 
+        self.fingerings[ chord.format(self.offset) ] = fingering
+    def get_fingering(self,crd_string):
+        fingering = ''
+        try:
+            fingering = self.fingerings[crd_string]
+            fingering = ' title="%s = %s"' % ( crd_string, fingering )
+        except:
+            pass
+        return fingering
     def is_comment_line(self,line):
         if line.strip().startswith('%'):
             # suddenly decide % is the comchar
             return True
 
-        commentwords = [ 'intro', 'outro', 'twice', 'capo', '=', 'note:', 'verse', 'chorus', 'solo', 'tuning' ]
+        commentwords = [ 'intro', 'outro', 'twice', 'capo', 
+                         '=', 'note:', 'verse', 'chorus',
+                         'solo', 'tuning' ]
+
         for cw in commentwords:
             if cw.lower() in line.lower():
                 return True
 
-        if re.match( '.*[0-9xX]{6,}.*', line ):
+        fingering = None
+        m = re.match( '.*([0-9xX]{6,}).*', line )
+        if m:
             # chord descriptions (e.g. 0x0434) should always be commented
+            fingering = m.group(1)
+            splits = re.split( r'(\s+)', line)
+            for word in splits:
+                if word == '':
+                    pass
+                for ender in [ ':', '=' ]:
+                    if word.endswith(ender):
+                        word = word[:-1]
+                        break
+                chord = CRD_chord(word)
+                if chord.is_chord():
+                    self.add_fingering( chord, fingering )
             return True
 
         return False
@@ -455,7 +485,10 @@ class CRD_song():
                 word, starter, ender = self.strip_delimeters(word)
                 chord = CRD_chord(word)
                 if chord.is_chord():
-                    formatted += starter + '<div class=chordline>' + chord.format(0) + '</div>' + ender
+                    crd = chord.format(self.offset)
+                    fingering = self.get_fingering(crd)
+                    formatted += starter + '<div class=chordline%s>%s</div>%s' % \
+                                                ( fingering, crd, ender )
                 else:
                     got_a_not_chord = True
                     formatted += starter + word + ender
