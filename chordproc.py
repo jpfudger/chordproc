@@ -425,9 +425,9 @@ class CRD_song():
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
-        chars = [ '*', '|', '-', '[', ']', '{', '}' ]
+        chars = [ '*', '|', '-', '[', ']', '{', '}', '/' ]
 
-        # Some charts use | and - to for timing, 
+        # Some charts use |,/,- to indicate timing, 
         # so we need to strip them off before chord processing,
         # and save them for reapplying afterwards
 
@@ -474,7 +474,7 @@ class CRD_song():
                 formatted += word
             elif word.isspace():
                 formatted += re.sub( ' ', '&nbsp;', word )
-            elif word in [ '|', '-', '%', 'n.c.', '*' ]:
+            elif word in [ '|', '/', '//', '///', '////', '-', '%', 'n.c.', '*' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
