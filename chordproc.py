@@ -84,7 +84,9 @@ class CRD_artist():
         #lines += [ '<ol>' ]
         for album in self.albums:
             #lines.append( '<li>' )
-            lines.append( '<a href=%s>%s</a>' % ( album.fname, album.title ) )
+            n_songs = len(album.songs)
+            lines.append( '<a href=%s>%s</a> <div class=count>%d</div>' 
+                                % ( album.fname, album.title, n_songs ) )
             lines.append( '<br>' )
         #lines += [ '</ol>' ]
         lines += [ '<hr>' ]
@@ -556,16 +558,38 @@ class CRD_data():
         self.artists = []
         self.tunings = []
         self.n_artists = 0
+        self.albums = []
+        self.songs = []
         self.collections = []
         self.load_song_data()
+    def summarise_data(self):
+        print( "artists: %d" % len(self.artists) )
+        print( "albums:  %d" % len(self.all_albums() ) )
+        print( "songs:   %d" % len(self.all_songs() ) )
+        print( "tunings: %d" % len(self.tunings) )
+
+        artists = self.artists[:]
+        artists.sort(key=lambda x: len(x.albums))
+
+        for artist in artists:
+            n_albums = len(artist.albums)
+            n_songs = len(artist.all_songs())
+            print( "%s : %d / %d" % ( artist.name.rjust(35), n_albums, n_songs ) )
+
+    def all_albums(self):
+        if len(self.albums) == 0:
+            for artist in self.artists:
+                for album in artist.albums:
+                    self.albums.append(album)
+            self.albums.sort( key=lambda x: x.title )
+        return self.albums
     def all_songs(self):
-        songs = []
-        for artist in self.artists:
-            for album in artist.albums:
+        if len(self.songs) == 0:
+            for album in self.all_albums():
                 for song in album.songs:
-                    songs.append(song)
-        songs.sort( key=lambda x: x.title_sort )
-        return songs
+                    self.songs.append(song)
+            self.songs.sort( key=lambda x: x.title_sort )
+        return self.songs
     def get_artist(self,name):
         for a in self.artists:
             if a.name == name:
@@ -658,6 +682,7 @@ class CRD_data():
         else:
             with open(self.opts.pickle,'rb') as f:
                 self.artists, self.tunings, self.collections = pickle.load(f)
+        self.summarise_data()
     def build_song_data(self):
         for f in glob.glob(self.opts.root + '/*.crd'):
             self.process_chord_file(f)
