@@ -402,6 +402,11 @@ class CRD_song():
             comline = line.replace( self.comchar, '', 1 )
             return comline
 
+        if line.lower().strip().startswith( 'capo' ):
+            return line
+        elif line.lower().strip().startswith( 'tuning' ):
+            return line
+
         autocomment = False
         if autocomment:
             commentwords = [ 'intro', 'outro', 'twice', 'capo', 
