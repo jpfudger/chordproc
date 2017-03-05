@@ -31,7 +31,7 @@ def common_html():
     lines.append( '    }' )
 
     lines.append( '</script>' )
-    lines.append( '<button onclick="toggleStyle()">Toggle Style</button>' )
+    #lines.append( '<button onclick="toggleStyle()">Toggle Style</button>' )
 
     return lines
 
@@ -339,6 +339,7 @@ class CRD_tuning():
                      [ 'CGDGBE',  'drop C' ],
                      [ 'DADGBD',  'double drop D' ],
                      [ 'EADGBE',  'standard' ],
+                     [ 'EAC#EAE', 'open A' ],
                    ]
             if 'standard' in self.input_string.lower():
                 self.tuning = 'EADGBE'
@@ -398,7 +399,7 @@ class CRD_song():
             return True
 
         commentwords = [ 'intro', 'outro', 'twice', 'capo', 
-                         '=', 'note:', 'verse', 'chorus',
+                         'note:', 'verse', 'chorus',
                          'solo', 'tuning' ]
 
         for cw in commentwords:
@@ -411,10 +412,13 @@ class CRD_song():
             # chord descriptions (e.g. 0x0434) should always be commented
             fingering = m.group(1)
             splits = re.split( r'(\s+)', line)
+            enders = [ ':', '=' ]
             for word in splits:
                 if word == '':
-                    pass
-                for ender in [ ':', '=' ]:
+                    continue
+                elif word in enders:
+                    continue
+                for ender in enders:
                     if word.endswith(ender):
                         word = word[:-1]
                         break
@@ -427,7 +431,7 @@ class CRD_song():
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
-        chars = [ '*', '|', '-', '[', ']', '{', '}' ]
+        chars = [ '*', '|', '-', '[', ']', '{', '}', '(', ')', '.' ]
 
         # Some charts use | and - to for timing, 
         # so we need to strip them off before chord processing,
@@ -449,6 +453,18 @@ class CRD_song():
             # Ignore [] delimiting chords
             starter = ''
             ender = '  '
+
+        if starter == '(' and ender == ')':
+            # Ignore () delimiting chords
+            starter = ''
+            ender = '  '
+        elif starter == '(':
+            word = '(' + word
+            starter = ''
+        elif ender == ')':
+            word += ')'
+            ender = ''
+            
 
         # if starter == '{' and ender == '}' ):
         #     # Ignore {} delimiting chords
@@ -476,7 +492,9 @@ class CRD_song():
                 formatted += word
             elif word.isspace():
                 formatted += re.sub( ' ', '&nbsp;', word )
-            elif word in [ '|', '-', '%', 'n.c.', '*' ]:
+            elif word == 'etc' or word == 'etc.':
+                formatted += '...'
+            elif word in [ '|', '-', '%', 'n.c.', 'nc', '*', '.', '|:', ':|' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
