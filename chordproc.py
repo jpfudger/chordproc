@@ -379,6 +379,7 @@ class CRD_song():
         self.lines = []
         self.tuning = None
         self.album = None
+        self.comchar = '%'
         self.fingerings = {}
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
@@ -394,17 +395,22 @@ class CRD_song():
             pass
         return fingering
     def is_comment_line(self,line):
-        if line.strip().startswith('%'):
-            # suddenly decide % is the comchar
-            return True
+        if line.strip().startswith( self.comchar + ' '):
+            comline = line.replace( self.comchar + ' ', '', 1 )
+            return comline
+        elif line.strip().startswith( self.comchar ):
+            comline = line.replace( self.comchar, '', 1 )
+            return comline
 
-        commentwords = [ 'intro', 'outro', 'twice', 'capo', 
-                         'note:', 'verse', 'chorus',
-                         'solo', 'tuning' ]
+        autocomment = False
+        if autocomment:
+            commentwords = [ 'intro', 'outro', 'twice', 'capo', 
+                             'note:', 'verse', 'chorus',
+                             'solo', 'tuning' ]
 
-        for cw in commentwords:
-            if cw.lower() in line.lower():
-                return True
+            for cw in commentwords:
+                if cw.lower() in line.lower():
+                    return line
 
         fingering = None
         m = re.match( '.*([0-9xX]{6,}).*', line )
@@ -425,9 +431,9 @@ class CRD_song():
                 chord = CRD_chord(word)
                 if chord.is_chord():
                     self.add_fingering( chord, fingering )
-            return True
+            return line
 
-        return False
+        return None
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
@@ -473,8 +479,9 @@ class CRD_song():
 
         return word, starter, ender
     def markup_chord_line(self,line):
-        if self.is_comment_line(line):
-            return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', line ) + '</div>'
+        comline = self.is_comment_line(line)
+        if comline:
+            return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', comline ) + '</div>'
         splits = re.split( r'(\s+)', line)
         # this splits the line at start/end of whitespace regions,
         # so that contiguous whitespace counts as a word
@@ -494,7 +501,14 @@ class CRD_song():
                 formatted += re.sub( ' ', '&nbsp;', word )
             elif word == 'etc' or word == 'etc.':
                 formatted += '...'
-            elif word in [ '|', '-', '%', 'n.c.', 'nc', '*', '.', '|:', ':|' ]:
+            elif word in [ 'n.c.', 'nc', 'n.c' ]:
+                if word == 'n.c.':
+                    formatted += '<div class=chordline>n/c</div> '
+                elif word == 'n.c':
+                    formatted += '<div class=chordline>n/c</div>'
+                elif word == 'nc':
+                    formatted += '<div class=chordline>n/c</div>'
+            elif word in [ '|', '-', '%', '*', '.', '|:', ':|' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
