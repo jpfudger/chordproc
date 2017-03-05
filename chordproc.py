@@ -598,6 +598,7 @@ class CRD_data():
         self.albums = []
         self.songs = []
         self.collections = []
+        self.stock_tunings = self.load_tuning_data()
         self.load_song_data()
     def summarise_data(self):
         print( "artists: %d" % len(self.artists) )
@@ -612,7 +613,6 @@ class CRD_data():
             n_albums = len(artist.albums)
             n_songs = len(artist.all_songs())
             print( "%s : %d / %d" % ( artist.name.rjust(35), n_albums, n_songs ) )
-
     def all_albums(self):
         if len(self.albums) == 0:
             for artist in self.artists:
@@ -710,6 +710,56 @@ class CRD_data():
                     break
                 end_index -= 1
             song.lines = song.lines[ start_index : end_index ]
+    def load_tuning_data(self):
+        lines = []
+        if os.path.isfile(self.opts.tunings):
+            with open(self.opts.tunings) as f:
+                lines = f.readlines()
+
+        current_tuning = None
+        current_fingerings = {}
+        tunings = []
+        fingerings = []
+
+        for line in lines:
+            mopen = re.match('^\s*\{\{\{\s+(.*)',line)
+            mclose = re.match('^\s*\}\}\}',line)
+            mblank = re.match('^\s*$',line)
+            mc = re.match('^\s*\{\{\{\s*---',line)
+            if mblank:
+                pass
+            elif mclose and current_tuning:
+                tunings.append( current_tuning )
+                fingerings.append( current_fingerings )
+                current_tuning = None
+                current_fingerings = {}
+            elif mopen:
+                splits = mopen.group(1).split()
+                if len(splits) > 0:
+                    if splits[0] == 'tuning:':
+                        notes = splits[1]
+                        names_str = " ".join(splits[2:])
+                        names = re.findall('\[([a-zA-Z0-9 ]+)\]', names_str )
+                        if len(names) > 0:
+                            #current_tuning = CRD_tuning( notes, names )
+                            current_tuning = notes
+                            #print( current_tuning )
+                        else:
+                            print("Tuning %s has no name" % notes)
+            elif current_tuning:
+                splits = line.strip().split()
+                if len(splits) == 2:
+                    chord = splits[0]
+                    fingering = splits[1]
+                    current_fingerings[chord] = fingering
+
+        # for t, fs in zip( tunings, fingerings ):
+        #     print( "==== " + t )
+        #     for key, value in fs.items():
+        #         print( "     " + key.ljust(10) + value )
+
+        return list(zip( tunings, fingerings ) )
+        sys.exit()
     def load_song_data(self):
         if self.opts.update or not os.path.isfile(self.opts.pickle):
             self.build_song_data()
