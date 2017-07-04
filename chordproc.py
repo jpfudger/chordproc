@@ -265,7 +265,8 @@ class CRD_chord():
         if self.root == None and self.bass == None:
             return False
 
-        if len(self.string) > 10:
+        if len(self.string) > 12:
+            # G#add9(sus4)
             self.root = None
             self.bass = None
             return False
@@ -294,7 +295,7 @@ class CRD_tuning():
             if m:
                 self.tuning = m.group(1)
             else:
-                raise ValueError
+                raise ValueError( "Failed to extract tuning from " + candidate.strip() )
     def __note_offset(self,root,note):
         if '#' in note + root:
             notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
@@ -848,17 +849,17 @@ class CRD_data():
         artist_lines += [ '</ul>' ]
 
         # collections
-        artist_lines += [ '<br>External collections:', '<ul>' ]
-        for collection in self.collections:
-            artist_lines.append( collection )
-        artist_lines += [ '</ul>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
+        if len(self.collections) > 0:
+            artist_lines += [ '<br>External collections:', '<ul>' ]
+            for collection in self.collections:
+                artist_lines.append( collection )
+            artist_lines += [ '</ul>' ]
+            artist_lines += [ '<br>' ]
+            artist_lines += [ '<br>' ]
+            artist_lines += [ '<br>' ]
+            artist_lines += [ '<br>' ]
+            artist_lines += [ '<br>' ]
+            artist_lines += [ '<br>' ]
 
         artist_lines += [ '</div>' ]
         artist_lines += [ '<hr>' ]
