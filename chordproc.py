@@ -9,6 +9,15 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from chordproc.design import Ui_MainWindow
 
+# Todo:
+#
+# 1) Currently the fingerings for each songs are stored in the song class,
+#    rather than the tunings class. We need to add an "add_fingering" method
+#    to CRD_tuning and replace CRD_song.fingerings with CRD_tuning.fingerings.
+#
+# 2) We need to add a link from each song to the tunings page.
+#    Songs can be hard to lookup in the tunings index because the
+#    tunings are listed by their offset notation.
 
 def common_html():
     lines = []
@@ -509,7 +518,7 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
-    def markup_chord_line(self,line,stock_tuning):
+    def markup_chord_line(self,line):
         comline = self.is_comment_line(line)
         if comline:
             return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', comline ) + '</div>'
@@ -552,8 +561,6 @@ class CRD_song():
                 if chord.is_chord():
                     crd = chord.format(self.offset)
                     fingering = self.get_fingering(crd)
-                    if fingering == "" and stock_tuning:
-                        fingering = stock_tuning.get_fingering(crd)
                     formatted += starter + '<div class=chordline%s>%s</div>%s' % \
                                                 ( fingering, crd, ender )
                 else:
@@ -562,8 +569,8 @@ class CRD_song():
         if got_a_not_chord:
             return '<br>' + re.sub( ' ', '&nbsp;', line )
         return formatted
-    def format_song_lines(self,stock_tuning={}):
-        formatted = [ self.markup_chord_line(line,stock_tuning) for line in self.lines ]
+    def format_song_lines(self):
+        formatted = [ self.markup_chord_line(line) for line in self.lines ]
         return formatted
     def add_line(self,newline):
         line = newline.rstrip()
@@ -576,9 +583,10 @@ class CRD_song():
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
-    def html(self,stock_tunings=[],add_artist=False):
-        lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
-        name = ''
+    def inherit_fingerings(self,stock_tunings):
+        # looks up the current tuning in the stock_tunings list
+        # and uses it to inject unspecified fingerings into the 
+        # self.tuning object
         stock_tuning = None
         for t in stock_tunings:
             if self.tuning:
@@ -588,6 +596,14 @@ class CRD_song():
             elif t.name() == 'standard':
                 stock_tuning = t
                 break
+        if stock_tuning:
+            for crd, fing in t.fingerings.items():
+                if self.get_fingering( crd ) == "":
+                    self.add_fingering( crd, fing )
+    def html(self,stock_tunings=[],add_artist=False):
+        self.inherit_fingerings(stock_tunings)
+        lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
+        name = ''
         if add_artist:
             name = ' (%s)' % self.artist
         lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, self.title + name) ]
@@ -597,7 +613,7 @@ class CRD_song():
             lines += [ '<div class=chords_2col>' ]
         else:
             lines += [ '<div class=chords_1col>' ]
-        lines += self.format_song_lines(stock_tuning)
+        lines += self.format_song_lines()
         lines += [ '</div>' ]
         lines += [ '<br><br>' ]
         return lines
