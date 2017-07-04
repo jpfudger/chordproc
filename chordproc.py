@@ -57,7 +57,7 @@ class CRD_artist():
                 allsongs.append(song)
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
-    def html_songs(self,add_artist=False):
+    def html_songs(self,stock_tunings,add_artist=False):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
         lines += common_html()
@@ -68,7 +68,7 @@ class CRD_artist():
             lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
         lines += [ '</ol>' ]
         for song in self.all_songs():
-            lines += song.html(add_artist)[:]
+            lines += song.html(stock_tunings,add_artist)[:]
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
@@ -93,9 +93,9 @@ class CRD_artist():
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
         return lines
-    def html(self,add_artist=False):
+    def html(self,stock_tunings,add_artist=False):
         if len(self.albums) == 1 and self.albums[0].title == 'Misc':
-            return self.html_songs(add_artist)
+            return self.html_songs(stock_tunings,add_artist)
         else:
             return self.html_albums(add_artist)
     def html_index(self):
@@ -166,7 +166,7 @@ class CRD_album():
         self.songs.append(new_song)
         new_song.album = self
         return new_song
-    def html(self):
+    def html(self,stock_tunings):
         title = self.artist.name + ' : ' + self.title
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % title ]
@@ -178,7 +178,7 @@ class CRD_album():
             lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
         lines += [ '</ol>' ]
         for song in self.songs:
-            lines += song.html()[:]
+            lines += song.html(stock_tunings)[:]
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
@@ -282,10 +282,12 @@ class CRD_chord():
         return True
 
 class CRD_tuning():
-    def __init__(self,input_string):
+    def __init__(self,input_string,names=[]):
         self.input_string = input_string
         self.tuning = None
         self._name = None
+        self.names = names
+        self.fingerings = {}
 
         if not self.name():
             # extract tuning candidate
@@ -296,6 +298,16 @@ class CRD_tuning():
                 self.tuning = m.group(1)
             else:
                 raise ValueError( "Failed to extract tuning from " + candidate.strip() )
+    def get_fingering(self,crd_string):
+        fingering = ''
+        try:
+            fingering = self.fingerings[crd_string]
+            fingering = ' title="%s = %s"' % ( crd_string, fingering )
+        except KeyError:
+            pass
+        return fingering
+    def __str__(self):
+        return self.tuning
     def __note_offset(self,root,note):
         if '#' in note + root:
             notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
@@ -392,7 +404,7 @@ class CRD_song():
         try:
             fingering = self.fingerings[crd_string]
             fingering = ' title="%s = %s"' % ( crd_string, fingering )
-        except:
+        except KeyError:
             pass
         return fingering
     def is_comment_line(self,line):
@@ -484,7 +496,7 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
-    def markup_chord_line(self,line):
+    def markup_chord_line(self,line,stock_tuning):
         comline = self.is_comment_line(line)
         if comline:
             return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', comline ) + '</div>'
@@ -527,6 +539,8 @@ class CRD_song():
                 if chord.is_chord():
                     crd = chord.format(self.offset)
                     fingering = self.get_fingering(crd)
+                    if fingering == "" and stock_tuning:
+                        fingering = stock_tuning.get_fingering(crd)
                     formatted += starter + '<div class=chordline%s>%s</div>%s' % \
                                                 ( fingering, crd, ender )
                 else:
@@ -535,8 +549,8 @@ class CRD_song():
         if got_a_not_chord:
             return '<br>' + re.sub( ' ', '&nbsp;', line )
         return formatted
-    def format_song_lines(self):
-        formatted = [ self.markup_chord_line(line) for line in self.lines ]
+    def format_song_lines(self,stock_tuning={}):
+        formatted = [ self.markup_chord_line(line,stock_tuning) for line in self.lines ]
         return formatted
     def add_line(self,newline):
         line = newline.rstrip()
@@ -549,9 +563,18 @@ class CRD_song():
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
-    def html(self,add_artist=False):
+    def html(self,stock_tunings=[],add_artist=False):
         lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
         name = ''
+        stock_tuning = None
+        for t in stock_tunings:
+            if self.tuning:
+                if t.name() == self.tuning.name():
+                    stock_tuning = t
+                    break
+            elif t.name() == 'standard':
+                stock_tuning = t
+                break
         if add_artist:
             name = ' (%s)' % self.artist
         lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, self.title + name) ]
@@ -561,7 +584,7 @@ class CRD_song():
             lines += [ '<div class=chords_2col>' ]
         else:
             lines += [ '<div class=chords_1col>' ]
-        lines += self.format_song_lines()
+        lines += self.format_song_lines(stock_tuning)
         lines += [ '</div>' ]
         lines += [ '<br><br>' ]
         return lines
@@ -718,9 +741,7 @@ class CRD_data():
                 lines = f.readlines()
 
         current_tuning = None
-        current_fingerings = {}
         tunings = []
-        fingerings = []
 
         for line in lines:
             mopen = re.match('^\s*\{\{\{\s+(.*)',line)
@@ -731,9 +752,7 @@ class CRD_data():
                 pass
             elif mclose and current_tuning:
                 tunings.append( current_tuning )
-                fingerings.append( current_fingerings )
                 current_tuning = None
-                current_fingerings = {}
             elif mopen:
                 splits = mopen.group(1).split()
                 if len(splits) > 0:
@@ -742,9 +761,7 @@ class CRD_data():
                         names_str = " ".join(splits[2:])
                         names = re.findall('\[([a-zA-Z0-9 ]+)\]', names_str )
                         if len(names) > 0:
-                            #current_tuning = CRD_tuning( notes, names )
-                            current_tuning = notes
-                            #print( current_tuning )
+                            current_tuning = CRD_tuning( notes, names )
                         else:
                             print("Tuning %s has no name" % notes)
             elif current_tuning:
@@ -752,15 +769,14 @@ class CRD_data():
                 if len(splits) == 2:
                     chord = splits[0]
                     fingering = splits[1]
-                    current_fingerings[chord] = fingering
+                    current_tuning.fingerings[chord] = fingering
 
-        # for t, fs in zip( tunings, fingerings ):
-        #     print( "==== " + t )
-        #     for key, value in fs.items():
+        # for t in tunings:
+        #     print( "==== %s" % t )
+        #     for key, value in t.fingerings.items():
         #         print( "     " + key.ljust(10) + value )
 
-        return list(zip( tunings, fingerings ) )
-        sys.exit()
+        return tunings
     def load_song_data(self):
         if self.opts.update or not os.path.isfile(self.opts.pickle):
             self.build_song_data()
@@ -817,12 +833,12 @@ class CRD_data():
                 artist_lines.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
                     ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
             with open(self.opts.html_root + artist.fname, 'w') as f:
-                for l in artist.html():
+                for l in artist.html(self.stock_tunings):
                     f.write('\n' + l)
             for album in artist.albums:
                 album_path = self.opts.html_root + album.fname
                 with open(album_path, 'w') as f:
-                    for l in album.html():
+                    for l in album.html(self.stock_tunings):
                         f.write('\n' + l)
                 if artist.name == 'Misc':
                     misc.append( [ album, album.fname ] )
@@ -879,7 +895,7 @@ class CRD_data():
             tuning_lines.append( '<li><a class=tuning href="%s">%s</a> <div class=count>%d</div>' % 
                     ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
             with open(self.opts.html_root + tuning.fname, 'w') as f:
-                for l in tuning.html(True):
+                for l in tuning.html(self.stock_tunings,True):
                     f.write('\n' + l)
         tuning_lines += [ '</ul>', '</body>', '</html>' ]
         with open(self.opts.html_root + 'tunings.html', 'w') as f:
