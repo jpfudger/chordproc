@@ -430,13 +430,17 @@ class CRD_song():
                 if cw.lower() in line.lower():
                     return line
 
-        fingering = None
-        m = re.match( '.*([0-9xX]{6,}).*', line )
+        regex = '([0-9xX]{6,})' 
+        m = re.search(regex, line)
         if m:
-            # chord descriptions (e.g. 0x0434) should always be commented
-            fingering = m.group(1)
+            # there is at least 1 fingering on this line
+            # fingerings (e.g. 0x0434) should always be commented
             splits = re.split( r'(\s+)', line)
             enders = [ ':', '=' ]
+            chord = None
+            fingering = None
+
+            # loop over line looking for fingerings (may be many per line)
             for word in splits:
                 if word == '':
                     continue
@@ -446,9 +450,18 @@ class CRD_song():
                     if word.endswith(ender):
                         word = word[:-1]
                         break
-                chord = CRD_chord(word)
-                if chord.is_chord():
-                    self.add_fingering( chord, fingering )
+
+                if chord and chord.is_chord():
+                    # already got a chord... check for fingerings
+                    m = re.search(regex, word)
+                    if m:
+                        # word is fingering
+                        fingering = m.group(1)
+                        self.add_fingering( chord, fingering )
+                        chord = None
+                        fingering = None
+                else:
+                    chord = CRD_chord(word)
             return line
 
         return None
