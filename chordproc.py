@@ -280,13 +280,31 @@ class CRD_chord():
             self.bass = None
             return False
 
-        nochord_chars = [ 'l', 'k', 't', 'h', 'gg' ]
+        nochord_chars = [ 'l', 'k', 't', 'h', 'gg', 'y', 'v', 'ing' ]
 
         for c in nochord_chars:
             if c in self.string.lower():
                 self.root = None
                 self.bass = None
                 return False
+
+        # n can only appear in min
+        if re.search( '[^i]n', self.string ):
+            self.root = None
+            self.bass = None
+            return False
+
+        # j can only appear in maj
+        if re.search( '[^a]j', self.string ):
+            self.root = None
+            self.bass = None
+            return False
+
+        # s can only appear in sus
+        if re.search( '[^u]s', self.string ):
+            self.root = None
+            self.bass = None
+            return False
 
         return True
 
@@ -561,6 +579,8 @@ class CRD_song():
                 if chord.is_chord():
                     crd = chord.format(self.offset)
                     fingering = self.get_fingering(crd)
+                    # if fingering == "" and self.tuning:
+                    #     print( "[%s] No fingering for %s" % ( self.tuning.name(), crd ) )
                     formatted += starter + '<div class=chordline%s>%s</div>%s' % \
                                                 ( fingering, crd, ender )
                 else:
