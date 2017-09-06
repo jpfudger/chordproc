@@ -653,6 +653,16 @@ class CRD_data():
         self.collections = []
         self.stock_tunings = self.load_tuning_data()
         self.load_song_data()
+    def __update_options(self,opts):
+        newopts = {}
+        newopts["update"]    = opts.get("update",    False)
+        #newopts["html"]      = opts.get("html",      False)
+        #newopts["gui"]       = opts.get("gui",       False)
+        newopts["tunings"]   = opts.get("tunings",   None)
+        newopts["html_root"] = opts.get("html_root", r'html/')
+        newopts["root"]      = opts.get("root",      r'crds')
+        newopts["pickle"]    = opts.get("pickle",    r'/home/jpf/bin/chord_pickle')
+        return newopts
     def summarise_data(self):
         print( "artists: %d" % len(self.artists) )
         print( "albums:  %d" % len(self.all_albums() ) )
@@ -765,8 +775,8 @@ class CRD_data():
             song.lines = song.lines[ start_index : end_index ]
     def load_tuning_data(self):
         lines = []
-        if os.path.isfile(self.opts.tunings):
-            with open(self.opts.tunings) as f:
+        if os.path.isfile(self.opts["tunings"]):
+            with open(self.opts["tunings"]) as f:
                 lines = f.readlines()
 
         current_tuning = None
@@ -807,17 +817,17 @@ class CRD_data():
 
         return tunings
     def load_song_data(self):
-        if self.opts.update or not os.path.isfile(self.opts.pickle):
+        if self.opts["update"] or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
             self.group_songs_by_tunings()
-            with open(self.opts.pickle,'wb') as f:
+            with open(self.opts["pickle"],'wb') as f:
                 pickle.dump( ( self.artists, self.tunings, self.collections ), f )
         else:
-            with open(self.opts.pickle,'rb') as f:
+            with open(self.opts["pickle"],'rb') as f:
                 self.artists, self.tunings, self.collections = pickle.load(f)
         self.summarise_data()
     def build_song_data(self):
-        for f in glob.glob(self.opts.root + '/*.crd'):
+        for f in glob.glob(self.opts["root"] + '/*.crd'):
             self.process_chord_file(f)
         self.artists.sort(key=lambda x: x.name)
         if os.path.isfile('collections.html'):
@@ -861,17 +871,17 @@ class CRD_data():
             if not artist.name == 'Misc':
                 artist_lines.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
                     ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
-            with open(self.opts.html_root + artist.fname, 'w') as f:
+            with open(self.opts["html_root"] + artist.fname, 'w') as f:
                 for l in artist.html(self.stock_tunings):
                     f.write('\n' + l)
             for album in artist.albums:
-                album_path = self.opts.html_root + album.fname
+                album_path = self.opts["html_root"] + album.fname
                 with open(album_path, 'w') as f:
                     for l in album.html(self.stock_tunings):
                         f.write('\n' + l)
                 if artist.name == 'Misc':
                     misc.append( [ album, album.fname ] )
-            with open(self.opts.html_root + artist.index_fname, 'w') as f:
+            with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 for l in artist.html_index():
                     f.write('\n' + l)
         artist_lines += [ '</ul>', '</div>' ] 
@@ -910,7 +920,7 @@ class CRD_data():
         artist_lines += [ '<hr>' ]
 
         artist_lines += [ '</body>', '</html>' ]
-        with open(self.opts.html_root + 'index.html', 'w') as f:
+        with open(self.opts["html_root"] + 'index.html', 'w') as f:
             for l in artist_lines:
                 f.write('\n' + l)
         
@@ -923,11 +933,11 @@ class CRD_data():
         for tuning in self.group_songs_by_tunings():
             tuning_lines.append( '<li><a class=tuning href="%s">%s</a> <div class=count>%d</div>' % 
                     ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
-            with open(self.opts.html_root + tuning.fname, 'w') as f:
+            with open(self.opts["html_root"] + tuning.fname, 'w') as f:
                 for l in tuning.html(self.stock_tunings,True):
                     f.write('\n' + l)
         tuning_lines += [ '</ul>', '</body>', '</html>' ]
-        with open(self.opts.html_root + 'tunings.html', 'w') as f:
+        with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
             for l in tuning_lines:
                 f.write('\n' + l)
 
@@ -951,7 +961,7 @@ class CRD_data():
             s_link = song.album.fname + '#' + song.link
             index_lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.artist ) )
         index_lines += [ '</div>', '</body>', '</html>' ]
-        with open(self.opts.html_root + 'allsongs.html', 'w') as f:
+        with open(self.opts["html_root"] + 'allsongs.html', 'w') as f:
             for l in index_lines:
                 f.write('\n' + l)
 
