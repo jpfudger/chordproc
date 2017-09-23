@@ -301,7 +301,7 @@ class CRD_chord():
             return False
 
         # s can only appear in sus
-        if re.search( '[^u]s', self.string ):
+        if 's' in self.string.replace('sus','xxx'):
             self.root = None
             self.bass = None
             return False
