@@ -8,6 +8,7 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from chordproc.design import Ui_MainWindow
+from laudable.laudable import *
 
 # Todo:
 #
@@ -45,10 +46,11 @@ def common_html():
     return lines
 
 class CRD_artist():
-    def __init__(self,name,index=0):
+    def __init__(self,name,index=0,laud_data=None):
         self.name = name
         self.albums = []
         self.index = index
+        self.laud_data = laud_data
         self.fname = name.lower() + '.html'
         self.fname = re.sub( ' ', '_', self.fname )
         self.fname = re.sub( '#', 's', self.fname )
@@ -56,7 +58,7 @@ class CRD_artist():
         self.tuning = None
     def add_album(self,title):
         album_index = '%d.%d' % ( self.index, len(self.albums) + 1 )
-        new_album = CRD_album( title, self, album_index )
+        new_album = CRD_album( title, self, album_index, self.laud_data )
         self.albums.append(new_album)
         return new_album
     def all_songs(self):
@@ -160,10 +162,11 @@ class CRD_artist():
         #print(output)
 
 class CRD_album():
-    def __init__(self,title,artist=None,index=0):
+    def __init__(self,title,artist,index,laud_data):
         self.title  = title
         self.artist = artist
         self.index  = index
+        self.laud_data = laud_data
         self.songs  = []
         name = ( artist.name if artist else '' ) + '_' + title
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
@@ -182,6 +185,7 @@ class CRD_album():
         lines += common_html()
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, title) ]
+        lines += [ self.get_playlist_link() ]
         lines += [ '<hr>', '<ol>' ]
         for song in self.songs:
             lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
@@ -217,6 +221,15 @@ class CRD_album():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+    def get_playlist_link(self):
+        try:
+            alb = self.laud_data.find_album(self.artist.name,self.title)
+            m3u = alb.playlist
+            img = alb.image
+            link = '<a href="%s"><img class=cover src="%s"></a>' % ( alb.playlist, alb.image )
+        except:
+            link = ''
+        return link
 
 class CRD_chord():
     def __init__(self,string):
@@ -671,6 +684,7 @@ class CRD_data():
         self.albums = []
         self.songs = []
         self.collections = []
+        self.laud_data = LAUD_data()
         self.stock_tunings = self.load_tuning_data()
         self.load_song_data()
     def __update_options(self,opts):
@@ -715,7 +729,7 @@ class CRD_data():
             if a.name == name:
                 return a
         self.n_artists += 1
-        a = CRD_artist(name,self.n_artists)
+        a = CRD_artist(name,self.n_artists,self.laud_data)
         self.artists.append(a)
         return a
     def process_chord_file(self,path):
