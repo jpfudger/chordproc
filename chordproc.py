@@ -260,6 +260,7 @@ class CRD_chord():
         return notes + notes
     def format(self,transpose=0):
         newchord = self.string
+        transpose = transpose % 12
 
         if self.is_chord():
             if self.root:
@@ -428,7 +429,6 @@ class CRD_song():
         self.artist = artist
         self.fpath = fpath
         self.index = index
-        self.offset = 0
         self.lines = []
         self.tuning = None
         self.album = None
@@ -437,8 +437,7 @@ class CRD_song():
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
     def add_fingering(self,chord,fingering):
-        #print( chord.format(self.offset).ljust(16) + ' : ' + fingering ) 
-        self.fingerings[ chord.format(self.offset) ] = fingering
+        self.fingerings[ chord.format() ] = fingering
     def get_fingering(self,crd_string):
         fingering = ''
         try:
@@ -549,7 +548,7 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
-    def markup_chord_line(self,line):
+    def markup_chord_line(self,line,transpose):
         comline = self.is_comment_line(line)
         if comline:
             return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', comline ) + '</div>'
@@ -590,7 +589,7 @@ class CRD_song():
                 word, starter, ender = self.strip_delimeters(word)
                 chord = CRD_chord(word)
                 if chord.is_chord():
-                    crd = chord.format(self.offset)
+                    crd = chord.format(transpose)
                     fingering = self.get_fingering(crd)
                     # if fingering == "" and self.tuning:
                     #     print( "[%s] No fingering for %s" % ( self.tuning.name(), crd ) )
@@ -602,8 +601,8 @@ class CRD_song():
         if got_a_not_chord:
             return '<br>' + re.sub( ' ', '&nbsp;', line )
         return formatted
-    def format_song_lines(self):
-        formatted = [ self.markup_chord_line(line) for line in self.lines ]
+    def format_song_lines(self,transpose=0):
+        formatted = [ self.markup_chord_line(line,transpose) for line in self.lines ]
         return formatted
     def add_line(self,newline):
         line = newline.rstrip()
@@ -633,7 +632,7 @@ class CRD_song():
             for crd, fing in t.fingerings.items():
                 if self.get_fingering( crd ) == "":
                     self.add_fingering( crd, fing )
-    def html(self,stock_tunings=[],add_artist=False):
+    def html(self,stock_tunings=[],add_artist=False,transpose=0):
         self.inherit_fingerings(stock_tunings)
         lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
         name = ''
@@ -646,7 +645,7 @@ class CRD_song():
             lines += [ '<div class=chords_2col>' ]
         else:
             lines += [ '<div class=chords_1col>' ]
-        lines += self.format_song_lines()
+        lines += self.format_song_lines(transpose)
         lines += [ '</div>' ]
         lines += [ '<br><br>' ]
         return lines
