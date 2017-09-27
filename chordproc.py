@@ -1015,6 +1015,14 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.root2 = self.model2.invisibleRootItem()
         self.makeTree(self.root2, self.chords.tunings)
 
+        self.currentArtistSong = None
+        self.currentArtistTranspose = 0
+        self.currentTuningSong = None
+        self.currentTuningTranspose = 0
+
+        QShortcut(QKeySequence("Ctrl+Up"),   self, self.transposeUp)
+        QShortcut(QKeySequence("Ctrl+Down"), self, self.transposeDown)
+
     def makeTree(self,root,collection):
         for artist in collection:
             branch = QStandardItem(artist.name)
@@ -1036,23 +1044,46 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.browser.setFont(font)
         #docviewer.anchorClicked.connect(self.on_doc_click)
         self.browser.show()
-        #self.browser.setText("Hello")
 
     def onArtistClick(self, index):
         item = index.model().itemFromIndex(index)
         song = item.data()
         if song:
-            #print(song.title)
-            lines = [ song.title, '=' * len(song.title) ] + song.lines
-            self.viewerArtists.setText("\n".join(lines))
+            self.currentArtistTranspose = 0
+            self.currentArtistSong = song
+            lines = song.html([],False,self.currentArtistTranspose)
+            text = "\n".join(lines)
+            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            self.viewerArtists.setHtml(text)
 
     def onTuningClick(self, index):
         item = index.model().itemFromIndex(index)
         song = item.data()
         if song:
-            #print(song.title)
-            lines = [ song.title, '=' * len(song.title) ] + song.lines
-            self.viewerTunings.setText("\n".join(lines))
+            self.currentTuningTranspose = 0
+            self.currentTuningSong = song
+            lines = song.html([],False,self.currentTuningTranspose)
+            text = "\n".join(lines)
+            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            self.viewerTunings.setHtml(text)
+
+    def transposeUp(self):
+        song = self.currentArtistSong
+        if song:
+            self.currentArtistTranspose += 1
+            lines = song.html([],False,self.currentArtistTranspose)
+            text = "\n".join(lines)
+            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            self.viewerArtists.setHtml(text)
+
+    def transposeDown(self):
+        song = self.currentArtistSong
+        if song:
+            self.currentArtistTranspose -= 1
+            lines = song.html([],False,self.currentArtistTranspose)
+            text = "\n".join(lines)
+            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            self.viewerArtists.setHtml(text)
 
 class CRD_interface():
     @staticmethod
