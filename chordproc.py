@@ -1028,6 +1028,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             branch = QStandardItem(artist.name)
             for album in artist.albums:
                 album_item = QStandardItem(album.title)
+                album_item.setData(album)
                 child = branch.appendRow(album_item)
                 for song in album.songs:
                     song_item = QStandardItem(song.title)
@@ -1047,14 +1048,22 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
 
     def onArtistClick(self, index):
         item = index.model().itemFromIndex(index)
-        song = item.data()
-        if song:
+        if not item.data():
+            pass
+        elif isinstance(item.data(),CRD_song):
+            song = item.data()
             self.currentArtistTranspose = 0
             self.currentArtistSong = song
             lines = song.html([],False,self.currentArtistTranspose)
             text = "\n".join(lines)
             text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            text = re.sub( '<(\/?)h1>', '<\1h1>', text )
+            text = text.replace('<hr>','')
             self.viewerArtists.setHtml(text)
+        elif isinstance(item.data(),CRD_album):
+            album = item.data()
+            link = album.get_playlist_link()
+            if link: self.viewerArtists.setHtml(link)
 
     def onTuningClick(self, index):
         item = index.model().itemFromIndex(index)
@@ -1065,6 +1074,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             lines = song.html([],False,self.currentTuningTranspose)
             text = "\n".join(lines)
             text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            text = text.replace('<hr>','')
             self.viewerTunings.setHtml(text)
 
     def transposeUp(self):
