@@ -21,12 +21,6 @@ from laudable.laudable import LAUD_data
 #    tunings are listed by their offset notation.
 #
 
-# GUI todo:
-#
-# 1) How to add a shortcut for <Enter> to view a song.
-#
-
-
 def common_html():
     lines = []
     #lines = [ '<link rel="stylesheet" type="text/css" href="style.css">' ]
@@ -1029,6 +1023,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
 
         QShortcut(QKeySequence("Ctrl+Up"),   self, self.transposeUp)
         QShortcut(QKeySequence("Ctrl+Down"), self, self.transposeDown)
+        QShortcut(QKeySequence(Qt.Key_Return),     self, self.handleEnter)
 
     def makeTree(self,root,collection):
         for artist in collection:
@@ -1050,7 +1045,6 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         font.setFamily("Courier")
         font.setPointSize(10)
         self.browser.setFont(font)
-        #docviewer.anchorClicked.connect(self.on_doc_click)
         self.browser.show()
 
     def tweak_html(self, song, transpose):
@@ -1098,6 +1092,11 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.currentArtistTranspose -= 1
             text = self.tweak_html(self.currentArtistSong,self.currentArtistTranspose)
             self.viewerArtists.setHtml(text)
+
+    def handleEnter(self):
+        # how to distinguish between treeArtists and treeTunings?
+        index = self.treeArtists.selectedIndexes()[0]
+        self.onArtistClick(index)
 
 class CRD_interface():
     @staticmethod
