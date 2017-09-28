@@ -19,6 +19,13 @@ from laudable.laudable import LAUD_data
 # 2) We need to add a link from each song to the tunings page.
 #    Songs can be hard to lookup in the tunings index because the
 #    tunings are listed by their offset notation.
+#
+
+# GUI todo:
+#
+# 1) How to add a shortcut for <Enter> to view a song.
+#
+
 
 def common_html():
     lines = []
@@ -1046,19 +1053,23 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         #docviewer.anchorClicked.connect(self.on_doc_click)
         self.browser.show()
 
+    def tweak_html(self, song, transpose):
+        lines = song.html([],False,transpose)
+        text = "\n".join(lines)
+        text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', 
+                      r'<font color="blue">\1</font>', text )
+        text = re.sub( '<(\/?)h1>', '<\1h1>', text )
+        text = text.replace('<hr>','')
+        return text
+
     def onArtistClick(self, index):
         item = index.model().itemFromIndex(index)
         if not item.data():
             pass
         elif isinstance(item.data(),CRD_song):
-            song = item.data()
             self.currentArtistTranspose = 0
-            self.currentArtistSong = song
-            lines = song.html([],False,self.currentArtistTranspose)
-            text = "\n".join(lines)
-            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
-            text = re.sub( '<(\/?)h1>', '<\1h1>', text )
-            text = text.replace('<hr>','')
+            self.currentArtistSong = item.data()
+            text = self.tweak_html(self.currentArtistSong,self.currentArtistTranspose)
             self.viewerArtists.setHtml(text)
         elif isinstance(item.data(),CRD_album):
             album = item.data()
@@ -1071,28 +1082,21 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         if song:
             self.currentTuningTranspose = 0
             self.currentTuningSong = song
-            lines = song.html([],False,self.currentTuningTranspose)
-            text = "\n".join(lines)
-            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
-            text = text.replace('<hr>','')
+            text = self.tweak_html(self.currentTuningSong,self.currentTuningTranspose)
             self.viewerTunings.setHtml(text)
 
     def transposeUp(self):
         song = self.currentArtistSong
         if song:
             self.currentArtistTranspose += 1
-            lines = song.html([],False,self.currentArtistTranspose)
-            text = "\n".join(lines)
-            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            text = self.tweak_html(self.currentArtistSong,self.currentArtistTranspose)
             self.viewerArtists.setHtml(text)
 
     def transposeDown(self):
         song = self.currentArtistSong
         if song:
             self.currentArtistTranspose -= 1
-            lines = song.html([],False,self.currentArtistTranspose)
-            text = "\n".join(lines)
-            text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', r'\1', text )
+            text = self.tweak_html(self.currentArtistSong,self.currentArtistTranspose)
             self.viewerArtists.setHtml(text)
 
 class CRD_interface():
