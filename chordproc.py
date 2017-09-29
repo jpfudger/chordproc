@@ -1021,9 +1021,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.currentTuningSong = None
         self.currentTuningTranspose = 0
 
-        QShortcut(QKeySequence("Ctrl+Up"),   self, self.transposeUp)
-        QShortcut(QKeySequence("Ctrl+Down"), self, self.transposeDown)
-        QShortcut(QKeySequence(Qt.Key_Return),     self, self.handleEnter)
+        QShortcut(QKeySequence("Ctrl+Up"),      self, self.transposeUp)
+        QShortcut(QKeySequence("Ctrl+Down"),    self, self.transposeDown)
+        QShortcut(QKeySequence(Qt.Key_Return),  self, self.handleEnter)
+        QShortcut(QKeySequence(Qt.Key_Left),    self, self.handleLeft)
 
     def makeTree(self,root,collection):
         for artist in collection:
@@ -1056,47 +1057,85 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         text = text.replace('<hr>','')
         return text
 
+    def currentTree(self):
+        tabindex = self.tabWidget.currentIndex()
+        if tabindex == 0:
+            return self.treeArtists
+        elif tabindex == 1:
+            return self.treeTunings
+        return None
+
+    def currentViewer(self):
+        tabindex = self.tabWidget.currentIndex()
+        if tabindex == 0:
+            return self.viewerArtists
+        elif tabindex == 1:
+            return self.viewerTunings
+        return None
+
+    def currentTranspose(self,inc=None):
+        tabindex = self.tabWidget.currentIndex()
+        if tabindex == 0:
+            if inc == None:
+                self.currentArtistTranspose = 0
+            else:
+                self.currentArtistTranspose += inc
+            return self.currentArtistTranspose
+        elif tabindex == 1:
+            if inc == None:
+                self.currentTuningTranspose = 0
+            else:
+                self.currentTuningTranspose += inc
+            return self.currentTuningTranspose
+        return 0
+
     def onArtistClick(self, index):
         item = index.model().itemFromIndex(index)
         if not item.data():
             pass
         elif isinstance(item.data(),CRD_song):
-            self.currentArtistTranspose = 0
             self.currentArtistSong = item.data()
-            text = self.tweak_html(self.currentArtistSong,self.currentArtistTranspose)
-            self.viewerArtists.setHtml(text)
+            text = self.tweak_html(self.currentArtistSong, self.currentTranspose())
+            self.currentViewer().setHtml(text)
         elif isinstance(item.data(),CRD_album):
             album = item.data()
             link = album.get_playlist_link()
-            if link: self.viewerArtists.setHtml(link)
+            if link: self.currentViewer().setHtml(link)
 
     def onTuningClick(self, index):
         item = index.model().itemFromIndex(index)
         song = item.data()
         if song:
-            self.currentTuningTranspose = 0
             self.currentTuningSong = song
-            text = self.tweak_html(self.currentTuningSong,self.currentTuningTranspose)
-            self.viewerTunings.setHtml(text)
+            text = self.tweak_html(self.currentTuningSong,self.currentTranspose())
+            self.currentViewer().setHtml(text)
 
     def transposeUp(self):
         song = self.currentArtistSong
         if song:
-            self.currentArtistTranspose += 1
-            text = self.tweak_html(self.currentArtistSong,self.currentArtistTranspose)
-            self.viewerArtists.setHtml(text)
+            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(1))
+            self.currentViewer().setHtml(text)
 
     def transposeDown(self):
         song = self.currentArtistSong
         if song:
-            self.currentArtistTranspose -= 1
-            text = self.tweak_html(self.currentArtistSong,self.currentArtistTranspose)
-            self.viewerArtists.setHtml(text)
+            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(-1))
+            self.currentViewer().setHtml(text)
 
     def handleEnter(self):
-        # how to distinguish between treeArtists and treeTunings?
-        index = self.treeArtists.selectedIndexes()[0]
+        index = self.currentTree().selectedIndexes()[0]
         self.onArtistClick(index)
+
+    def handleLeft(self):
+        indices = self.currentTree().selectedIndexes()
+        if len(indices) > 0:
+            index = indices[0]
+            item = index.model().itemFromIndex(indices[0])
+            if not item.data():
+                pass
+            elif not isinstance(item.data(),CRD_artist):
+                self.currentTree().collapse(index.parent())
+                self.currentTree().setCurrentIndex(index.parent())
 
 class CRD_interface():
     @staticmethod
