@@ -1029,6 +1029,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
     def makeTree(self,root,collection):
         for artist in collection:
             branch = QStandardItem(artist.name)
+            branch.setData(artist)
             for album in artist.albums:
                 album_item = QStandardItem(album.title)
                 album_item.setData(album)
@@ -1133,7 +1134,15 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             item = index.model().itemFromIndex(indices[0])
             if not item.data():
                 pass
-            elif not isinstance(item.data(),CRD_artist):
+            if isinstance(item.data(),CRD_artist):
+                self.currentTree().collapse(index)
+            elif isinstance(item.data(),CRD_album):
+                if self.currentTree().isExpanded(index):
+                    self.currentTree().collapse(index)
+                else:
+                    self.currentTree().collapse(index.parent())
+                    self.currentTree().setCurrentIndex(index.parent())
+            elif isinstance(item.data(),CRD_song):
                 self.currentTree().collapse(index.parent())
                 self.currentTree().setCurrentIndex(index.parent())
 
