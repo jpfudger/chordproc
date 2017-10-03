@@ -859,7 +859,7 @@ class CRD_data():
         else:
             with open(self.opts["pickle"],'rb') as f:
                 self.artists, self.tunings, self.collections = pickle.load(f)
-        self.summarise_data()
+        #self.summarise_data()
     def build_song_data(self):
         for f in glob.glob(self.opts["root"] + '/*.crd'):
             self.process_chord_file(f)
@@ -1050,7 +1050,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.browser.show()
 
     def tweak_html(self, song, transpose):
-        lines = song.html([],False,transpose)
+        add_artist = self.onTuningsTab()
+        lines = song.html([],add_artist,transpose)
         text = "\n".join(lines)
         text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', 
                       r'<font color="blue">\1</font>', text )
@@ -1059,30 +1060,35 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         return text
 
     def currentTree(self):
-        tabindex = self.tabWidget.currentIndex()
-        if tabindex == 0:
+        if self.onArtistsTab():
             return self.treeArtists
-        elif tabindex == 1:
+        elif self.onTuningsTab():
             return self.treeTunings
         return None
 
-    def currentViewer(self):
+    def onArtistsTab(self):
         tabindex = self.tabWidget.currentIndex()
-        if tabindex == 0:
+        return tabindex == 0
+
+    def onTuningsTab(self):
+        tabindex = self.tabWidget.currentIndex()
+        return tabindex == 1
+
+    def currentViewer(self):
+        if self.onArtistsTab():
             return self.viewerArtists
-        elif tabindex == 1:
+        elif self.onTuningsTab():
             return self.viewerTunings
         return None
 
     def currentTranspose(self,inc=None):
-        tabindex = self.tabWidget.currentIndex()
-        if tabindex == 0:
+        if self.onArtistsTab():
             if inc == None:
                 self.currentArtistTranspose = 0
             else:
                 self.currentArtistTranspose += inc
             return self.currentArtistTranspose
-        elif tabindex == 1:
+        elif self.onTuningsTab():
             if inc == None:
                 self.currentTuningTranspose = 0
             else:
