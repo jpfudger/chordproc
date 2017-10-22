@@ -254,18 +254,18 @@ class CRD_chord():
             if self.string.lower().endswith( '/' + t) or self.string.lower().endswith( '\\' + t):
                 self.bass = t
                 break
-    def __notes(self,which):
+    def __notes(self,which,prefer_sharp=False):
         notes = [ 'A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab' ]
-        if '#' in which:
+        if prefer_sharp or '#' in which:
             notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
         return notes + notes
-    def format(self,transpose=0):
+    def format(self,transpose=0,prefer_sharp=False):
         newchord = self.string
         transpose = transpose % 12
 
         if self.is_chord():
             if self.root:
-                notes = self.__notes(self.root)
+                notes = self.__notes(self.root,prefer_sharp)
                 lowernotes = [ n.lower() for n in notes ]
 
                 rootindex = lowernotes.index(self.root.lower())
@@ -273,7 +273,7 @@ class CRD_chord():
                 newchord = newroot + newchord[len(self.root):]
 
             if self.bass:
-                notes = self.__notes(self.bass)
+                notes = self.__notes(self.bass,prefer_sharp)
                 lowernotes = [ n.lower() for n in notes ]
 
                 bassindex = lowernotes.index(self.bass.lower())
@@ -549,7 +549,7 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
-    def markup_chord_line(self,line,transpose):
+    def markup_chord_line(self,line,transpose,prefer_sharp):
         comline = self.is_comment_line(line)
         if comline:
             return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', comline ) + '</div>'
@@ -590,7 +590,7 @@ class CRD_song():
                 word, starter, ender = self.strip_delimeters(word)
                 chord = CRD_chord(word)
                 if chord.is_chord():
-                    crd = chord.format(transpose)
+                    crd = chord.format(transpose,prefer_sharp)
                     fingering = self.get_fingering(crd)
                     # if fingering == "" and self.tuning:
                     #     print( "[%s] No fingering for %s" % ( self.tuning.name(), crd ) )
@@ -602,8 +602,8 @@ class CRD_song():
         if got_a_not_chord:
             return '<br>' + re.sub( ' ', '&nbsp;', line )
         return formatted
-    def format_song_lines(self,transpose=0):
-        formatted = [ self.markup_chord_line(line,transpose) for line in self.lines ]
+    def format_song_lines(self,transpose=0,prefer_sharp=False):
+        formatted = [ self.markup_chord_line(line,transpose,prefer_sharp) for line in self.lines ]
         return formatted
     def add_line(self,newline):
         line = newline.rstrip()
@@ -633,7 +633,7 @@ class CRD_song():
             for crd, fing in t.fingerings.items():
                 if self.get_fingering( crd ) == "":
                     self.add_fingering( crd, fing )
-    def html(self,stock_tunings=[],add_artist=False,transpose=0):
+    def html(self,stock_tunings=[],add_artist=False,transpose=0,prefer_sharp=False):
         self.inherit_fingerings(stock_tunings)
         lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
         name = ''
@@ -646,7 +646,7 @@ class CRD_song():
             lines += [ '<div class=chords_2col>' ]
         else:
             lines += [ '<div class=chords_1col>' ]
-        lines += self.format_song_lines(transpose)
+        lines += self.format_song_lines(transpose,prefer_sharp)
         lines += [ '</div>' ]
         lines += [ '<br><br>' ]
         return lines
@@ -1049,9 +1049,9 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.browser.setFont(font)
         self.browser.show()
 
-    def tweak_html(self, song, transpose):
+    def tweak_html(self, song, transpose, prefer_sharp=False):
         add_artist = self.onTuningsTab()
-        lines = song.html([],add_artist,transpose)
+        lines = song.html([],add_artist,transpose,prefer_sharp)
         text = "\n".join(lines)
         text = re.sub( '<div class=chordline[^>]*>([^<]*)</div>', 
                       r'<font color="blue">\1</font>', text )
@@ -1120,13 +1120,13 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
     def transposeUp(self):
         song = self.currentArtistSong
         if song:
-            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(1))
+            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(1),True)
             self.currentViewer().setHtml(text)
 
     def transposeDown(self):
         song = self.currentArtistSong
         if song:
-            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(-1))
+            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(-1),False)
             self.currentViewer().setHtml(text)
 
     def handleEnter(self):
