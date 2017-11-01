@@ -265,18 +265,26 @@ class CRD_chord():
 
         if self.is_chord():
             if self.root:
-                notes = self.__notes(self.root,prefer_sharp)
-                lowernotes = [ n.lower() for n in notes ]
-
-                rootindex = lowernotes.index(self.root.lower())
+                try:
+                    notes = self.__notes(self.root,prefer_sharp)
+                    lowernotes = [ n.lower() for n in notes ]
+                    rootindex = lowernotes.index(self.root.lower())
+                except ValueError:
+                    notes = self.__notes(self.root,not prefer_sharp)
+                    lowernotes = [ n.lower() for n in notes ]
+                    rootindex = lowernotes.index(self.root.lower())
                 newroot = notes[rootindex + transpose]
                 newchord = newroot + newchord[len(self.root):]
 
             if self.bass:
-                notes = self.__notes(self.bass,prefer_sharp)
-                lowernotes = [ n.lower() for n in notes ]
-
-                bassindex = lowernotes.index(self.bass.lower())
+                try:
+                    notes = self.__notes(self.bass,prefer_sharp)
+                    lowernotes = [ n.lower() for n in notes ]
+                    bassindex = lowernotes.index(self.bass.lower())
+                except ValueError:
+                    notes = self.__notes(self.bass,not prefer_sharp)
+                    lowernotes = [ n.lower() for n in notes ]
+                    bassindex = lowernotes.index(self.bass.lower())
                 newbass = notes[bassindex + transpose]
 
                 if not self.root:
