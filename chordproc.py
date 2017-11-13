@@ -228,7 +228,7 @@ class CRD_album():
             m3u = alb.playlist
             img = alb.image
             link = '<a href="%s"><img class=cover src="%s"></a>' % ( alb.playlist, alb.image )
-        except:
+        except AttributeError:
             link = ''
         return link
 
@@ -744,10 +744,11 @@ class CRD_data():
         songs = []
         lines = []
         try:
-            with open(path,encoding='ascii') as f:
+            with open(path,encoding='utf-8') as f:
                 lines = f.readlines()
         except:
-            print("Failed to process " + path + " (non-ASCII character?)")
+            raise
+            #print("Failed to process " + path + " (non-ASCII character?)")
         level = 0
         this_artist = None
         this_album  = None
@@ -887,7 +888,7 @@ class CRD_data():
                             try:
                                 offsets = [ x.tuning.offset() for x in self.tunings ]
                                 pos = offsets.index(song.tuning.offset())
-                            except:
+                            except ValueError:
                                 tuning_artist = CRD_artist(song.tuning.summary())
                                 tuning_artist.add_album('Misc')
                                 tuning_artist.tuning = song.tuning
