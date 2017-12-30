@@ -1126,6 +1126,30 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             text = self.tweak_html(self.currentTuningSong,self.currentTranspose())
             self.currentViewer().setHtml(text)
 
+    def onSearch(self):
+        pattern = self.lineEdit.text()
+        top = self.model.invisibleRootItem().index()
+
+        for i in range(self.model.rowCount()):
+            index = self.model.index(i,0)
+            artist = self.model.itemFromIndex(index)
+            artist_visible = False
+            if artist:
+                for j in range(artist.rowCount()):
+                    album = artist.child(j)
+                    album_visible = False
+                    for k in range(album.rowCount()):
+                        song = album.child(k)
+                        song_visible = pattern.lower() in song.text().lower()
+                        self.treeArtists.setRowHidden(song.row(),album.index(),not song_visible)
+                        if song_visible:
+                            album_visible = True
+                            artist_visible = True
+                    self.treeArtists.setRowHidden(album.row(),artist.index(),not album_visible)
+                self.treeArtists.setRowHidden(artist.row(),top,not artist_visible)
+
+        # Still need to do the same for self.treeTunings
+
     def transposeUp(self):
         song = self.currentArtistSong
         if song:
@@ -1139,8 +1163,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.currentViewer().setHtml(text)
 
     def handleEnter(self):
-        index = self.currentTree().selectedIndexes()[0]
-        self.onArtistClick(index)
+        ct = self.currentTree()
+        if ct:
+            index = ct.selectedIndexes()[0]
+            self.onArtistClick(index)
 
     def handleLeft(self):
         indices = self.currentTree().selectedIndexes()
