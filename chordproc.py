@@ -1014,21 +1014,26 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.chords = chords
         self.setupUi(self)
 
-        self.model = QStandardItemModel()
-        self.model2 = QStandardItemModel()
+        self.modelArtists = QStandardItemModel()
+        self.treeArtists.setModel(self.modelArtists)
+        self.rootArtists = self.modelArtists.invisibleRootItem()
+        self.makeTree(self.rootArtists, self.chords.artists)
 
-        self.treeArtists.setModel(self.model)
-        self.root1 = self.model.invisibleRootItem()
-        self.makeTree(self.root1, self.chords.artists)
+        self.modelTunings = QStandardItemModel()
+        self.treeTunings.setModel(self.modelTunings)
+        self.rootTunings = self.modelTunings.invisibleRootItem()
+        self.makeTree(self.rootTunings, self.chords.tunings)
 
-        self.treeTunings.setModel(self.model2)
-        self.root2 = self.model2.invisibleRootItem()
-        self.makeTree(self.root2, self.chords.tunings)
+        self.modelSearch  = QStandardItemModel()
+        self.treeSearch.setModel(self.modelSearch)
+        self.rootSearch = self.modelSearch.invisibleRootItem()
 
         self.currentArtistSong = None
         self.currentArtistTranspose = 0
         self.currentTuningSong = None
         self.currentTuningTranspose = 0
+        self.currentSearchSong = None
+        self.currentSearchTranspose = 0
 
         QShortcut(QKeySequence("Ctrl+Up"),      self, self.transposeUp)
         QShortcut(QKeySequence("Ctrl+Down"),    self, self.transposeDown)
@@ -1075,6 +1080,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return self.treeTunings
         return None
 
+    def onSearchTab(self):
+        tabindex = self.tabWidget.currentIndex()
+        return tabindex == 2
+
     def onArtistsTab(self):
         tabindex = self.tabWidget.currentIndex()
         return tabindex == 0
@@ -1088,6 +1097,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return self.viewerArtists
         elif self.onTuningsTab():
             return self.viewerTunings
+        elif self.onSearchTab():
+            return self.viewerSearch
         return None
 
     def currentTranspose(self,inc=None):
@@ -1103,6 +1114,12 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             else:
                 self.currentTuningTranspose += inc
             return self.currentTuningTranspose
+        elif self.onSearchTab():
+            if inc == None:
+                self.currentSearchTranspose = 0
+            else:
+                self.currentSearchTranspose += inc
+            return self.currentSearchTranspose
         return 0
 
     def onArtistClick(self, index):
@@ -1126,13 +1143,21 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             text = self.tweak_html(self.currentTuningSong,self.currentTranspose())
             self.currentViewer().setHtml(text)
 
-    def onSearch(self):
-        pattern = self.lineEdit.text()
-        top = self.model.invisibleRootItem().index()
+    def onSearchClick(self, index):
+        item = index.model().itemFromIndex(index)
+        song = item.data()
+        if song:
+            self.currentSearchSong = song
+            text = self.tweak_html(self.currentSearchSong,self.currentTranspose())
+            self.currentViewer().setHtml(text)
 
-        for i in range(self.model.rowCount()):
-            index = self.model.index(i,0)
-            artist = self.model.itemFromIndex(index)
+    def searchMainTabs(self):
+        pattern = self.lineEdit.text()
+        top = self.modelArtists.invisibleRootItem().index()
+
+        for i in range(self.modelArtists.rowCount()):
+            index = self.modelArtists.index(i,0)
+            artist = self.modelArtists.itemFromIndex(index)
             artist_visible = False
             if artist:
                 for j in range(artist.rowCount()):
@@ -1148,25 +1173,72 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                     self.treeArtists.setRowHidden(album.row(),artist.index(),not album_visible)
                 self.treeArtists.setRowHidden(artist.row(),top,not artist_visible)
 
-        # Still need to do the same for self.treeTunings
+        for i in range(self.modelTunings.rowCount()):
+            index = self.modelTunings.index(i,0)
+            artist = self.modelTunings.itemFromIndex(index)
+            artist_visible = False
+            if artist:
+                for j in range(artist.rowCount()):
+                    album = artist.child(j)
+                    album_visible = False
+                    for k in range(album.rowCount()):
+                        song = album.child(k)
+                        song_visible = pattern.lower() in song.text().lower()
+                        self.treeTunings.setRowHidden(song.row(),album.index(),not song_visible)
+                        if song_visible:
+                            album_visible = True
+                            artist_visible = True
+                    self.treeTunings.setRowHidden(album.row(),artist.index(),not album_visible)
+                self.treeTunings.setRowHidden(artist.row(),top,not artist_visible)
+
+    def searchTab(self):
+        pattern = self.lineEdit.text().lower()
+        if self.modelSearch.rowCount() > 0:
+            self.modelSearch.clear()
+            self.rootSearch = self.modelSearch.invisibleRootItem()
+
+        if pattern != '':
+            for artist in self.chords.artists:
+                for album in artist.albums:
+                    for song in album.songs:
+                        if pattern in song.title.lower():
+                            song_item = QStandardItem(song.title)
+                            song_item.setData(song)
+                            self.rootSearch.appendRow(song_item)
 
     def transposeUp(self):
-        song = self.currentArtistSong
-        if song:
-            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(1),True)
-            self.currentViewer().setHtml(text)
+        if self.onArtistsTab():
+            song = self.currentArtistSong
+            if song:
+                text = self.tweak_html(self.currentArtistSong,self.currentTranspose(1),True)
+                self.currentViewer().setHtml(text)
+        elif self.onSearchTab():
+            song = self.currentSearchSong
+            if song:
+                text = self.tweak_html(self.currentSearchSong,self.currentTranspose(1),True)
+                self.currentViewer().setHtml(text)
 
     def transposeDown(self):
-        song = self.currentArtistSong
-        if song:
-            text = self.tweak_html(self.currentArtistSong,self.currentTranspose(-1),False)
-            self.currentViewer().setHtml(text)
+        if self.onArtistsTab():
+            song = self.currentArtistSong
+            if song:
+                text = self.tweak_html(self.currentArtistSong,self.currentTranspose(-1),False)
+                self.currentViewer().setHtml(text)
+        elif self.onSearchTab():
+            song = self.currentSearchSong
+            if song:
+                text = self.tweak_html(self.currentSearchSong,self.currentTranspose(-1),False)
+                self.currentViewer().setHtml(text)
 
     def handleEnter(self):
-        ct = self.currentTree()
-        if ct:
-            index = ct.selectedIndexes()[0]
-            self.onArtistClick(index)
+        if self.onSearchTab():
+            #self.searchMainTabs()
+            self.searchTab()
+        else:
+            tree = self.currentTree()
+            if tree:
+                index = tree.selectedIndexes()[0]
+                self.onArtistClick(index)
 
     def handleLeft(self):
         indices = self.currentTree().selectedIndexes()

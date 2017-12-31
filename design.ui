@@ -16,10 +16,10 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLineEdit" name="lineEdit"/>
-    </item>
-    <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -29,7 +29,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QSplitter" name="splitter_2">
+         <widget class="QSplitter" name="splitterArtists">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -70,7 +70,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QSplitter" name="splitter">
+         <widget class="QSplitter" name="splitterTunings">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -102,6 +102,42 @@
            </property>
           </widget>
          </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_search">
+       <attribute name="title">
+        <string>Search</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QLineEdit" name="lineEdit"/>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QSplitter" name="splitterSearch">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <widget class="QTreeView" name="treeSearch">
+             <property name="maximumSize">
+              <size>
+               <width>300</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <attribute name="headerVisible">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+            <widget class="QTextBrowser" name="viewerSearch"/>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -155,14 +191,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>lineEdit</sender>
-   <signal>returnPressed()</signal>
+   <sender>treeSearch</sender>
+   <signal>clicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
-   <slot>onSearch()</slot>
+   <slot>onSearchClick(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>498</x>
-     <y>47</y>
+     <x>170</x>
+     <y>343</y>
     </hint>
     <hint type="destinationlabel">
      <x>498</x>
@@ -174,6 +210,6 @@
  <slots>
   <slot>onArtistClick(QModelIndex)</slot>
   <slot>onTuningClick(QModelIndex)</slot>
-  <slot>onSearch()</slot>
+  <slot>onSearchClick(QModelIndex)</slot>
  </slots>
 </ui>
