@@ -1013,6 +1013,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.chords = chords
         self.setupUi(self)
+        self.pattern = ''
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -1078,6 +1079,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return self.treeArtists
         elif self.onTuningsTab():
             return self.treeTunings
+        elif self.onSearchTab():
+            return self.treeSearch
         return None
 
     def onSearchTab(self):
@@ -1192,16 +1195,15 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 self.treeTunings.setRowHidden(artist.row(),top,not artist_visible)
 
     def searchTab(self):
-        pattern = self.lineEdit.text().lower()
         if self.modelSearch.rowCount() > 0:
             self.modelSearch.clear()
             self.rootSearch = self.modelSearch.invisibleRootItem()
 
-        if pattern != '':
+        if self.pattern != '':
             for artist in self.chords.artists:
                 for album in artist.albums:
                     for song in album.songs:
-                        if pattern in song.title.lower():
+                        if self.pattern in song.title.lower():
                             song_item = QStandardItem(song.title)
                             song_item.setData(song)
                             self.rootSearch.appendRow(song_item)
@@ -1230,8 +1232,15 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 text = self.tweak_html(self.currentSearchSong,self.currentTranspose(-1),False)
                 self.currentViewer().setHtml(text)
 
+    def patternChanged(self):
+        text = self.lineEdit.text().lower()
+        if text != self.pattern:
+            self.pattern = text
+            return True
+        return False
+
     def handleEnter(self):
-        if self.onSearchTab():
+        if self.onSearchTab() and self.patternChanged():
             #self.searchMainTabs()
             self.searchTab()
         else:
