@@ -1200,13 +1200,22 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.rootSearch = self.modelSearch.invisibleRootItem()
 
         if self.pattern != '':
+            first = None
             for artist in self.chords.artists:
                 for album in artist.albums:
                     for song in album.songs:
                         if self.pattern in song.title.lower():
                             song_item = QStandardItem(song.title)
                             song_item.setData(song)
+                            if first == None:
+                                first = song_item
                             self.rootSearch.appendRow(song_item)
+            if first:
+                # select and view first match:
+                index = first.index()
+                self.treeSearch.setCurrentIndex(index)
+                self.treeSearch.setFocus()
+                self.onArtistClick(index)
 
     def transposeUp(self):
         if self.onArtistsTab():
