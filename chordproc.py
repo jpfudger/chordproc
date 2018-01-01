@@ -1249,9 +1249,15 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         return False
 
     def handleEnter(self):
-        if self.onSearchTab() and self.patternChanged():
-            #self.searchMainTabs()
-            self.searchTab()
+        if self.onSearchTab():
+            if self.patternChanged():
+                #self.searchMainTabs()
+                self.searchTab()
+            else:
+                tree = self.currentTree()
+                if tree:
+                    index = tree.selectedIndexes()[0]
+                    self.onSearchClick(index)
         else:
             tree = self.currentTree()
             if tree:
