@@ -1292,15 +1292,20 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return True
         return False
 
-    def importString(self,lines):
+    def importLines(self,lines,title):
         print("Importing %d lines" % len(lines))
 
         if "{{{" in "".join(lines):
-            # expected format
-            pass 
+            print("Expected format")
         else:
-            lines.insert( 0, "{{{ song: New" )
-            lines.append( "}}}" )
+            print("Sandwiching in foldmarkers")
+
+            newlines = [ "{{{ song: " + title ]
+            for l in lines:
+                newlines.append(l)
+                print(l)
+            newlines.append( "}}}" )
+            lines = newlines
 
         options = {}
         options["update"]    = False
@@ -1317,21 +1322,60 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
 
         self.makeTree(self.rootImport, import_data.artists)
 
+    def parseHTML(self,html,url):
+        # Works nicely for ultimate-guitar
+        # https://tabs.ultimate-guitar.com/tab/belle_and_sebastian/seeing_other_people_chords_61835
+
+        lines = html.split("\n")
+        urlsplits = url.split('/')
+        newlines = []
+
+        for line in lines:
+            if len(newlines) > 0:
+                newlines.append(line)
+                if re.search( '<\/pre\>', line ):
+                    break
+            if re.search( '<pre class=.*js-tab-content', line ):
+                newlines.append(line)
+
+        if len(newlines) > 0:
+            lines = []
+            lines.append('{{{ artist: ' + urlsplits[-2] )
+            lines.append('{{{ song: ' + urlsplits[-1] )
+            newlines = newlines[1:-2]
+
+            for l in newlines:
+                l = l.replace( '<span>', '' )
+                l = l.replace( '</span>', '' )
+                lines.append(l)
+
+            lines.append( '}}}' )
+            lines.append( '}}}' )
+
+        print( "Extracted %d from %d lines" % ( len(newlines), len(lines) ) )
+
+        return lines
+
     def importGeneral(self):
         text = self.importPattern
         lines = None
         if os.path.exists(text):
-            print("Import exists!")
-            # readlines
             with open(text) as f:
                 lines = f.readlines()
             if lines:
-                self.importString(lines)
+                self.importLines(lines,text)
         elif text.startswith('http') or text.startswith('www'):
-            print("HTML import")
-            # extract html lines
+            url = text
+            html = None
+
+            import urllib.request
+            with urllib.request.urlopen(url) as response:
+               html = response.read()
+               lines = self.parseHTML(html.decode("utf-8"), url)
+
             if lines:
-                self.importString(lines)
+                self.importLines(lines,url)
+
         else:
             print("Unrecognised import")
 
