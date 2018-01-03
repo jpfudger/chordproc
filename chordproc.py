@@ -684,7 +684,7 @@ class CRD_song():
         # return list of artists
 
 class CRD_data():
-    def __init__(self,opts):
+    def __init__(self,opts,lines=None):
         self.opts = opts
         self.artists = []
         self.tunings = []
@@ -694,7 +694,11 @@ class CRD_data():
         self.collections = []
         self.laud_data = LAUD_data()
         self.stock_tunings = self.load_tuning_data()
-        self.load_song_data()
+
+        if lines:
+            self.process_chord_lines(lines)
+        else:
+            self.load_song_data()
     def __update_options(self,opts):
         newopts = {}
         newopts["update"]    = opts.get("update",    False)
@@ -741,14 +745,15 @@ class CRD_data():
         self.artists.append(a)
         return a
     def process_chord_file(self,path):
-        songs = []
         lines = []
         try:
             with open(path,encoding='utf-8') as f:
                 lines = f.readlines()
+            self.process_chord_lines(lines,path)
         except:
             raise
             #print("Failed to process " + path + " (non-ASCII character?)")
+    def process_chord_lines(self,lines,path=None):
         level = 0
         this_artist = None
         this_album  = None
@@ -1013,7 +1018,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.chords = chords
         self.setupUi(self)
-        self.pattern = ''
+        self.searchPattern = ''
+        self.importPattern = ''
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -1029,12 +1035,18 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.treeSearch.setModel(self.modelSearch)
         self.rootSearch = self.modelSearch.invisibleRootItem()
 
+        self.modelImport  = QStandardItemModel()
+        self.treeImport.setModel(self.modelImport)
+        self.rootImport = self.modelImport.invisibleRootItem()
+
         self.currentArtistSong = None
         self.currentArtistTranspose = 0
         self.currentTuningSong = None
         self.currentTuningTranspose = 0
         self.currentSearchSong = None
         self.currentSearchTranspose = 0
+        self.currentImportSong = None
+        self.currentImportTranspose = 0
 
         QShortcut(QKeySequence("Ctrl+Up"),      self, self.transposeUp)
         QShortcut(QKeySequence("Ctrl+Down"),    self, self.transposeDown)
@@ -1081,11 +1093,17 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return self.treeTunings
         elif self.onSearchTab():
             return self.treeSearch
+        elif self.onImportTab():
+            return self.treeImport
         return None
 
     def onSearchTab(self):
         tabindex = self.tabWidget.currentIndex()
         return tabindex == 2
+
+    def onImportTab(self):
+        tabindex = self.tabWidget.currentIndex()
+        return tabindex == 3
 
     def onArtistsTab(self):
         tabindex = self.tabWidget.currentIndex()
@@ -1102,6 +1120,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return self.viewerTunings
         elif self.onSearchTab():
             return self.viewerSearch
+        elif self.onImportTab():
+            return self.viewerImport
         return None
 
     def currentTranspose(self,inc=None):
@@ -1123,6 +1143,12 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             else:
                 self.currentSearchTranspose += inc
             return self.currentSearchTranspose
+        elif self.onImportTab():
+            if inc == None:
+                self.currentImportTranspose = 0
+            else:
+                self.currentImportTranspose += inc
+            return self.currentImportTranspose
         return 0
 
     def onArtistClick(self, index):
@@ -1152,6 +1178,14 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         if song:
             self.currentSearchSong = song
             text = self.tweak_html(self.currentSearchSong,self.currentTranspose())
+            self.currentViewer().setHtml(text)
+
+    def onImportClick(self, index):
+        item = index.model().itemFromIndex(index)
+        song = item.data()
+        if song:
+            self.currentImportSong = song
+            text = self.tweak_html(self.currentImportSong,self.currentTranspose())
             self.currentViewer().setHtml(text)
 
     def searchMainTabs(self):
@@ -1199,12 +1233,12 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.modelSearch.clear()
             self.rootSearch = self.modelSearch.invisibleRootItem()
 
-        if self.pattern != '':
+        if self.searchPattern != '':
             first = None
             for artist in self.chords.artists:
                 for album in artist.albums:
                     for song in album.songs:
-                        if self.pattern in song.title.lower():
+                        if self.searchPattern in song.title.lower():
                             song_item = QStandardItem(song.title)
                             song_item.setData(song)
                             if first == None:
@@ -1228,6 +1262,11 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             if song:
                 text = self.tweak_html(self.currentSearchSong,self.currentTranspose(1),True)
                 self.currentViewer().setHtml(text)
+        elif self.onImportTab():
+            song = self.currentImportSong
+            if song:
+                text = self.tweak_html(self.currentImportSong,self.currentTranspose(1),True)
+                self.currentViewer().setHtml(text)
 
     def transposeDown(self):
         if self.onArtistsTab():
@@ -1240,11 +1279,66 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             if song:
                 text = self.tweak_html(self.currentSearchSong,self.currentTranspose(-1),False)
                 self.currentViewer().setHtml(text)
+        elif self.onImportTab():
+            song = self.currentImportSong
+            if song:
+                text = self.tweak_html(self.currentImportSong,self.currentTranspose(-1),False)
+                self.currentViewer().setHtml(text)
 
     def patternChanged(self):
         text = self.lineEdit.text().lower()
-        if text != self.pattern:
-            self.pattern = text
+        if text != self.searchPattern:
+            self.searchPattern = text
+            return True
+        return False
+
+    def importString(self,lines):
+        print("Importing %d lines" % len(lines))
+
+        if "{{{" in "".join(lines):
+            # expected format
+            pass 
+        else:
+            lines.insert( 0, "{{{ song: New" )
+            lines.append( "}}}" )
+
+        options = {}
+        options["update"]    = False
+        options["html"]      = False
+        options["gui"]       = False
+        options["tunings"]   = None
+        options["html_root"] = None
+        options["root"]      = None
+        options["pickle"]    = None
+        import_data = CRD_data(options,lines)
+
+        self.modelImport.clear()
+        self.rootImport = self.modelImport.invisibleRootItem()
+
+        self.makeTree(self.rootImport, import_data.artists)
+
+    def importGeneral(self):
+        text = self.importPattern
+        lines = None
+        if os.path.exists(text):
+            print("Import exists!")
+            # readlines
+            with open(text) as f:
+                lines = f.readlines()
+            if lines:
+                self.importString(lines)
+        elif text.startswith('http') or text.startswith('www'):
+            print("HTML import")
+            # extract html lines
+            if lines:
+                self.importString(lines)
+        else:
+            print("Unrecognised import")
+
+    def importChanged(self):
+        text = self.importEdit.text()
+        if text != self.importPattern:
+            self.importPattern = text
             return True
         return False
 
@@ -1258,6 +1352,15 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 if tree:
                     index = tree.selectedIndexes()[0]
                     self.onSearchClick(index)
+        elif self.onImportTab():
+            if self.importChanged():
+                text = self.importEdit.text()
+                self.importGeneral()
+            else:
+                tree = self.currentTree()
+                if tree:
+                    index = tree.selectedIndexes()[0]
+                    self.onImportClick(index)
         else:
             tree = self.currentTree()
             if tree:

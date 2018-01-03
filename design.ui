@@ -141,6 +141,33 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Import</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLineEdit" name="importEdit"/>
+          </item>
+          <item>
+           <widget class="QSplitter" name="splitter">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <widget class="QTreeView" name="treeImport">
+             <property name="headerHidden">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QTextBrowser" name="viewerImport"/>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -206,10 +233,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>treeImport</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onImportClick(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>258</x>
+     <y>343</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onArtistClick(QModelIndex)</slot>
   <slot>onTuningClick(QModelIndex)</slot>
   <slot>onSearchClick(QModelIndex)</slot>
+  <slot>onImportClick(QModelIndex)</slot>
  </slots>
 </ui>
