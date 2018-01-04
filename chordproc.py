@@ -1317,38 +1317,28 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 self.treeIndexClicked(index)
 
     def transposeUp(self):
-        if self.onArtistsTab():
-            song = self.currentArtistSong
-            if song:
-                text = self.tweak_html(self.currentArtistSong,self.currentTranspose(1),True)
-                self.currentViewer().setHtml(text)
-        elif self.onSearchTab():
-            song = self.currentSearchSong
-            if song:
-                text = self.tweak_html(self.currentSearchSong,self.currentTranspose(1),True)
-                self.currentViewer().setHtml(text)
-        elif self.onImportTab():
-            song = self.currentImportSong
-            if song:
-                text = self.tweak_html(self.currentImportSong,self.currentTranspose(1),True)
-                self.currentViewer().setHtml(text)
+        song = self.currentSong()
+        viewer = self.currentViewer()
+        if song and viewer:
+            bar_value = None
+            bar = viewer.verticalScrollBar()
+            if bar:
+                bar_value = bar.value()
+            text = self.tweak_html(song, self.currentTranspose(1), False)
+            self.currentViewer().setHtml(text)
+            bar.setValue(bar_value)
 
     def transposeDown(self):
-        if self.onArtistsTab():
-            song = self.currentArtistSong
-            if song:
-                text = self.tweak_html(self.currentArtistSong,self.currentTranspose(-1),False)
-                self.currentViewer().setHtml(text)
-        elif self.onSearchTab():
-            song = self.currentSearchSong
-            if song:
-                text = self.tweak_html(self.currentSearchSong,self.currentTranspose(-1),False)
-                self.currentViewer().setHtml(text)
-        elif self.onImportTab():
-            song = self.currentImportSong
-            if song:
-                text = self.tweak_html(self.currentImportSong,self.currentTranspose(-1),False)
-                self.currentViewer().setHtml(text)
+        song = self.currentSong()
+        viewer = self.currentViewer()
+        if song and viewer:
+            bar_value = None
+            bar = viewer.verticalScrollBar()
+            if bar:
+                bar_value = bar.value()
+            text = self.tweak_html(song, self.currentTranspose(-1), False)
+            self.currentViewer().setHtml(text)
+            bar.setValue(bar_value)
 
     def patternChanged(self):
         text = self.lineEdit.text().lower()
