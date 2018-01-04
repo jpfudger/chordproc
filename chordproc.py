@@ -705,9 +705,18 @@ class CRD_song():
                         if self.title.lower() in l.lower():
                             link = os.path.dirname(m3u) + os.sep + l
                             break
-        else:
-            pass
-            # Scan all songs of artist?
+        if not link:
+            a = self.album.laud_data.find_artist(self.album.artist.name)
+            if a:
+                albums = a.albums[:]
+                # sort like this so we find non-bootleg matches first
+                albums.sort( key = lambda x: x.bootleg )
+                for alb in albums:
+                    for song in alb.psongs:
+                        if self.title.lower() in song.fname.lower():
+                            link = song.path
+                            break
+                        if link: break
 
         return link
 
