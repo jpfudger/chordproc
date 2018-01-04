@@ -116,6 +116,15 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addLayout(self.verticalLayout_4)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.verticalLayout.addWidget(self.tabWidget)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.playButton = QtGui.QPushButton(self.centralwidget)
+        self.playButton.setEnabled(False)
+        self.playButton.setObjectName(_fromUtf8("playButton"))
+        self.horizontalLayout.addWidget(self.playButton)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QtGui.QMenuBar(MainWindow)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 998, 25))
@@ -132,6 +141,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.viewerImport, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
         QtCore.QObject.connect(self.viewerSearch, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
         QtCore.QObject.connect(self.viewerTunings, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
+        QtCore.QObject.connect(self.playButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.playButtonClicked)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -140,4 +150,5 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_tunings), _translate("MainWindow", "Tunings", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_search), _translate("MainWindow", "Search", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Import", None))
+        self.playButton.setText(_translate("MainWindow", "Play", None))
 

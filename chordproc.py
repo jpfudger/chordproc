@@ -222,14 +222,22 @@ class CRD_album():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+    def get_playlist(self):
+        try:
+            alb = self.laud_data.find_album(self.artist.name,self.title)
+            link = alb.playlist
+        except:
+            link = None
+        return link
     def get_playlist_link(self):
+        link = None
         try:
             alb = self.laud_data.find_album(self.artist.name,self.title)
             m3u = alb.playlist
             img = alb.image
             link = '<a href="%s"><img class=cover src="%s"></a>' % ( alb.playlist, alb.image )
         except AttributeError:
-            link = ''
+            pass
         return link
 
 class CRD_chord():
@@ -682,6 +690,26 @@ class CRD_song():
     def search(self,pattern):
         pass
         # return list of artists
+    def get_mp3_link(self):
+        link = None
+        if self.album:
+            # extract mp3 from m3u
+            m3u = self.album.get_playlist()
+            if m3u:
+                lines = []
+                with open(m3u) as f:
+                    lines = f.readlines()
+                for l in lines:
+                    l = l.strip()
+                    if l.endswith(".mp3"):
+                        if self.title.lower() in l.lower():
+                            link = os.path.dirname(m3u) + os.sep + l
+                            break
+        else:
+            pass
+            # Scan all songs of artist?
+
+        return link
 
 class CRD_data():
     def __init__(self,opts,lines=None):
@@ -1020,6 +1048,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.searchPattern = ''
         self.importPattern = ''
+        self.currentPlayLink = None
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -1171,25 +1200,49 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         if not os.path.exists(link):
             print("Link not found: " + link)
         elif link.endswith(".m3u"):
-            self.playM3u(link)
+            # We don't want to follow this link in the browser, so reset it:
+            self.currentViewer().setSource(QUrl(""))
+            # Now play the m3u:
+            self.playAudio(link)
         else:
             print("Unhandled link: " + link)
 
-    def playM3u(self,m3u):
-        p = subprocess.Popen(['audacious', m3u], shell=False)
+    def playButtonClicked(self):
+        if self.playButton.isEnabled():
+            if self.currentPlayLink:
+                self.playAudio(self.currentPlayLink)
+
+    def playAudio(self,link):
+        p = subprocess.Popen(['audacious', link], shell=False)
+
+    def enablePlayButton(self,link=None):
+        if link:
+            self.playButton.setEnabled(True)
+            self.currentPlayLink = link
+            self.playButton.setToolTip(link)
+        else:
+            self.playButton.setEnabled(False)
+            self.currentPlayLink = None
+            self.playButton.setToolTip("")
 
     def treeIndexClicked(self, index):
         item = index.model().itemFromIndex(index)
+        self.enablePlayButton()
         if not item.data():
             pass
         elif isinstance(item.data(),CRD_song):
             self.currentSong( item.data() )
             text = self.tweak_html(self.currentSong(), self.currentTranspose())
             self.currentViewer().setHtml(text)
+            link = item.data().get_mp3_link()
+            if link:
+                self.enablePlayButton(link)
         elif isinstance(item.data(),CRD_album):
             album = item.data()
             link = album.get_playlist_link()
-            if link: self.currentViewer().setHtml(link)
+            if link: 
+                self.currentViewer().setHtml(link)
+                self.enablePlayButton(album.get_playlist())
 
     def searchMainTabs(self):
         pattern = self.lineEdit.text()
