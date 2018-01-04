@@ -189,7 +189,7 @@
    <sender>treeArtists</sender>
    <signal>clicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
-   <slot>onArtistClick(QModelIndex)</slot>
+   <slot>treeIndexClicked(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>208</x>
@@ -205,7 +205,7 @@
    <sender>treeTunings</sender>
    <signal>clicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
-   <slot>onTuningClick(QModelIndex)</slot>
+   <slot>treeIndexClicked(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>208</x>
@@ -221,7 +221,7 @@
    <sender>treeSearch</sender>
    <signal>clicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
-   <slot>onSearchClick(QModelIndex)</slot>
+   <slot>treeIndexClicked(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>170</x>
@@ -237,7 +237,7 @@
    <sender>treeImport</sender>
    <signal>clicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
-   <slot>onImportClick(QModelIndex)</slot>
+   <slot>treeIndexClicked(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>258</x>
@@ -249,11 +249,73 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>viewerArtists</sender>
+   <signal>anchorClicked(QUrl)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>viewerLinkClicked(QUrl)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>627</x>
+     <y>326</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>viewerImport</sender>
+   <signal>anchorClicked(QUrl)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>viewerLinkClicked(QUrl)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>viewerSearch</sender>
+   <signal>anchorClicked(QUrl)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>viewerLinkClicked(QUrl)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>97</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>viewerTunings</sender>
+   <signal>anchorClicked(QUrl)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>viewerLinkClicked(QUrl)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>369</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>onArtistClick(QModelIndex)</slot>
-  <slot>onTuningClick(QModelIndex)</slot>
-  <slot>onSearchClick(QModelIndex)</slot>
-  <slot>onImportClick(QModelIndex)</slot>
+  <slot>viewerLinkClicked(QUrl)</slot>
+  <slot>treeIndexClicked(QModelIndex)</slot>
  </slots>
 </ui>

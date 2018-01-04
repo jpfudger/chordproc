@@ -1151,42 +1151,45 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return self.currentImportTranspose
         return 0
 
-    def onArtistClick(self, index):
+    def currentSong(self,new=None):
+        if self.onArtistsTab():
+            if new: self.currentArtistSong = new
+            return self.currentArtistSong
+        elif self.onTuningsTab():
+            if new: self.currentTuningSong = new
+            return self.currentTuningSong
+        elif self.onSearchTab():
+            if new: self.currentSearchSong = new
+            return self.currentSearchSong
+        elif self.onImportTab():
+            if new: self.currentImportSong = new
+            return self.currentImportSong
+        return None
+
+    def viewerLinkClicked(self, qurl):
+        link = qurl.path()
+        if not os.path.exists(link):
+            print("Link not found: " + link)
+        elif link.endswith(".m3u"):
+            self.playM3u(link)
+        else:
+            print("Unhandled link: " + link)
+
+    def playM3u(self,m3u):
+        p = subprocess.Popen(['audacious', m3u], shell=False)
+
+    def treeIndexClicked(self, index):
         item = index.model().itemFromIndex(index)
         if not item.data():
             pass
         elif isinstance(item.data(),CRD_song):
-            self.currentArtistSong = item.data()
-            text = self.tweak_html(self.currentArtistSong, self.currentTranspose())
+            self.currentSong( item.data() )
+            text = self.tweak_html(self.currentSong(), self.currentTranspose())
             self.currentViewer().setHtml(text)
         elif isinstance(item.data(),CRD_album):
             album = item.data()
             link = album.get_playlist_link()
             if link: self.currentViewer().setHtml(link)
-
-    def onTuningClick(self, index):
-        item = index.model().itemFromIndex(index)
-        song = item.data()
-        if song:
-            self.currentTuningSong = song
-            text = self.tweak_html(self.currentTuningSong,self.currentTranspose())
-            self.currentViewer().setHtml(text)
-
-    def onSearchClick(self, index):
-        item = index.model().itemFromIndex(index)
-        song = item.data()
-        if song:
-            self.currentSearchSong = song
-            text = self.tweak_html(self.currentSearchSong,self.currentTranspose())
-            self.currentViewer().setHtml(text)
-
-    def onImportClick(self, index):
-        item = index.model().itemFromIndex(index)
-        song = item.data()
-        if song:
-            self.currentImportSong = song
-            text = self.tweak_html(self.currentImportSong,self.currentTranspose())
-            self.currentViewer().setHtml(text)
 
     def searchMainTabs(self):
         pattern = self.lineEdit.text()
@@ -1249,7 +1252,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 index = first.index()
                 self.treeSearch.setCurrentIndex(index)
                 self.treeSearch.setFocus()
-                self.onArtistClick(index)
+                self.treeIndexClicked(index)
 
     def transposeUp(self):
         if self.onArtistsTab():
@@ -1395,7 +1398,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 tree = self.currentTree()
                 if tree:
                     index = tree.selectedIndexes()[0]
-                    self.onSearchClick(index)
+                    self.treeIndexClicked(index)
         elif self.onImportTab():
             if self.importChanged():
                 text = self.importEdit.text()
@@ -1404,12 +1407,12 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 tree = self.currentTree()
                 if tree:
                     index = tree.selectedIndexes()[0]
-                    self.onImportClick(index)
+                    self.treeIndexClicked(index)
         else:
             tree = self.currentTree()
             if tree:
                 index = tree.selectedIndexes()[0]
-                self.onArtistClick(index)
+                self.treeIndexClicked(index)
 
     def handleLeft(self):
         indices = self.currentTree().selectedIndexes()

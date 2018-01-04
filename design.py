@@ -124,10 +124,14 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QObject.connect(self.treeArtists, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.onArtistClick)
-        QtCore.QObject.connect(self.treeTunings, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.onTuningClick)
-        QtCore.QObject.connect(self.treeSearch, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.onSearchClick)
-        QtCore.QObject.connect(self.treeImport, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.onImportClick)
+        QtCore.QObject.connect(self.treeArtists, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.treeIndexClicked)
+        QtCore.QObject.connect(self.treeTunings, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.treeIndexClicked)
+        QtCore.QObject.connect(self.treeSearch, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.treeIndexClicked)
+        QtCore.QObject.connect(self.treeImport, QtCore.SIGNAL(_fromUtf8("clicked(QModelIndex)")), MainWindow.treeIndexClicked)
+        QtCore.QObject.connect(self.viewerArtists, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
+        QtCore.QObject.connect(self.viewerImport, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
+        QtCore.QObject.connect(self.viewerSearch, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
+        QtCore.QObject.connect(self.viewerTunings, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
