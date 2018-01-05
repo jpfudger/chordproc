@@ -222,6 +222,9 @@ class CRD_album():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+    def laud(self):
+        alb = self.laud_data.find_album(self.artist.name,self.title)
+        return alb
     def get_playlist(self):
         try:
             alb = self.laud_data.find_album(self.artist.name,self.title)
@@ -692,31 +695,15 @@ class CRD_song():
         # return list of artists
     def get_mp3_link(self):
         link = None
-        if self.album:
-            # extract mp3 from m3u
-            m3u = self.album.get_playlist()
-            if m3u:
-                lines = []
-                with open(m3u) as f:
-                    lines = f.readlines()
-                for l in lines:
-                    l = l.strip()
-                    if l.endswith(".mp3"):
-                        if self.title.lower() in l.lower():
-                            link = os.path.dirname(m3u) + os.sep + l
-                            break
+        if self.album and self.album.laud():
+            songs = self.album.laud().findSong(self.title)
+
         if not link:
+            # search all songs of artist
             a = self.album.laud_data.find_artist(self.album.artist.name)
-            if a:
-                albums = a.albums[:]
-                # sort like this so we find non-bootleg matches first
-                albums.sort( key = lambda x: x.bootleg )
-                for alb in albums:
-                    for song in alb.psongs:
-                        if self.title.lower() in song.fname.lower():
-                            link = song.path
-                            break
-                        if link: break
+            songs = a.findSong(self.title, True) if a else []
+            if len(songs) > 0:
+                link = songs[0].path
 
         return link
 
@@ -1243,9 +1230,9 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.currentSong( item.data() )
             text = self.tweak_html(self.currentSong(), self.currentTranspose())
             self.currentViewer().setHtml(text)
-            link = item.data().get_mp3_link()
-            if link:
-                self.enablePlayButton(link)
+            links = item.data().get_mp3_link()
+            if links:
+                self.enablePlayButton(links)
         elif isinstance(item.data(),CRD_album):
             album = item.data()
             link = album.get_playlist_link()
