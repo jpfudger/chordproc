@@ -5,6 +5,7 @@ import re
 import string
 import subprocess
 import sys
+import random
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from chordproc.design import Ui_MainWindow
@@ -233,7 +234,7 @@ class CRD_album():
             link = None
         return link
     def get_playlist_link(self):
-        link = None
+        link = ''
         try:
             alb = self.laud_data.find_album(self.artist.name,self.title)
             m3u = alb.playlist
@@ -456,6 +457,7 @@ class CRD_song():
         self.fingerings = {}
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
+        self.gui_item = None
     def add_fingering(self,chord,fingering):
         self.fingerings[ chord.format() ] = fingering
     def get_fingering(self,crd_string):
@@ -1077,6 +1079,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         QShortcut(QKeySequence("Ctrl+Down"),    self, self.transposeDown)
         QShortcut(QKeySequence(Qt.Key_Return),  self, self.handleEnter)
         QShortcut(QKeySequence(Qt.Key_Left),    self, self.handleLeft)
+        QShortcut(QKeySequence("Ctrl+R"),       self, self.chooseRandomSong)
 
     def makeTree(self,root,collection):
         for artist in collection:
@@ -1088,6 +1091,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 child = branch.appendRow(album_item)
                 for song in album.songs:
                     song_item = QStandardItem(song.title)
+                    song.gui_item = song_item
                     song_item.setData(song)
                     grandchild = album_item.appendRow(song_item)
             root.appendRow(branch)
@@ -1207,6 +1211,18 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         if self.playButton.isEnabled():
             if self.currentPlayLink:
                 self.playAudio(self.currentPlayLink)
+
+    def chooseRandomSong(self):
+        if self.onArtistsTab():
+            songs = self.chords.all_songs()
+            song = random.choice(songs)
+            item = song.gui_item
+            index = item.index()
+            self.currentTree().setCurrentIndex(index)
+            self.treeIndexClicked(index)
+
+    def tabChanged(self,which):
+        pass
 
     def playAudio(self,link):
         p = subprocess.Popen(['audacious', link], shell=False)

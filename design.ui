@@ -356,10 +356,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tabChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>498</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>viewerLinkClicked(QUrl)</slot>
   <slot>treeIndexClicked(QModelIndex)</slot>
   <slot>playButtonClicked()</slot>
+  <slot>tabChanged(int)</slot>
  </slots>
 </ui>

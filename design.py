@@ -142,6 +142,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.viewerSearch, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
         QtCore.QObject.connect(self.viewerTunings, QtCore.SIGNAL(_fromUtf8("anchorClicked(QUrl)")), MainWindow.viewerLinkClicked)
         QtCore.QObject.connect(self.playButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.playButtonClicked)
+        QtCore.QObject.connect(self.tabWidget, QtCore.SIGNAL(_fromUtf8("currentChanged(int)")), MainWindow.tabChanged)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
