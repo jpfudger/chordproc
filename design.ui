@@ -17,6 +17,12 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
       </property>
@@ -34,11 +40,11 @@
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QTreeView" name="treeArtists">
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
-            </size>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
@@ -48,11 +54,11 @@
            </attribute>
           </widget>
           <widget class="QTextBrowser" name="viewerArtists">
-           <property name="minimumSize">
-            <size>
-             <width>700</width>
-             <height>0</height>
-            </size>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="font">
             <font>
@@ -75,12 +81,6 @@
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QTreeView" name="treeTunings">
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -89,11 +89,11 @@
            </attribute>
           </widget>
           <widget class="QTextBrowser" name="viewerTunings">
-           <property name="minimumSize">
-            <size>
-             <width>700</width>
-             <height>0</height>
-            </size>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="font">
             <font>
@@ -117,16 +117,15 @@
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <widget class="QSplitter" name="splitterSearch">
+            <property name="font">
+             <font>
+              <family>Courier New</family>
+             </font>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
             <widget class="QTreeView" name="treeSearch">
-             <property name="maximumSize">
-              <size>
-               <width>300</width>
-               <height>16777215</height>
-              </size>
-             </property>
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
@@ -134,12 +133,14 @@
               <bool>false</bool>
              </attribute>
             </widget>
-            <widget class="QTextBrowser" name="viewerSearch"/>
-           <property name="font">
-            <font>
-             <family>Courier New</family>
-            </font>
-           </property>
+            <widget class="QTextBrowser" name="viewerSearch">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
            </widget>
           </item>
          </layout>
@@ -158,6 +159,11 @@
           </item>
           <item>
            <widget class="QSplitter" name="splitter">
+            <property name="font">
+             <font>
+              <family>Courier New</family>
+             </font>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -166,12 +172,14 @@
               <bool>true</bool>
              </property>
             </widget>
-            <widget class="QTextBrowser" name="viewerImport"/>
-           <property name="font">
-            <font>
-             <family>Courier New</family>
-            </font>
-           </property>
+            <widget class="QTextBrowser" name="viewerImport">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
            </widget>
           </item>
          </layout>
