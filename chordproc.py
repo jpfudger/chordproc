@@ -1381,36 +1381,35 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.makeTree(self.rootImport, import_data.artists)
 
     def parseHTML(self,html,url):
-        # Works nicely for ultimate-guitar
-        # https://tabs.ultimate-guitar.com/tab/belle_and_sebastian/seeing_other_people_chords_61835
-
         lines = html.split("\n")
-        urlsplits = url.split('/')
-        newlines = []
 
-        for line in lines:
+        if 'ultimate-guitar' in url.lower():
+            urlsplits = url.split('/')
+            newlines = []
+
+            for line in lines:
+                if len(newlines) > 0:
+                    newlines.append(line)
+                    if re.search( '<\/pre\>', line ):
+                        break
+                if re.search( '<pre class=.*js-tab-content', line ):
+                    newlines.append(line)
+
             if len(newlines) > 0:
-                newlines.append(line)
-                if re.search( '<\/pre\>', line ):
-                    break
-            if re.search( '<pre class=.*js-tab-content', line ):
-                newlines.append(line)
+                lines = []
+                lines.append('{{{ artist: ' + urlsplits[-2] )
+                lines.append('{{{ song: ' + urlsplits[-1] )
+                newlines = newlines[1:-1]
 
-        if len(newlines) > 0:
-            lines = []
-            lines.append('{{{ artist: ' + urlsplits[-2] )
-            lines.append('{{{ song: ' + urlsplits[-1] )
-            newlines = newlines[1:-2]
+                for l in newlines:
+                    l = l.replace( '<span>', '' )
+                    l = l.replace( '</span>', '' )
+                    lines.append(l)
 
-            for l in newlines:
-                l = l.replace( '<span>', '' )
-                l = l.replace( '</span>', '' )
-                lines.append(l)
+                lines.append( '}}}' )
+                lines.append( '}}}' )
 
-            lines.append( '}}}' )
-            lines.append( '}}}' )
-
-        print( "Extracted %d from %d lines" % ( len(newlines), len(lines) ) )
+            print( "Extracted %d from %d lines" % ( len(newlines), len(lines) ) )
 
         return lines
 
