@@ -135,6 +135,11 @@
              </attribute>
             </widget>
             <widget class="QTextBrowser" name="viewerSearch"/>
+           <property name="font">
+            <font>
+             <family>Courier New</family>
+            </font>
+           </property>
            </widget>
           </item>
          </layout>
@@ -162,6 +167,11 @@
              </property>
             </widget>
             <widget class="QTextBrowser" name="viewerImport"/>
+           <property name="font">
+            <font>
+             <family>Courier New</family>
+            </font>
+           </property>
            </widget>
           </item>
          </layout>
