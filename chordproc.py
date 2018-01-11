@@ -1377,8 +1377,9 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         options["pickle"]    = None
         import_data = CRD_data(options,lines)
 
-        self.modelImport.clear()
-        self.rootImport = self.modelImport.invisibleRootItem()
+        # Don't clear model - then we can still access previous imports
+        # self.modelImport.clear()
+        # self.rootImport = self.modelImport.invisibleRootItem()
 
         self.makeTree(self.rootImport, import_data.artists)
 
