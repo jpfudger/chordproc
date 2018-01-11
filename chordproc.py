@@ -1111,6 +1111,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         text = "\n".join(lines)
         text = re.sub( '<div class=chordline([^>]*)>([^<]*)</div>', 
                       r'<font color="blue" \1>\2</font>', text )
+        text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
+                      r'<font color="gray" \1>\2</font>', text )
         text = re.sub( '<(\/?)h1>', '<\1h1>', text )
         text = text.replace('<hr>','')
         return text
