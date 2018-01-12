@@ -147,7 +147,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="tab_import">
        <attribute name="title">
         <string>Import</string>
        </attribute>
@@ -185,6 +185,107 @@
          </layout>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="tab_settings">
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+       <widget class="QComboBox" name="colourComment">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>20</y>
+          <width>181</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>Blue</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Red</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Green</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Black</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Comment colour</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>101</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Chord colour</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="colourChord">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>50</y>
+          <width>181</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>Red</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Blue</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Green</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Black</string>
+         </property>
+        </item>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -390,11 +491,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>colourChord</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>settingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colourComment</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>settingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>viewerLinkClicked(QUrl)</slot>
   <slot>treeIndexClicked(QModelIndex)</slot>
   <slot>playButtonClicked()</slot>
   <slot>tabChanged(int)</slot>
+  <slot>settingsChanged()</slot>
  </slots>
 </ui>

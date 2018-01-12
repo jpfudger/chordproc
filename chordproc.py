@@ -476,6 +476,9 @@ class CRD_song():
             comline = line.replace( self.comchar, '', 1 )
             return comline
 
+        if line.strip().startswith('[') and line.strip().endswith(']'):
+            return line
+
         if line.lower().strip().startswith( 'capo' ):
             return line
         elif line.lower().strip().startswith( 'tuning' ):
@@ -1047,6 +1050,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.searchPattern = ''
         self.importPattern = ''
         self.currentPlayLink = None
+        self.colour_comment = 'gray'
+        self.colour_chord = 'red'
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -1114,9 +1119,11 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         lines = song.html([],add_artist,transpose,prefer_sharp)
         text = "\n".join(lines)
         text = re.sub( '<div class=chordline([^>]*)>([^<]*)</div>', 
-                      r'<font color="blue" \1>\2</font>', text )
+                      r'<font color="%s" \1>\2</font>' % self.colour_chord, 
+                      text )
         text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
-                      r'<font color="gray" \1>\2</font>', text )
+                      r'<font color="%s" \1>\2</font>' % self.colour_comment, 
+                      text )
         text = re.sub( '<(\/?)h1>', '<\1h1>', text )
         text = text.replace('<hr>','')
         return text
@@ -1449,6 +1456,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.importPattern = text
             return True
         return False
+
+    def settingsChanged(self,value):
+        self.colour_chord = self.colourChord.currentText().lower()
+        self.colour_comment = self.colourComment.currentText().lower()
 
     def handleEnter(self):
         if self.onSearchTab():
