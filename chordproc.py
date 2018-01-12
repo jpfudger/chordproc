@@ -1085,15 +1085,19 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         for artist in collection:
             branch = QStandardItem(artist.name)
             branch.setData(artist)
+            total_songs = 0
             for album in artist.albums:
                 album_item = QStandardItem(album.title)
                 album_item.setData(album)
+                album_item.setToolTip("%d songs" % len(album.songs))
+                total_songs += len(album.songs)
                 child = branch.appendRow(album_item)
                 for song in album.songs:
                     song_item = QStandardItem(song.title)
                     song.gui_item = song_item
                     song_item.setData(song)
                     grandchild = album_item.appendRow(song_item)
+            branch.setToolTip("%d albums, %d songs" % (len(artist.albums), total_songs))
             root.appendRow(branch)
 
     def make_browser(self):
