@@ -1,0 +1,40 @@
+#!/usr/bin/python3
+import argparse, time
+from chordproc.chordproc import *
+
+def proc_options():
+    parser = argparse.ArgumentParser()
+    parser.add_argument( '-update',  action='store_true', default=False )
+    parser.add_argument( '-html',    action='store_true', default=False )
+    parser.add_argument( '-gui',     action='store_true', default=False )
+    parser.add_argument( '-tunings', type=str, default=None )
+
+    options = parser.parse_args()
+
+    options.html_root = r'./html/'
+    options.root      = r'./crds'
+    options.pickle    = r'/home/jpf/bin/chord_pickle'
+
+    options_dict = vars(options)
+
+    return options_dict
+
+if __name__ == "__main__":
+    time.clock()
+
+    opts = proc_options()
+    data = CRD_data(opts)
+
+    if opts["update"]:
+        data.summarise_data()
+
+    if opts["html"]:
+        data.make_html()
+
+    if opts["gui"]:
+        CRD_interface.gui(data)
+
+    time_taken = time.clock()
+
+    print( "Time taken: %2.2f seconds" % time_taken )
+
