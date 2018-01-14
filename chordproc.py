@@ -604,7 +604,7 @@ class CRD_song():
                     formatted += '<div class=chordline>n/c</div>'
                 elif word == 'nc':
                     formatted += '<div class=chordline>n/c</div>'
-            elif word in [ '|', '-', '%', '*', '.', '|:', ':|' ]:
+            elif word in [ '|', '-', '%', '*', '.', '|:', ':|', '[', ']' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
@@ -625,7 +625,10 @@ class CRD_song():
                     got_a_not_chord = True
                     formatted += starter + word + ender
         if got_a_not_chord:
-            return '<br>' + re.sub( ' ', '&nbsp;', line )
+            line = re.sub( ' ', '&nbsp;', line )
+            line = re.sub( '<', '&lt;', line )
+            line = re.sub( '>', '&gt;', line )
+            return '<br>' + line
         return formatted
     def format_song_lines(self,transpose=0,prefer_sharp=False):
         formatted = [ self.markup_chord_line(line,transpose,prefer_sharp) for line in self.lines ]
@@ -1125,7 +1128,9 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
                       r'<font color="%s" \1>\2</font>' % self.colour_comment, 
                       text )
-        text = re.sub( '<(\/?)h1>', '<\1h1>', text )
+        #text = re.sub( '<(\/?)h1>', '<\1h1>', text )
+        text = re.sub( '<h3>', '<font size="10"><b>', text )
+        text = re.sub( '</h3>', '</b></font>', text )
         text = text.replace('<hr>','')
         return text
 
@@ -1414,7 +1419,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 lines = []
                 lines.append('{{{ artist: ' + urlsplits[-2] )
                 lines.append('{{{ song: ' + urlsplits[-1] )
-                newlines = newlines[1:-1]
+                #newlines = newlines[1:-1]
 
                 for l in newlines:
                     l = l.replace( '<span>', '' )
