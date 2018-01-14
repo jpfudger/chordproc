@@ -415,6 +415,7 @@ class CRD_tuning():
                      [ 'DADGBD',  'double drop D' ],
                      [ 'EADGBE',  'standard' ],
                      [ 'EAC#EAE', 'open A' ],
+                     [ 'EBEG#BE', 'open E' ],
                    ]
             if 'standard' in self.input_string.lower():
                 self.tuning = 'EADGBE'
