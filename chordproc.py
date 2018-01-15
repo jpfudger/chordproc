@@ -1110,6 +1110,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         QShortcut(QKeySequence("Ctrl+Down"),    self, self.transposeDown)
         QShortcut(QKeySequence(Qt.Key_Return),  self, self.handleEnter)
         QShortcut(QKeySequence(Qt.Key_Left),    self, self.handleLeft)
+        QShortcut(QKeySequence(Qt.Key_Right),   self, self.handleRight)
         QShortcut(QKeySequence("Ctrl+R"),       self, self.chooseRandomSong)
 
     def makeTree(self,root,collection):
@@ -1528,7 +1529,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             item = index.model().itemFromIndex(indices[0])
             if not item.data():
                 pass
-            if isinstance(item.data(),CRD_artist):
+            elif isinstance(item.data(),CRD_artist):
                 self.currentTree().collapse(index)
             elif isinstance(item.data(),CRD_album):
                 if self.currentTree().isExpanded(index):
@@ -1539,6 +1540,20 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             elif isinstance(item.data(),CRD_song):
                 self.currentTree().collapse(index.parent())
                 self.currentTree().setCurrentIndex(index.parent())
+
+    def handleRight(self):
+        indices = self.currentTree().selectedIndexes()
+        if len(indices) > 0:
+            index = indices[0]
+            item = index.model().itemFromIndex(indices[0])
+            if not item.data():
+                pass
+            elif isinstance(item.data(),CRD_artist):
+                self.currentTree().expand(index)
+            elif isinstance(item.data(),CRD_album):
+                self.currentTree().expand(index)
+            elif isinstance(item.data(),CRD_song):
+                self.treeIndexClicked(index)
 
 class CRD_interface():
     @staticmethod
