@@ -706,9 +706,15 @@ class CRD_song():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
-    def search(self,pattern):
-        pass
-        # return list of artists
+    def search(self,pattern,lyrics):
+        string = self.title + " "
+        if lyrics:
+            string += " ".join(self.lines)
+
+        pattern = pattern.lower()
+        string = string.lower()
+
+        return pattern in string
     def get_mp3_link(self):
         link = None
         if self.album and self.album.laud():
@@ -1066,6 +1072,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.chords = chords
         self.setupUi(self)
+        self.searchLyrics = False
         self.searchPattern = ''
         self.importPattern = ''
         self.currentPlayLink = None
@@ -1335,12 +1342,15 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.modelSearch.clear()
             self.rootSearch = self.modelSearch.invisibleRootItem()
 
-        if self.searchPattern != '':
+        pattern = self.searchPattern
+        lyrics = self.searchLyrics
+
+        if pattern != '':
             first = None
             for artist in self.chords.artists:
                 for album in artist.albums:
                     for song in album.songs:
-                        if self.searchPattern in song.title.lower():
+                        if song.search(pattern,lyrics):
                             song_item = QStandardItem(song.title)
                             song_item.setData(song)
                             if first == None:
@@ -1477,6 +1487,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.importPattern = text
             return True
         return False
+
+    def searchLyricsChanged(self,value):
+        self.searchLyrics = value
+        self.searchTab()
 
     def settingsChanged(self,value):
         self.colour_chord = self.colourChord.currentText().lower()

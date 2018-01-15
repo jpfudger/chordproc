@@ -111,12 +111,29 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QLineEdit" name="lineEdit"/>
-        </item>
-        <item>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLineEdit" name="lineEdit"/>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkLyrics">
+              <property name="text">
+               <string>Lyrics</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QSplitter" name="splitterSearch">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <family>Courier New</family>
@@ -201,17 +218,17 @@
         </property>
         <item>
          <property name="text">
+          <string>Gray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Blue</string>
          </property>
         </item>
         <item>
          <property name="text">
           <string>Red</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Gray</string>
          </property>
         </item>
         <item>
@@ -523,6 +540,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>checkLyrics</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>searchLyricsChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>940</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>viewerLinkClicked(QUrl)</slot>
@@ -530,5 +563,6 @@
   <slot>playButtonClicked()</slot>
   <slot>tabChanged(int)</slot>
   <slot>settingsChanged()</slot>
+  <slot>searchLyricsChanged(bool)</slot>
  </slots>
 </ui>
