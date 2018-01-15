@@ -9,7 +9,11 @@ import random
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from chordproc.design import Ui_MainWindow
-from laudable.laudable import LAUD_data
+
+try:
+    from laudable.laudable import LAUD_data
+except ImportError:
+    pass
 
 # Todo:
 #
@@ -224,7 +228,10 @@ class CRD_album():
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
     def laud(self):
-        alb = self.laud_data.find_album(self.artist.name,self.title)
+        try:
+            alb = self.laud_data.find_album(self.artist.name,self.title)
+        except:
+            alb = None
         return alb
     def get_playlist(self):
         try:
@@ -709,8 +716,11 @@ class CRD_song():
 
         if not link:
             # search all songs of artist
-            a = self.album.laud_data.find_artist(self.album.artist.name)
-            songs = a.findSong(self.title, True) if a else []
+            try:
+                a = self.album.laud_data.find_artist(self.album.artist.name)
+                songs = a.findSong(self.title, True) if a else []
+            except:
+                songs = []
             if len(songs) > 0:
                 link = songs[0].path
 
@@ -725,7 +735,12 @@ class CRD_data():
         self.albums = []
         self.songs = []
         self.collections = []
-        self.laud_data = LAUD_data()
+
+        try:
+            self.laud_data = LAUD_data()
+        except NameError:
+            self.laud_data = None
+
         self.stock_tunings = self.load_tuning_data()
 
         if lines:
