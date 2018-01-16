@@ -6,7 +6,7 @@ import random
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from chordproc.crd_data import CRD_data, CRD_artist, CRD_album, CRD_song
-from chordproc.design import Ui_MainWindow
+from chordproc.crd_gui_design import Ui_MainWindow
 
 class CRD_gui(QMainWindow, Ui_MainWindow):
     def __init__(self, chords):
