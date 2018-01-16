@@ -1,12 +1,14 @@
 #!/usr/bin/python3
-import argparse, time
-from chordproc.crd_gui import *
+import sys, argparse, time
+from chordproc.crd_test import CRD_test
+from chordproc.crd_gui  import CRD_data, CRD_interface
 
 def proc_options():
     parser = argparse.ArgumentParser()
     parser.add_argument( '-update',  action='store_true', default=False )
     parser.add_argument( '-html',    action='store_true', default=False )
     parser.add_argument( '-gui',     action='store_true', default=False )
+    parser.add_argument( '-test',    action='store_true', default=False )
     parser.add_argument( '-tunings', type=str, default=None )
 
     options = parser.parse_args()
@@ -23,6 +25,11 @@ if __name__ == "__main__":
     time.clock()
 
     opts = proc_options()
+
+    if opts["test"]:
+        CRD_test().run()
+        sys.exit(1)
+
     data = CRD_data(opts)
 
     if opts["update"]:
