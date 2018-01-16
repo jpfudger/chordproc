@@ -324,6 +324,13 @@ class CRD_chord():
 
         nochord_chars = [ 'l', 'k', 't', 'h', 'gg', 'y', 'v', 'ing' ]
 
+        # the following notes cannot occur consecutively (e.g. Free) 
+        for note in [ 'a', 'c', 'e', 'f', 'g' ]:
+            if note + note in self.string.lower():
+                self.root = None
+                self.bass = None
+                return False
+
         for c in nochord_chars:
             if c in self.string.lower():
                 self.root = None
@@ -540,7 +547,17 @@ class CRD_song():
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
-        chars = [ '*', '|', '-', '[', ']', '{', '}', '(', ')', '.' ]
+        multichars = [ '.' ]
+        chars = [ '*', '|', '-', '[', ']', '{', '}', '(', ')' ]
+
+        for x in multichars:
+            while word.startswith(x):
+                word = word[1:]
+                starter += x
+
+            while word.endswith(x):
+                word = word[:-1]
+                ender += x
 
         # Some charts use | and - to for timing, 
         # so we need to strip them off before chord processing,
