@@ -892,8 +892,15 @@ class CRD_data():
             song.lines = song.lines[ start_index : end_index ]
     def load_tuning_data(self):
         lines = []
+
+        # load stock tunings from resource file
+        path = os.path.dirname(os.path.realpath(__file__)) + '/resources/stock_tunings.crd'
+
         if self.opts["tunings"] and os.path.isfile(self.opts["tunings"]):
-            with open(self.opts["tunings"]) as f:
+            path = self.opts["tunings"]
+
+        if os.path.isfile(path):
+            with open(path) as f:
                 lines = f.readlines()
 
         current_tuning = None

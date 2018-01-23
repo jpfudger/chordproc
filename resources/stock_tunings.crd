@@ -1,0 +1,82 @@
+{{{ tuning: DGDGBD    [open G]
+G   000000
+}}}
+{{{ tuning: DGDGBbD   [open Gm]
+Gm  000000
+}}}
+{{{ tuning: DADF#AD   [open D]
+D   000000
+}}}
+{{{ tuning: DADFAD    [open Dm]
+Dm  000000
+}}}
+{{{ tuning: EAC#EAE   [open A]
+A   000000
+}}}
+{{{ tuning: DADGBE    [drop D] [dropped D]
+A   202220
+C   x32010
+D   0xx232
+E   222100
+Em  222000
+G   5xx033
+}}}
+{{{ tuning: CADGBE    [drop C] [dropped C]
+
+C       032010
+
+}}}
+{{{ tuning: CGDGBE    [open C] [dropped C]
+G   x00033
+C   002010
+Em  x22210
+D   2xx232
+}}}
+{{{ tuning: DADGBD    [double drop D] [double dropped D]
+
+D       0xx230
+
+}}}
+{{{ tuning: EADGBE    [standard]
+
+A       x02220
+A/e     002220
+Asus4   x02230
+Asus2   x02200
+Am      x02210
+Am7     x02010
+
+B       224442
+B7      x21200
+Bm      224432
+Bm7     224232
+
+C       x32010
+Cmaj7   x32000
+C/g     332010
+C/e     032010
+Csus4   x33010
+Csus2   x30010
+C7      x32310
+
+D       xx0232
+D7      xx0212
+Dsus4   xx0233
+Dsus2   xx0230
+Dm      xx0231
+Dmaj7   xx0222
+D11     xx0010
+
+E       022100
+Em      022000
+
+F       133211
+Fmaj7   x33210
+
+G       320003
+G7      320001
+G6      320000
+Gsus4   3x2013
+
+}}}
+
