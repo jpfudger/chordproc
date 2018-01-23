@@ -46,11 +46,15 @@ def common_html():
     return lines
 
 class CRD_artist():
-    def __init__(self,name,index=0,laud_data=None):
+    def __init__(self,name,index=0,data=None):
         self.name = name
         self.albums = []
         self.index = index
-        self.laud_data = laud_data
+        self.laud_data = None
+        self.stock_tunings = None
+        if data:
+            self.laud_data = data.laud_data
+            self.stock_tunings = data.stock_tunings
         self.fname = name.lower() + '.html'
         self.fname = re.sub( ' ', '_', self.fname )
         self.fname = re.sub( '#', 's', self.fname )
@@ -68,7 +72,7 @@ class CRD_artist():
                 allsongs.append(song)
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
-    def html_songs(self,stock_tunings,add_artist=False):
+    def html_songs(self,add_artist=False):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
         lines += common_html()
@@ -79,7 +83,7 @@ class CRD_artist():
             lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
         lines += [ '</ol>' ]
         for song in self.all_songs():
-            lines += song.html(stock_tunings,add_artist)[:]
+            lines += song.html(add_artist)[:]
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
@@ -104,9 +108,9 @@ class CRD_artist():
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
         return lines
-    def html(self,stock_tunings,add_artist=False):
+    def html(self,add_artist=False):
         if len(self.albums) == 1 and self.albums[0].title == 'Misc':
-            return self.html_songs(stock_tunings,add_artist)
+            return self.html_songs(add_artist)
         else:
             return self.html_albums(add_artist)
     def html_index(self):
@@ -174,11 +178,11 @@ class CRD_album():
         self.fname = 'album_' + alphaname + '.html'
     def add_song(self,title,fpath):
         song_index = self.index + '.%d' % ( len(self.songs) + 1 )
-        new_song = CRD_song(title,self.artist.name,fpath,song_index)
+        new_song = CRD_song(title,self.artist,fpath,song_index)
         self.songs.append(new_song)
         new_song.album = self
         return new_song
-    def html(self,stock_tunings):
+    def html(self):
         title = self.artist.name + ' : ' + self.title
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % title ]
@@ -191,7 +195,7 @@ class CRD_album():
             lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
         lines += [ '</ol>' ]
         for song in self.songs:
-            lines += song.html(stock_tunings)[:]
+            lines += song.html()[:]
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
@@ -662,12 +666,12 @@ class CRD_song():
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
-    def inherit_fingerings(self,stock_tunings):
+    def inherit_fingerings(self):
         # looks up the current tuning in the stock_tunings list
         # and uses it to inject unspecified fingerings into the 
         # self.tuning object
         stock_tuning = None
-        for t in stock_tunings:
+        for t in self.artist.stock_tunings:
             if self.tuning:
                 if t.name() == self.tuning.name():
                     stock_tuning = t
@@ -679,12 +683,12 @@ class CRD_song():
             for crd, fing in t.fingerings.items():
                 if self.get_fingering( crd ) == "":
                     self.add_fingering( crd, fing )
-    def html(self,stock_tunings=[],add_artist=False,transpose=0,prefer_sharp=False):
-        self.inherit_fingerings(stock_tunings)
+    def html(self,add_artist=False,transpose=0,prefer_sharp=False):
+        self.inherit_fingerings()
         lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
         name = ''
         if add_artist:
-            name = ' (%s)' % self.artist
+            name = ' (%s)' % self.artist.name
         lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, self.title + name) ]
         if len(self.lines) > 100 and self.longest_line() <= 83:
             lines += [ '<div class=chords_3col>' ]
@@ -806,7 +810,7 @@ class CRD_data():
             if a.name == name:
                 return a
         self.n_artists += 1
-        a = CRD_artist(name,self.n_artists,self.laud_data)
+        a = CRD_artist(name,self.n_artists,self)
         self.artists.append(a)
         return a
     def process_chord_file(self,path):
@@ -985,12 +989,12 @@ class CRD_data():
                 artist_lines.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
                     ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
             with open(self.opts["html_root"] + artist.fname, 'w') as f:
-                for l in artist.html(self.stock_tunings):
+                for l in artist.html():
                     f.write('\n' + l)
             for album in artist.albums:
                 album_path = self.opts["html_root"] + album.fname
                 with open(album_path, 'w') as f:
-                    for l in album.html(self.stock_tunings):
+                    for l in album.html():
                         f.write('\n' + l)
                 if artist.name == 'Misc':
                     misc.append( [ album, album.fname ] )
@@ -1047,7 +1051,7 @@ class CRD_data():
             tuning_lines.append( '<li><a class=tuning href="%s">%s</a> <div class=count>%d</div>' % 
                     ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
             with open(self.opts["html_root"] + tuning.fname, 'w') as f:
-                for l in tuning.html(self.stock_tunings,True):
+                for l in tuning.html(True):
                     f.write('\n' + l)
         tuning_lines += [ '</ul>', '</body>', '</html>' ]
         with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
