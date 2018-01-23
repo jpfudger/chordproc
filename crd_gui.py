@@ -9,9 +9,10 @@ from chordproc.crd_data import CRD_data, CRD_artist, CRD_album, CRD_song
 from chordproc.crd_gui_design import Ui_MainWindow
 
 class CRD_gui(QMainWindow, Ui_MainWindow):
-    def __init__(self, chords):
+    def __init__(self, chords, app):
         super(self.__class__, self).__init__()
         self.chords = chords
+        self.app = app
         self.setupUi(self)
         self.searchLyrics = False
         self.searchPattern = ''
@@ -38,6 +39,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.treeImport.setModel(self.modelImport)
         self.rootImport = self.modelImport.invisibleRootItem()
 
+        self.set_icon()
+
         self.currentArtistSong = None
         self.currentArtistTranspose = 0
         self.currentTuningSong = None
@@ -53,6 +56,12 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         QShortcut(QKeySequence(Qt.Key_Left),    self, self.handleLeft)
         QShortcut(QKeySequence(Qt.Key_Right),   self, self.handleRight)
         QShortcut(QKeySequence("Ctrl+R"),       self, self.chooseRandomSong)
+
+    def set_icon(self):
+        path = self.chords.resource_root() + 'icon.jpg'
+        app_icon = QIcon()
+        app_icon.addFile(path)
+        self.app.setWindowIcon(app_icon)
 
     def makeTree(self,root,collection):
         for artist in collection:
@@ -500,7 +509,7 @@ class CRD_interface():
     @staticmethod
     def gui(data):
         app = QApplication(sys.argv)
-        form = CRD_gui(data)
+        form = CRD_gui(data,app)
         form.show()
         app.exec_()
 

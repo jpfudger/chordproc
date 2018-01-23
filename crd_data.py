@@ -778,6 +778,10 @@ class CRD_data():
         newopts["root"]      = opts.get("root",      r'crds')
         newopts["pickle"]    = opts.get("pickle",    r'/home/jpf/bin/chord_pickle')
         return newopts
+    def resource_root(self):
+        # resources prefix
+        path = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'resources' + os.sep
+        return path
     def summarise_data(self):
         print( "artists: %d" % len(self.artists) )
         print( "albums:  %d" % len(self.all_albums() ) )
@@ -892,9 +896,7 @@ class CRD_data():
             song.lines = song.lines[ start_index : end_index ]
     def load_tuning_data(self):
         lines = []
-
-        # load stock tunings from resource file
-        path = os.path.dirname(os.path.realpath(__file__)) + '/resources/stock_tunings.crd'
+        path = self.resource_root() + 'stock_tunings.crd'
 
         if self.opts["tunings"] and os.path.isfile(self.opts["tunings"]):
             path = self.opts["tunings"]
