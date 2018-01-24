@@ -372,11 +372,12 @@ class CRD_tuning():
                 self.tuning = m.group(1)
             else:
                 raise ValueError( "Failed to extract tuning from " + candidate.strip() )
-    def get_fingering(self,crd_string):
+    def get_fingering(self,crd_string,as_title=False):
         fingering = ''
         try:
             fingering = self.fingerings[crd_string]
-            fingering = ' title="%s = %s"' % ( crd_string, fingering )
+            if as_title:
+                fingering = ' title="%s = %s"' % ( crd_string, fingering )
         except KeyError:
             pass
         return fingering
@@ -473,11 +474,12 @@ class CRD_song():
         self.gui_item = None
     def add_fingering(self,chord,fingering):
         self.fingerings[ chord.format() ] = fingering
-    def get_fingering(self,crd_string):
+    def get_fingering(self,crd_string,as_title=False):
         fingering = ''
         try:
             fingering = self.fingerings[crd_string]
-            fingering = ' title="%s = %s"' % ( crd_string, fingering )
+            if as_title:
+                fingering = ' title="%s = %s"' % ( crd_string, fingering )
         except KeyError:
             pass
         return fingering
@@ -638,7 +640,7 @@ class CRD_song():
                 chord = CRD_chord(word)
                 if chord.is_chord():
                     crd = chord.format(transpose,prefer_sharp)
-                    fingering = self.get_fingering(crd)
+                    fingering = self.get_fingering(crd,True)
                     # if fingering == "" and self.tuning:
                     #     print( "[%s] No fingering for %s" % ( self.tuning.name(), crd ) )
                     formatted += starter + '<div class=chordline%s>%s</div>%s' % \
@@ -681,7 +683,7 @@ class CRD_song():
                 break
         if stock_tuning:
             for crd, fing in t.fingerings.items():
-                if self.get_fingering( crd ) == "":
+                if self.get_fingering(crd,True) == "":
                     self.add_fingering( crd, fing )
     def html(self,add_artist=False,transpose=0,prefer_sharp=False):
         self.inherit_fingerings()

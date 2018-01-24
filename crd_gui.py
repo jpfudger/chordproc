@@ -40,6 +40,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.rootImport = self.modelImport.invisibleRootItem()
 
         self.set_icon()
+        self.populateTuningCombo()
 
         self.currentArtistSong = None
         self.currentArtistTranspose = 0
@@ -118,6 +119,14 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             return self.treeImport
         return None
 
+    def onArtistsTab(self):
+        tabindex = self.tabWidget.currentIndex()
+        return tabindex == 0
+
+    def onTuningsTab(self):
+        tabindex = self.tabWidget.currentIndex()
+        return tabindex == 1
+
     def onSearchTab(self):
         tabindex = self.tabWidget.currentIndex()
         return tabindex == 2
@@ -126,13 +135,13 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         tabindex = self.tabWidget.currentIndex()
         return tabindex == 3
 
-    def onArtistsTab(self):
+    def onChordFinderTab(self):
         tabindex = self.tabWidget.currentIndex()
-        return tabindex == 0
+        return tabindex == 4
 
-    def onTuningsTab(self):
+    def onSettingsTab(self):
         tabindex = self.tabWidget.currentIndex()
-        return tabindex == 1
+        return tabindex == 5
 
     def currentViewer(self):
         if self.onArtistsTab():
@@ -466,6 +475,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 if tree:
                     index = tree.selectedIndexes()[0]
                     self.treeIndexClicked(index)
+        elif self.onChordFinderTab():
+            self.lookupChord()
         else:
             tree = self.currentTree()
             if tree:
@@ -504,6 +515,30 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 self.currentTree().expand(index)
             elif isinstance(item.data(),CRD_song):
                 self.treeIndexClicked(index)
+
+    def populateTuningCombo(self):
+        tunings = self.chords.stock_tunings[:]
+        tunings.sort(key=lambda x: x.name())
+
+        standard = 0
+        for i, tuning in enumerate(tunings):
+            if tuning.name().lower() == "standard":
+                standard = i
+                break
+
+        tunings.insert(0, tunings.pop(standard))
+
+        for tuning in tunings:
+            name = tuning.name()
+            name = name[0].upper() + name[1:]
+            self.tuningCombo.addItem(name,tuning)
+
+    def lookupChord(self):
+        tuning = self.tuningCombo.itemData(self.tuningCombo.currentIndex())
+        chord  = self.chordName.text()
+        print("Looking up %s in %s" % ( chord, tuning.name() ))
+        fingering = tuning.get_fingering(chord)
+        self.chordResult1.setText(fingering)
 
 class CRD_interface():
     @staticmethod

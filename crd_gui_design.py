@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'design.ui'
+# Form implementation generated from reading ui file 'crd_gui_design.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -157,6 +157,27 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.splitter)
         self.verticalLayout_6.addLayout(self.verticalLayout_4)
         self.tabWidget.addTab(self.tab_import, _fromUtf8(""))
+        self.tab = QtGui.QWidget()
+        self.tab.setObjectName(_fromUtf8("tab"))
+        self.tuningCombo = QtGui.QComboBox(self.tab)
+        self.tuningCombo.setGeometry(QtCore.QRect(160, 20, 181, 21))
+        self.tuningCombo.setObjectName(_fromUtf8("tuningCombo"))
+        self.chordName = QtGui.QLineEdit(self.tab)
+        self.chordName.setGeometry(QtCore.QRect(160, 50, 181, 21))
+        self.chordName.setObjectName(_fromUtf8("chordName"))
+        self.chordResult1 = QtGui.QTextEdit(self.tab)
+        self.chordResult1.setGeometry(QtCore.QRect(160, 120, 181, 351))
+        self.chordResult1.setObjectName(_fromUtf8("chordResult1"))
+        self.chordFind = QtGui.QPushButton(self.tab)
+        self.chordFind.setGeometry(QtCore.QRect(160, 80, 99, 27))
+        self.chordFind.setObjectName(_fromUtf8("chordFind"))
+        self.tuningLabel = QtGui.QLabel(self.tab)
+        self.tuningLabel.setGeometry(QtCore.QRect(20, 20, 68, 17))
+        self.tuningLabel.setObjectName(_fromUtf8("tuningLabel"))
+        self.chordNameLabel = QtGui.QLabel(self.tab)
+        self.chordNameLabel.setGeometry(QtCore.QRect(20, 50, 101, 17))
+        self.chordNameLabel.setObjectName(_fromUtf8("chordNameLabel"))
+        self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_settings = QtGui.QWidget()
         self.tab_settings.setObjectName(_fromUtf8("tab_settings"))
         self.colourComment = QtGui.QComboBox(self.tab_settings)
@@ -213,6 +234,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.colourChord, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), MainWindow.settingsChanged)
         QtCore.QObject.connect(self.colourComment, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), MainWindow.settingsChanged)
         QtCore.QObject.connect(self.checkLyrics, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), MainWindow.searchLyricsChanged)
+        QtCore.QObject.connect(self.chordFind, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.lookupChord)
+        QtCore.QObject.connect(self.chordName, QtCore.SIGNAL(_fromUtf8("returnPressed()")), MainWindow.lookupChord)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -222,6 +245,10 @@ class Ui_MainWindow(object):
         self.checkLyrics.setText(_translate("MainWindow", "Lyrics", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_search), _translate("MainWindow", "Search", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_import), _translate("MainWindow", "Import", None))
+        self.chordFind.setText(_translate("MainWindow", "Find", None))
+        self.tuningLabel.setText(_translate("MainWindow", "Tuning", None))
+        self.chordNameLabel.setText(_translate("MainWindow", "Chord name", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Chords", None))
         self.colourComment.setItemText(0, _translate("MainWindow", "Gray", None))
         self.colourComment.setItemText(1, _translate("MainWindow", "Blue", None))
         self.colourComment.setItemText(2, _translate("MainWindow", "Red", None))

@@ -203,6 +203,80 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Chords</string>
+       </attribute>
+       <widget class="QComboBox" name="tuningCombo">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>20</y>
+          <width>181</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="chordName">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>50</y>
+          <width>181</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTextEdit" name="chordResult1">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>120</y>
+          <width>181</width>
+          <height>351</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="chordFind">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>80</y>
+          <width>99</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Find</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="tuningLabel">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>68</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Tuning</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="chordNameLabel">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>101</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Chord name</string>
+        </property>
+       </widget>
+      </widget>
       <widget class="QWidget" name="tab_settings">
        <attribute name="title">
         <string>Settings</string>
@@ -556,6 +630,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chordFind</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>lookupChord()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>158</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chordName</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>lookupChord()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>viewerLinkClicked(QUrl)</slot>
@@ -564,5 +670,6 @@
   <slot>tabChanged(int)</slot>
   <slot>settingsChanged()</slot>
   <slot>searchLyricsChanged(bool)</slot>
+  <slot>lookupChord()</slot>
  </slots>
 </ui>
