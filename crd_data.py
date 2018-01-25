@@ -473,7 +473,7 @@ class CRD_song():
         self.title_sort = re.sub( '\AThe\s+', '', title)
         self.gui_item = None
     def add_fingering(self,chord,fingering):
-        self.fingerings[ chord.format() ] = fingering
+        self.fingerings[ chord.format() ] = fingering.lower()
     def get_fingering(self,crd_string,as_title=False):
         fingering = ''
         try:
@@ -598,7 +598,7 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
-    def markup_chord_line(self,line,transpose,prefer_sharp):
+    def markup_chord_line(self,line,transpose=0,prefer_sharp=False):
         comline = self.is_comment_line(line)
         if comline:
             return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', comline ) + '</div>'
@@ -685,6 +685,11 @@ class CRD_song():
             for crd, fing in t.fingerings.items():
                 if self.get_fingering(crd,True) == "":
                     self.add_fingering( crd, fing )
+    def process_local_fingerings(self):
+        # extract local fingerings from each song line
+        for line in self.lines:
+            if re.search('[x0-9]{6}', line):
+                self.is_comment_line(line)
     def html(self,add_artist=False,transpose=0,prefer_sharp=False):
         self.inherit_fingerings()
         lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
@@ -948,11 +953,11 @@ class CRD_data():
         if self.opts["update"] or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
 
-            # Generating the html will cause the song-specific fingerings
-            # to be added to the local dictionary. 
-            # We want to pickle this data, so calculate it here:
+            # This performs the part of song.html() which adds song-specific
+            # fingerings to the local chord dictionary. 
+            # We generate it here so it will be pickled.
             for s in self.all_songs():
-                s.html()
+                s.process_local_fingerings()
 
             self.group_songs_by_tunings()
             with open(self.opts["pickle"],'wb') as f:
@@ -1107,7 +1112,8 @@ class CRD_data():
             else:
                 fingering = song.get_fingering(chord)
                 if fingering:
-                    fingering += ' (%s/%s/%s)' % ( song.title, song.album.title, song.artist.name )
                     fingerings.append(fingering)
+
+        fingerings = list(set(fingerings))
         return fingerings
 
