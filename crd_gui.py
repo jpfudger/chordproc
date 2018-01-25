@@ -484,6 +484,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 self.treeIndexClicked(index)
 
     def handleLeft(self):
+        if self.onSearchTab() or self.onChordFinderTab():
+            return
         indices = self.currentTree().selectedIndexes()
         if len(indices) > 0:
             index = indices[0]
@@ -503,6 +505,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 self.currentTree().setCurrentIndex(index.parent())
 
     def handleRight(self):
+        if self.onSearchTab() or self.onChordFinderTab():
+            return
         indices = self.currentTree().selectedIndexes()
         if len(indices) > 0:
             index = indices[0]
@@ -538,7 +542,16 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         chord  = self.chordName.text()
         print("Looking up %s in %s" % ( chord, tuning.name() ))
         fingering = tuning.get_fingering(chord)
-        self.chordResult1.setText(fingering)
+        fingering_string = fingering
+        if fingering_string:
+            fingering_string += " (stock)"
+        lines = [ fingering_string ]
+
+        for x in self.chords.lookup_chord(tuning,chord):
+            if not fingering in x:
+                lines.append(x)
+
+        self.chordResult1.setText("\n".join(lines))
 
 class CRD_interface():
     @staticmethod

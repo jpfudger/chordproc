@@ -947,6 +947,13 @@ class CRD_data():
     def load_song_data(self):
         if self.opts["update"] or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
+
+            # Generating the html will cause the song-specific fingerings
+            # to be added to the local dictionary. 
+            # We want to pickle this data, so calculate it here:
+            for s in self.all_songs():
+                s.html()
+
             self.group_songs_by_tunings()
             with open(self.opts["pickle"],'wb') as f:
                 pickle.dump( ( self.artists, self.tunings, self.collections ), f )
@@ -1092,4 +1099,15 @@ class CRD_data():
         with open(self.opts["html_root"] + 'allsongs.html', 'w') as f:
             for l in index_lines:
                 f.write('\n' + l)
+    def lookup_chord(self,tuning,chord):
+        fingerings = []
+        for song in self.all_songs():
+            if song.tuning and song.tuning.name() and song.tuning.name() != tuning.name():
+                pass
+            else:
+                fingering = song.get_fingering(chord)
+                if fingering:
+                    fingering += ' (%s/%s/%s)' % ( song.title, song.album.title, song.artist.name )
+                    fingerings.append(fingering)
+        return fingerings
 
