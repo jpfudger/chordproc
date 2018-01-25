@@ -232,9 +232,17 @@
          <rect>
           <x>160</x>
           <y>120</y>
-          <width>181</width>
+          <width>791</width>
           <height>351</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Monospace</family>
+         </font>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
         </property>
        </widget>
        <widget class="QPushButton" name="chordFind">
