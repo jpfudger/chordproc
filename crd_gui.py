@@ -131,11 +131,11 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         tabindex = self.tabWidget.currentIndex()
         return tabindex == 2
 
-    def onImportTab(self):
+    def onChordFinderTab(self):
         tabindex = self.tabWidget.currentIndex()
         return tabindex == 3
 
-    def onChordFinderTab(self):
+    def onImportTab(self):
         tabindex = self.tabWidget.currentIndex()
         return tabindex == 4
 
