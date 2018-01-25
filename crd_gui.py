@@ -533,8 +533,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         tunings.insert(0, tunings.pop(standard))
 
         for tuning in tunings:
-            name = tuning.name()
-            name = name[0].upper() + name[1:]
+            name = '%s (%s)' % ( tuning.tuning, tuning.name() )
             self.tuningCombo.addItem(name,tuning)
 
     def lookupChord(self):

@@ -25,6 +25,8 @@ G   5xx033
 
 C       032010
 
+Am      x22210
+
 }}}
 {{{ tuning: CGDGBE    [open C] [dropped C]
 G   x00033
@@ -44,7 +46,11 @@ A/e     002220
 Asus4   x02230
 Asus2   x02200
 Am      x02210
+Am6     x02212
 Am7     x02010
+
+Bb      113331
+Bbm     113321
 
 B       224442
 B7      x21200
@@ -59,24 +65,39 @@ Csus4   x33010
 Csus2   x30010
 C7      x32310
 
+Db      553335
+
 D       xx0232
+D6      xx0202
 D7      xx0212
 Dsus4   xx0233
 Dsus2   xx0230
 Dm      xx0231
+Dm6     xx0201
+Dm7     xx0211
 Dmaj7   xx0222
 D11     xx0010
+
+Eb      66504x
+Ebm     668876
 
 E       022100
 Em      022000
 
 F       133211
+Fm      133111
 Fmaj7   x33210
+
+F#      244322
+F#m     244222
 
 G       320003
 G7      320001
 G6      320000
 Gsus4   3x2013
+
+G#      466544
+G#m     466444
 
 }}}
 
