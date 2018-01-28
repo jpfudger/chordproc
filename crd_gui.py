@@ -18,6 +18,8 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.searchPattern = ''
         self.importPattern = ''
         self.currentPlayLink = None
+        self.currentEditLink = None
+        self.currentEditLnum = None
         self.colour_comment = 'gray'
         self.colour_chord = 'red'
 
@@ -213,6 +215,14 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             if self.currentPlayLink:
                 self.playAudio(self.currentPlayLink)
 
+    def editButtonClicked(self):
+        if self.editButton.isEnabled():
+            if self.currentEditLink:
+                editor = "gvim " + self.currentEditLink
+                command = " -c \"normal! %dggzv\"" % self.currentEditLnum
+                print(editor + command)
+                subprocess.Popen(editor + command, shell=True)
+
     def chooseRandomSong(self):
         if self.onArtistsTab():
             songs = self.chords.all_songs()
@@ -238,18 +248,33 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             self.currentPlayLink = None
             self.playButton.setToolTip("")
 
+    def enableEditButton(self,path=None,lnum=0):
+        if path:
+            self.editButton.setEnabled(True)
+            self.currentEditLink = path
+            self.currentEditLnum = lnum
+            self.editButton.setToolTip(path)
+        else:
+            self.editButton.setEnabled(False)
+            self.currentEditLink = None
+            self.editButton.setToolTip("")
+
     def treeIndexClicked(self, index):
         item = index.model().itemFromIndex(index)
         self.enablePlayButton()
+        self.enableEditButton()
         if not item.data():
             pass
         elif isinstance(item.data(),CRD_song):
-            self.currentSong( item.data() )
+            song = item.data()
+            self.currentSong(song)
             text = self.tweak_html(self.currentSong(), self.currentTranspose())
             self.currentViewer().setHtml(text)
-            links = item.data().get_mp3_link()
+            links = song.get_mp3_link()
             if links:
                 self.enablePlayButton(links)
+            if song.fpath and song.lnum:
+                self.enableEditButton(song.fpath,song.lnum)
         elif isinstance(item.data(),CRD_album):
             album = item.data()
             link = album.get_playlist_link()

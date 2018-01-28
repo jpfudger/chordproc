@@ -176,9 +176,9 @@ class CRD_album():
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
         alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(title)
         self.fname = 'album_' + alphaname + '.html'
-    def add_song(self,title,fpath):
+    def add_song(self,title,fpath,lnum):
         song_index = self.index + '.%d' % ( len(self.songs) + 1 )
-        new_song = CRD_song(title,self.artist,fpath,song_index)
+        new_song = CRD_song(title,self.artist,fpath,lnum,song_index)
         self.songs.append(new_song)
         new_song.album = self
         return new_song
@@ -459,10 +459,11 @@ class CRD_tuning():
         return string
 
 class CRD_song():
-    def __init__(self,title,artist,fpath,index=0):
+    def __init__(self,title,artist,fpath,lnum,index):
         self.title = title
         self.artist = artist
         self.fpath = fpath
+        self.lnum = lnum
         self.index = index
         self.lines = []
         self.tuning = None
@@ -843,7 +844,9 @@ class CRD_data():
         level_song   = 0
         comment_level = 0
         newsongs = []
+        lnum = 0
         for line in lines:
+            lnum += 1
             mopen = re.match('^\s*\{\{\{\s+(.*)',line)
             mclose = re.match('^\s*\}\}\}',line)
             mblank = re.match('^\s*$',line)
@@ -871,7 +874,7 @@ class CRD_data():
                         this_artist = self.get_artist('Misc')
                     if not this_album:
                         this_album = this_artist.add_album('Misc')
-                    this_song = this_album.add_song(s_name,path)
+                    this_song = this_album.add_song(s_name,path,lnum)
                     newsongs.append(this_song)
                     level_song = level
                 else:

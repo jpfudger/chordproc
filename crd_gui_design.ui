@@ -373,6 +373,16 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="editButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Edit</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="playButton">
         <property name="enabled">
          <bool>false</bool>
@@ -639,6 +649,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>editButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>854</x>
+     <y>576</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>viewerLinkClicked(QUrl)</slot>
@@ -648,5 +674,6 @@
   <slot>settingsChanged()</slot>
   <slot>searchLyricsChanged(bool)</slot>
   <slot>lookupChord()</slot>
+  <slot>editButtonClicked()</slot>
  </slots>
 </ui>
