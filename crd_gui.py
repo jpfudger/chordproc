@@ -219,7 +219,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         if self.editButton.isEnabled():
             if self.currentEditLink:
                 editor = "gvim " + self.currentEditLink
-                command = " -c \"normal! %dggzv\"" % self.currentEditLnum
+                command = " -c \"normal! %dggzvzt\"" % self.currentEditLnum
                 print(editor + command)
                 subprocess.Popen(editor + command, shell=True)
 
@@ -338,6 +338,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                         if song.search(pattern,lyrics):
                             song_item = QStandardItem(song.title)
                             song_item.setData(song)
+                            song_item.setToolTip("%s - %s" % (artist.name, album.title))
                             if first == None:
                                 first = song_item
                             self.rootSearch.appendRow(song_item)

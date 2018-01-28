@@ -178,7 +178,8 @@ class CRD_album():
         self.fname = 'album_' + alphaname + '.html'
     def add_song(self,title,fpath,lnum):
         song_index = self.index + '.%d' % ( len(self.songs) + 1 )
-        new_song = CRD_song(title,self.artist,fpath,lnum,song_index)
+        apath = os.path.abspath(fpath)
+        new_song = CRD_song(title,self.artist,apath,lnum,song_index)
         self.songs.append(new_song)
         new_song.album = self
         return new_song
