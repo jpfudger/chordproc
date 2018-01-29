@@ -776,7 +776,7 @@ class CRD_data():
         if lines:
             self.process_chord_lines(lines)
         else:
-            self.load_song_data()
+            self.load_song_data( self.opts["update"] )
     def __update_options(self,opts):
         newopts = {}
         newopts["update"]    = opts.get("update",    False)
@@ -953,8 +953,13 @@ class CRD_data():
         #         print( "     " + key.ljust(10) + value )
 
         return tunings
-    def load_song_data(self):
-        if self.opts["update"] or not os.path.isfile(self.opts["pickle"]):
+    def load_song_data(self,update):
+        self.artists = []
+        self.tunings = []
+        self.albums = []
+        self.songs = []
+        self.collections = []
+        if update or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
 
             # This performs the part of song.html() which adds song-specific

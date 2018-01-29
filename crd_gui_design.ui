@@ -373,6 +373,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="reloadButton">
+        <property name="text">
+         <string>Reload</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="editButton">
         <property name="enabled">
          <bool>false</bool>
@@ -665,6 +672,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reloadButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reloadButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>763</x>
+     <y>576</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>viewerLinkClicked(QUrl)</slot>
@@ -675,5 +698,6 @@
   <slot>searchLyricsChanged(bool)</slot>
   <slot>lookupChord()</slot>
   <slot>editButtonClicked()</slot>
+  <slot>reloadButtonClicked()</slot>
  </slots>
 </ui>

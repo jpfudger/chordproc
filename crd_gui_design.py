@@ -215,6 +215,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.reloadButton = QtGui.QPushButton(self.centralwidget)
+        self.reloadButton.setObjectName(_fromUtf8("reloadButton"))
+        self.horizontalLayout.addWidget(self.reloadButton)
         self.editButton = QtGui.QPushButton(self.centralwidget)
         self.editButton.setEnabled(False)
         self.editButton.setObjectName(_fromUtf8("editButton"))
@@ -248,6 +251,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.chordFind, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.lookupChord)
         QtCore.QObject.connect(self.chordName, QtCore.SIGNAL(_fromUtf8("returnPressed()")), MainWindow.lookupChord)
         QtCore.QObject.connect(self.editButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.editButtonClicked)
+        QtCore.QObject.connect(self.reloadButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.reloadButtonClicked)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -273,6 +277,7 @@ class Ui_MainWindow(object):
         self.colourChord.setItemText(3, _translate("MainWindow", "Green", None))
         self.colourChord.setItemText(4, _translate("MainWindow", "Black", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_settings), _translate("MainWindow", "Settings", None))
+        self.reloadButton.setText(_translate("MainWindow", "Reload", None))
         self.editButton.setText(_translate("MainWindow", "Edit", None))
         self.playButton.setText(_translate("MainWindow", "Play", None))
 

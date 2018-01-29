@@ -223,6 +223,28 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 print(editor + command)
                 subprocess.Popen(editor + command, shell=True)
 
+    def reloadButtonClicked(self):
+        print("Reloading")
+        self.chords.load_song_data(True)
+        print("Reloaded")
+
+        # should clear the search and chord tab results.
+
+        # should store the current item (artist/album/song) and restore it afterwards
+
+
+        self.modelArtists = QStandardItemModel()
+        self.treeArtists.setModel(self.modelArtists)
+        self.rootArtists = self.modelArtists.invisibleRootItem()
+        self.makeTree(self.rootArtists, self.chords.artists)
+
+        self.modelTunings = QStandardItemModel()
+        self.treeTunings.setModel(self.modelTunings)
+        self.rootTunings = self.modelTunings.invisibleRootItem()
+        self.makeTree(self.rootTunings, self.chords.tunings)
+
+        print("Repopulated")
+
     def chooseRandomSong(self):
         if self.onArtistsTab():
             songs = self.chords.all_songs()
