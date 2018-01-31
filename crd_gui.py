@@ -228,6 +228,28 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                 print(editor + command)
                 subprocess.Popen(editor + command, shell=True)
 
+    def jumpToSong(self,ar,al,so,model,tree):
+        #print("artist: " + ar)
+        #print("albuma  " + al)
+        #print("song:   " + so)
+
+        for i in range(model.rowCount()):
+            index = model.index(i,0)
+            artist = model.itemFromIndex(index)
+            #print(artist.data().name)
+            if artist.data().name == ar:
+                for j in range(artist.rowCount()):
+                    album = artist.child(j)
+                    if album.data().title == al:
+                        for k in range(album.rowCount()):
+                            song = album.child(k)
+                            if song.data().title == so:
+                                tree.setCurrentIndex(song.index())
+                                self.treeIndexClicked(song.index())
+                                break
+                        break
+                break
+
     def reloadButtonClicked(self):
         print("Reloading")
         self.chords.load_song_data(True)
@@ -237,6 +259,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
 
         # should store the current item (artist/album/song) and restore it afterwards
 
+        artist_song = self.currentArtistSong
+        tuning_song = self.currentTuningSong
+        self.currentArtistSong = None
+        self.currentTuningSong = None
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -249,6 +275,9 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.makeTree(self.rootTunings, self.chords.tunings)
 
         print("Repopulated")
+
+        self.jumpToSong( artist_song.artist.name, artist_song.album.title, artist_song.title, 
+                         self.modelArtists, self.treeArtists )
 
     def chooseRandomSong(self):
         if self.onArtistsTab():
