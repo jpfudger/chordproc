@@ -657,7 +657,20 @@ class CRD_song():
             return '<br>' + line
         return formatted
     def format_song_lines(self,transpose=0,prefer_sharp=False):
-        formatted = [ self.markup_chord_line(line,transpose,prefer_sharp) for line in self.lines ]
+        formatted = []
+        n_tab_lines = 0
+        for line in self.lines:
+            newline = self.markup_chord_line(line,transpose,prefer_sharp)
+            formatted.append(newline)
+
+            if ('-' in line) and ('|' in line):
+                n_tab_lines += 1
+
+            if n_tab_lines == 6:
+                formatted.insert(-6, '<div class=tabline>')
+                formatted.append('</div> /*tabline*/')
+                n_tab_lines = 0
+
         return formatted
     def add_line(self,newline):
         line = newline.rstrip()

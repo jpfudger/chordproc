@@ -22,6 +22,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.currentEditLnum = None
         self.colour_comment = 'gray'
         self.colour_chord = 'red'
+        self.colour_tab = 'blue'
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -103,6 +104,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                       text )
         text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
                       r'<font color="%s" \1>\2</font>' % self.colour_comment, 
+                      text )
+        text = re.sub( '<div class=tabline>', '<font color="%s">' % self.colour_tab,
+                      text )
+        text = re.sub( '</div> /*tabline*/', '</font>',
                       text )
         #text = re.sub( '<(\/?)h1>', '<\1h1>', text )
         text = re.sub( '<h3>', '<font size="10"><b>', text )
