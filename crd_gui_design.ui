@@ -65,6 +65,9 @@
              <family>Courier New</family>
             </font>
            </property>
+           <property name="lineWrapMode">
+            <enum>QTextEdit::NoWrap</enum>
+           </property>
           </widget>
          </widget>
         </item>
@@ -99,6 +102,9 @@
             <font>
              <family>Courier New</family>
             </font>
+           </property>
+           <property name="lineWrapMode">
+            <enum>QTextEdit::NoWrap</enum>
            </property>
           </widget>
          </widget>
@@ -156,6 +162,9 @@
                <horstretch>1</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="lineWrapMode">
+              <enum>QTextEdit::NoWrap</enum>
              </property>
             </widget>
            </widget>
@@ -246,6 +255,9 @@
                <horstretch>1</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="lineWrapMode">
+              <enum>QTextEdit::NoWrap</enum>
              </property>
             </widget>
            </widget>
