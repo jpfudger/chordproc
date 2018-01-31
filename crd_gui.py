@@ -107,7 +107,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                       text )
         text = re.sub( '<div class=tabline>', '<font color="%s">' % self.colour_tab,
                       text )
-        text = re.sub( '</div> /*tabline*/', '</font>',
+        text = re.sub( '</div> <!--tabline-->', '</font>',
                       text )
         #text = re.sub( '<(\/?)h1>', '<\1h1>', text )
         text = re.sub( '<h3>', '<font size="10"><b>', text )

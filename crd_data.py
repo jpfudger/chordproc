@@ -668,7 +668,7 @@ class CRD_song():
 
             if n_tab_lines == 6:
                 formatted.insert(-6, '<div class=tabline>')
-                formatted.append('</div> /*tabline*/')
+                formatted.append('</div> <!--tabline-->')
                 n_tab_lines = 0
 
         return formatted
