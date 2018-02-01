@@ -20,9 +20,6 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.currentPlayLink = None
         self.currentEditLink = None
         self.currentEditLnum = None
-        self.colour_comment = 'gray'
-        self.colour_chord = 'red'
-        self.colour_tab = 'blue'
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -54,12 +51,26 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.currentImportSong = None
         self.currentImportTranspose = 0
 
+        self.colour_chord   = None
+        self.colour_comment = None
+        self.colour_tab     = None
+        self.populate_colour_combo(self.comboCommentColour,'Gray')
+        self.populate_colour_combo(self.comboChordColour,'Red')
+        self.populate_colour_combo(self.comboTabColour,'Blue')
+
         QShortcut(QKeySequence("Ctrl+Up"),      self, self.transposeUp)
         QShortcut(QKeySequence("Ctrl+Down"),    self, self.transposeDown)
         QShortcut(QKeySequence(Qt.Key_Return),  self, self.handleEnter)
         QShortcut(QKeySequence(Qt.Key_Left),    self, self.handleLeft)
         QShortcut(QKeySequence(Qt.Key_Right),   self, self.handleRight)
         QShortcut(QKeySequence("Ctrl+R"),       self, self.chooseRandomSong)
+
+    def populate_colour_combo(self,combo,default):
+        colours = [ 'Black', 'Gray', 'Blue', 'Red', 'Green', ]
+        if not default in colours:
+            colours.append(default)
+        combo.addItems(colours)
+        combo.setCurrentIndex(colours.index(default))
 
     def set_icon(self):
         path = self.chords.resource_root() + 'icon.jpg'
@@ -535,8 +546,9 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.searchTab()
 
     def settingsChanged(self,value):
-        self.colour_chord = self.colourChord.currentText().lower()
-        self.colour_comment = self.colourComment.currentText().lower()
+        self.colour_chord   = self.comboChordColour.currentText().lower()
+        self.colour_comment = self.comboCommentColour.currentText().lower()
+        self.colour_tab     = self.comboTabColour.currentText().lower()
 
     def handleEnter(self):
         if self.onSearchTab():
