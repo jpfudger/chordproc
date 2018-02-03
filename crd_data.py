@@ -47,7 +47,7 @@ def common_html():
 
 class CRD_artist():
     def __init__(self,name,index=0,data=None):
-        self.name = name
+        self.name = name.strip()
         self.albums = []
         self.index = index
         self.laud_data = None
@@ -167,7 +167,7 @@ class CRD_artist():
 
 class CRD_album():
     def __init__(self,title,artist,index,laud_data):
-        self.title  = title
+        self.title  = title.strip()
         self.artist = artist
         self.index  = index
         self.laud_data = laud_data
@@ -461,7 +461,7 @@ class CRD_tuning():
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
-        self.title = title
+        self.title = title.strip()
         self.artist = artist
         self.fpath = fpath
         self.lnum = lnum
