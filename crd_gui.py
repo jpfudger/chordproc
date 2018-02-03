@@ -54,6 +54,9 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.colour_chord   = None
         self.colour_comment = None
         self.colour_tab     = None
+        self.hide_chord     = False
+        self.hide_comment   = False
+        self.hide_tab       = False
         self.populate_colour_combo(self.comboCommentColour,'Gray')
         self.populate_colour_combo(self.comboChordColour,'Red')
         self.populate_colour_combo(self.comboTabColour,'Blue')
@@ -110,16 +113,31 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         add_artist = self.onTuningsTab()
         lines = song.html(add_artist,transpose,prefer_sharp)
         text = "\n".join(lines)
-        text = re.sub( '<div class=chordline([^>]*)>([^<]*)</div>', 
-                      r'<font color="%s" \1>\2</font>' % self.colour_chord, 
-                      text )
-        text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
-                      r'<font color="%s" \1>\2</font>' % self.colour_comment, 
-                      text )
-        text = re.sub( '<div class=tabline>', '<font color="%s">' % self.colour_tab,
-                      text )
-        text = re.sub( '</div> <!--tabline-->', '</font>',
-                      text )
+
+        if self.hide_chord:
+            text = re.sub( '<div class=chordline([^>]*)>([^<]*)</div>',
+                           '', text )
+        else:
+            text = re.sub( '<div class=chordline([^>]*)>([^<]*)</div>', 
+                          r'<font color="%s" \1>\2</font>' % self.colour_chord, 
+                          text )
+
+        if self.hide_comment:
+            text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
+                           '', text )
+        else:
+            text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
+                          r'<font color="%s" \1>\2</font>' % self.colour_comment, 
+                          text )
+
+        if self.hide_tab:
+            text = re.sub( '<div class=tabline>(.*)</div>', 
+                           '', text )
+        else:
+            text = re.sub( '<div class=tabline>(.*)</div>', 
+                          r'<font color="%s">\1</font>' % self.colour_tab, 
+                          text )
+
         #text = re.sub( '<(\/?)h1>', '<\1h1>', text )
         text = re.sub( '<h3>', '<font size="10"><b>', text )
         text = re.sub( '</h3>', '</b></font>', text )
@@ -545,10 +563,13 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.searchLyrics = value
         self.searchTab()
 
-    def settingsChanged(self,value):
+    def settingsChanged(self):
         self.colour_chord   = self.comboChordColour.currentText().lower()
         self.colour_comment = self.comboCommentColour.currentText().lower()
         self.colour_tab     = self.comboTabColour.currentText().lower()
+        self.hide_chord     = self.hideChord.isChecked()
+        self.hide_comment   = self.hideComment.isChecked()
+        self.hide_tab       = self.hideTab.isChecked()
 
     def handleEnter(self):
         if self.onSearchTab():

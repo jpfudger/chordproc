@@ -667,9 +667,10 @@ class CRD_song():
                 n_tab_lines += 1
 
             if n_tab_lines == 6:
-                formatted.insert(-6, '<div class=tabline>')
-                formatted.append('</div> <!--tabline-->')
                 n_tab_lines = 0
+                for i in range(1,7):
+                    l = formatted[-i]
+                    formatted[-i] = '<div class=tabline>%s</div>' % l
 
         return formatted
     def add_line(self,newline):
@@ -990,6 +991,7 @@ class CRD_data():
         #self.summarise_data()
     def build_song_data(self):
         for f in glob.glob(self.opts["root"] + '/*.crd'):
+            #if not 'bert_jansch.crd' in f: continue
             self.process_chord_file(f)
         self.artists.sort(key=lambda x: x.name)
         if os.path.isfile('collections.html'):

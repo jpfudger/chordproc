@@ -339,6 +339,45 @@
          </rect>
         </property>
        </widget>
+       <widget class="QCheckBox" name="hideComment">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>20</y>
+          <width>99</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Hide</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="hideChord">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>50</y>
+          <width>99</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Hide</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="hideTab">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>80</y>
+          <width>99</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Hide</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -681,6 +720,54 @@
    <hints>
     <hint type="sourcelabel">
      <x>261</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hideChord</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>settingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>420</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hideComment</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>settingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>420</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hideTab</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>settingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>420</x>
      <y>155</y>
     </hint>
     <hint type="destinationlabel">
