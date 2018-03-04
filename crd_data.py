@@ -791,6 +791,7 @@ class CRD_data():
             self.process_chord_lines(lines)
         else:
             self.load_song_data( self.opts["update"] )
+
     def __update_options(self,opts):
         newopts = {}
         newopts["update"]    = opts.get("update",    False)

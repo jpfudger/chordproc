@@ -3,8 +3,9 @@ import re
 import subprocess
 import sys
 import random
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from chordproc.crd_data import CRD_data, CRD_artist, CRD_album, CRD_song
 from chordproc.crd_gui_design import Ui_MainWindow
 
