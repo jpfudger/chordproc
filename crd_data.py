@@ -665,6 +665,8 @@ class CRD_song():
 
             if ('-' in line) and ('|' in line):
                 n_tab_lines += 1
+            else:
+                n_tab_lines = 0
 
             if n_tab_lines == 6:
                 n_tab_lines = 0
