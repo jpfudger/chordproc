@@ -167,7 +167,7 @@ class CRD_artist():
 
 class CRD_album():
     def __init__(self,title,artist,index,laud_data):
-        self.title  = " ".join(x.capitalize() for x in title.strip().split())
+        self.title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
         self.artist = artist
         self.index  = index
         self.laud_data = laud_data
@@ -461,7 +461,7 @@ class CRD_tuning():
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
-        self.title  = " ".join(x.capitalize() for x in title.strip().split())
+        self.title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
         self.artist = artist
         self.fpath = fpath
         self.lnum = lnum
@@ -494,7 +494,7 @@ class CRD_song():
             return comline
 
         if line.strip().startswith('[') and line.strip().endswith(']'):
-            return line
+            return line.strip()[1:-1]
 
         if line.lower().strip().startswith( 'capo' ):
             return line
