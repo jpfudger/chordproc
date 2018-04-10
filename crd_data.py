@@ -167,7 +167,7 @@ class CRD_artist():
 
 class CRD_album():
     def __init__(self,title,artist,index,laud_data):
-        self.title  = title.strip()
+        self.title  = " ".join(x.capitalize() for x in title.strip().split())
         self.artist = artist
         self.index  = index
         self.laud_data = laud_data
@@ -324,7 +324,7 @@ class CRD_chord():
         nochord_chars = [ 'l', 'k', 't', 'h', 'gg', 'y', 'v', 'ing' ]
 
         # the following notes cannot occur consecutively (e.g. Free) 
-        for note in [ 'a', 'c', 'e', 'f', 'g' ]:
+        for note in [ 'c', 'e', 'f', 'g' ]:
             if note + note in self.string.lower():
                 self.root = None
                 self.bass = None
@@ -461,7 +461,7 @@ class CRD_tuning():
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
-        self.title = title.strip()
+        self.title  = " ".join(x.capitalize() for x in title.strip().split())
         self.artist = artist
         self.fpath = fpath
         self.lnum = lnum
@@ -1124,7 +1124,7 @@ class CRD_data():
                 index_lines.append( '<br>' )
             cur_letter = song.title_sort[0]
             s_link = song.album.fname + '#' + song.link
-            index_lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.artist ) )
+            index_lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.artist.name ) )
         index_lines += [ '</div>', '</body>', '</html>' ]
         with open(self.opts["html_root"] + 'allsongs.html', 'w') as f:
             for l in index_lines:
