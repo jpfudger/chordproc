@@ -55,10 +55,10 @@ class CRD_artist():
         if data:
             self.laud_data = data.laud_data
             self.stock_tunings = data.stock_tunings
-        self.fname = name.lower() + '.html'
-        self.fname = re.sub( ' ', '_', self.fname )
-        self.fname = re.sub( '#', 's', self.fname )
-        self.index_fname = re.sub( '.html', '_index.html', self.fname )
+
+        alphaname = ''.join( [y for y in self.name if y.isalnum()] )
+        self.fname = 'artist_' + alphaname + '.html'
+        self.index_fname = 'artist_' + alphaname + '_index.html'
         self.tuning = None
     def add_album(self,title):
         album_index = '%d.%d' % ( self.index, len(self.albums) + 1 )
@@ -94,7 +94,8 @@ class CRD_artist():
         lines += common_html()
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s</title></h2>' % (self.index, self.name) ]
-        lines += [ '<hr>', '<a href="%s">Song Index</a>' % self.index_fname ]
+        total_songs = sum( [ len(a.songs) for a in self.albums ] )
+        lines += [ '<hr>', '<a href="%s">Song Index (%d)</a>' % ( self.index_fname, total_songs ) ]
         lines += [ '<hr>' ]
         #lines += [ '<ol>' ]
         for album in self.albums:
@@ -1100,7 +1101,7 @@ class CRD_data():
         for tuning in self.group_songs_by_tunings():
             tuning_lines.append( '<li><a class=tuning href="%s">%s</a> <div class=count>%d</div>' % 
                     ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
-            with open(self.opts["html_root"] + tuning.fname, 'w') as f:
+            with open(self.opts["html_root"] + 'tuning_' + tuning.fname, 'w') as f:
                 for l in tuning.html(True):
                     f.write('\n' + l)
         tuning_lines += [ '</ul>', '</body>', '</html>' ]
