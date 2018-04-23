@@ -513,8 +513,9 @@ class CRD_song():
                     return line
 
         regex = '([0-9xX]{6,})' 
-        m = re.search(regex, line)
-        if m:
+        if '---' in line:
+            pass # line is probably a tab
+        elif re.search(regex, line):
             # there is at least 1 fingering on this line
             # fingerings (e.g. 0x0434) should always be commented
             splits = re.split( r'(\s+)', line)
@@ -713,7 +714,7 @@ class CRD_song():
         if add_artist:
             name = ' (%s)' % self.artist.name
         lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, self.title + name) ]
-        if len(self.lines) > 100 and self.longest_line() <= 83:
+        if len(self.lines) > 100 and self.longest_line() <= 65:
             lines += [ '<div class=chords_3col>' ]
         elif len(self.lines) > 50:
             lines += [ '<div class=chords_2col>' ]
