@@ -322,7 +322,7 @@ class CRD_chord():
             self.bass = None
             return False
 
-        nochord_chars = [ 'l', 'k', 't', 'h', 'gg', 'y', 'v', 'ing' ]
+        nochord_chars = [ 'l', 'k', 't', 'h', 'gg', 'y', 'ing' ]
 
         # the following notes cannot occur consecutively (e.g. Free) 
         for note in [ 'c', 'e', 'f', 'g' ]:
@@ -624,18 +624,15 @@ class CRD_song():
                 formatted += re.sub( ' ', '&nbsp;', word )
             elif word == 'etc' or word == 'etc.':
                 formatted += '...'
-            elif word in [ 'n.c.', 'nc', 'n.c' ]:
-                if word == 'n.c.':
-                    formatted += '<div class=chordline>n/c</div> '
-                elif word == 'n.c':
-                    formatted += '<div class=chordline>n/c</div>'
-                elif word == 'nc':
-                    formatted += '<div class=chordline>n/c</div>'
+            elif word.lower() in [ 'n.c.', 'nc', 'n.c', 'n/c' ]:
+                formatted += len(word) * '&nbsp'
+            elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
+                formatted += '<div class=commentline>' + word + '</div>'
             elif word in [ '|', '-', '%', '*', '.', '|:', ':|', '[', ']' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
-            elif re.match( '\(?\s*[xX]\s*\d+\s*\)?', word ):
+            elif re.match( '\(?\s*[xX]?\s*\d+[xX]?\s*\)?', word ):
                 # this is to match (x4) for repetition
                 formatted += '<div class=commentline>' + word + '</div>'
             else:
