@@ -191,7 +191,7 @@ class CRD_album():
         lines += common_html()
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, title) ]
-        lines += [ self.get_playlist_link() ]
+        #lines += [ self.get_playlist_link() ]
         lines += [ '<hr>', '<ol>' ]
         for song in self.songs:
             lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
@@ -1029,14 +1029,14 @@ class CRD_data():
         artist_lines += [ '</head>' ]
         artist_lines += [ '<h2>ChordProc</h2>' ]
         artist_lines += [ '<hr>' ]
+
         artist_lines += [ '<br>' ]
         artist_lines += [ '<div class=artistlist>' ]
         artist_lines += [ '<ul>' ]
-        misc = []
+
         for artist in self.artists:
-            if not artist.name == 'Misc':
-                artist_lines.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
-                    ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
+            artist_lines.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
+               ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
             with open(self.opts["html_root"] + artist.fname, 'w') as f:
                 for l in artist.html():
                     f.write('\n' + l)
@@ -1045,46 +1045,19 @@ class CRD_data():
                 with open(album_path, 'w') as f:
                     for l in album.html():
                         f.write('\n' + l)
-                if artist.name == 'Misc':
-                    misc.append( [ album, album.fname ] )
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 for l in artist.html_index():
                     f.write('\n' + l)
         artist_lines += [ '</ul>', '</div>' ] 
-
+        artist_lines += [ '<br>' ]
         artist_lines += [ '<hr>' ]
-        artist_lines += [ '<div class=artistlist>' ]
-        # indices
-        artist_lines += [ '<br>Indices', '<ul>' ]
+        artist_lines += [ '<br>' ]
+        artist_lines += [ '<ul>' ]
         artist_lines += [ '<li> <a href=tunings.html>Tuning Index</a>' ]
         artist_lines += [ '<li> <a href=allsongs.html>Song Index</a>' ]
         artist_lines += [ '</ul>' ]
         artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<br>' ]
-
-        # misc
-        artist_lines += [ '<br>Misc by genre:', '<ul>' ]
-        for album, path in misc:
-            artist_lines.append( '<li><a href=%s>%s</a>' % ( path, album.title ) )
-        artist_lines += [ '</ul>' ]
-
-        # collections
-        if len(self.collections) > 0:
-            artist_lines += [ '<br>External collections:', '<ul>' ]
-            for collection in self.collections:
-                artist_lines.append( collection )
-            artist_lines += [ '</ul>' ]
-            artist_lines += [ '<br>' ]
-            artist_lines += [ '<br>' ]
-            artist_lines += [ '<br>' ]
-            artist_lines += [ '<br>' ]
-            artist_lines += [ '<br>' ]
-            artist_lines += [ '<br>' ]
-
-        artist_lines += [ '</div>' ]
         artist_lines += [ '<hr>' ]
-
         artist_lines += [ '</body>', '</html>' ]
         with open(self.opts["html_root"] + 'index.html', 'w') as f:
             for l in artist_lines:
