@@ -1070,7 +1070,7 @@ class CRD_data():
         tuning_lines += [ '<h2>ChordProc Tunings</h2>' ]
         tuning_lines += [ '<ul>' ]
         for tuning in self.group_songs_by_tunings():
-            tuning_lines.append( '<li><a class=tuning href="%s">%s</a> <div class=count>%d</div>' % 
+            tuning_lines.append( '<li><a class=tuning href="tuning_%s">%s</a> <div class=count>%d</div>' % 
                     ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
             with open(self.opts["html_root"] + 'tuning_' + tuning.fname, 'w') as f:
                 for l in tuning.html(True):
