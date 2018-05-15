@@ -1034,7 +1034,13 @@ class CRD_data():
         artist_lines += [ '<div class=artistlist>' ]
         artist_lines += [ '<ul>' ]
 
+        n_artists = 0
+        n_albums = 0
+        n_songs = 0
         for artist in self.artists:
+            n_artists += 1
+            n_albums += len(artist.albums)
+            n_songs += len(artist.all_songs())
             artist_lines.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
                ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
             with open(self.opts["html_root"] + artist.fname, 'w') as f:
@@ -1048,20 +1054,6 @@ class CRD_data():
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 for l in artist.html_index():
                     f.write('\n' + l)
-        artist_lines += [ '</ul>', '</div>' ] 
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<hr>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<ul>' ]
-        artist_lines += [ '<li> <a href=tunings.html>Tuning Index</a>' ]
-        artist_lines += [ '<li> <a href=allsongs.html>Song Index</a>' ]
-        artist_lines += [ '</ul>' ]
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<hr>' ]
-        artist_lines += [ '</body>', '</html>' ]
-        with open(self.opts["html_root"] + 'index.html', 'w') as f:
-            for l in artist_lines:
-                f.write('\n' + l)
         
         tuning_lines  = [ '<html>', '<body>', '<head>' ]
         tuning_lines += [ '<title>Chordproc</title>' ]
@@ -1069,15 +1061,39 @@ class CRD_data():
         tuning_lines += [ '</head>' ]
         tuning_lines += [ '<h2>ChordProc Tunings</h2>' ]
         tuning_lines += [ '<ul>' ]
+
+        n_tunings = 0
+        n_tunings_songs = 0
         for tuning in self.group_songs_by_tunings():
+            n_tunings += 1
+            n_tunings_songs += len(tuning.all_songs())
             tuning_lines.append( '<li><a class=tuning href="tuning_%s">%s</a> <div class=count>%d</div>' % 
                     ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
             with open(self.opts["html_root"] + 'tuning_' + tuning.fname, 'w') as f:
                 for l in tuning.html(True):
                     f.write('\n' + l)
+
         tuning_lines += [ '</ul>', '</body>', '</html>' ]
         with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
             for l in tuning_lines:
+                f.write('\n' + l)
+
+        artist_lines += [ '</ul>', '</div>' ] 
+        artist_lines += [ '<br>' ]
+        artist_lines += [ '<hr>' ]
+        artist_lines += [ '<br>' ]
+        artist_lines += [ '<ul>' ]
+        artist_lines.append( '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%d/%d</div>' 
+                % (n_tunings_songs, n_tunings) )
+        artist_lines.append( '<li> <a href=allsongs.html>Song Index</a> <div class=count>%d/%d/%d</div>' 
+                % (n_songs, n_albums, n_artists) )
+        artist_lines += [ '</ul>' ]
+        artist_lines += [ '<br>' ]
+        artist_lines += [ '<hr>' ]
+        artist_lines += [ '</body>', '</html>' ]
+
+        with open(self.opts["html_root"] + 'index.html', 'w') as f:
+            for l in artist_lines:
                 f.write('\n' + l)
 
         index_lines  = [ '<html>', '<body>', '<head>' ]
