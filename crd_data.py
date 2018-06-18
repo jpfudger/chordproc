@@ -709,7 +709,7 @@ class CRD_song():
                 self.is_comment_line(line)
     def html(self,add_artist=False,transpose=0,prefer_sharp=False):
         self.inherit_fingerings()
-        lines  = [ '<hr> <a class=songlink name=%s>' % self.link ] 
+        lines  = [ '<hr> <a name=%s></a>' % self.link ] 
         name = ''
         if add_artist:
             name = ' (%s)' % self.artist.name
