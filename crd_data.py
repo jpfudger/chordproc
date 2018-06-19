@@ -1101,15 +1101,26 @@ class CRD_data():
         index_lines += common_html()
         index_lines += [ '</head>' ]
         index_lines += [ '<h2>ChordProc Song Index</h2>' ]
-        index_lines += [ '<hr>', '<div class=songindex>' ]
+
+        alphastring = ''
+        for char in list('#ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+            alphastring += '<a href="#%s">%s</a> ' % ( char, char )
+        index_lines += [ alphastring ]
+
+        index_lines += [ '<hr>', '<h3>#</h3>', '<div class=songindex>' ]
         allsongs = self.all_songs()
         cur_letter = None
         for song in allsongs:
             if cur_letter == None:
                 pass
+            elif not song.title_sort[0] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                index_lines.append( '<br>' ) # all non alpha characters in same section
             elif cur_letter != song.title_sort[0]:
-                index_lines.append('<br>')
-                index_lines.append('<br>')
+                index_lines.append('</div>')
+                index_lines.append('<a name="%s">' % song.title_sort[0])
+                index_lines.append('<hr>')
+                index_lines.append('<h3>%s</h3>' % song.title_sort[0])
+                index_lines.append('<div class=songindex>')
             else:
                 index_lines.append( '<br>' )
             cur_letter = song.title_sort[0]
