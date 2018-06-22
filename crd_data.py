@@ -495,7 +495,8 @@ class CRD_song():
             return comline
 
         if line.strip().startswith('[') and line.strip().endswith(']'):
-            return line.strip()[1:-1]
+            m_ws = re.search('(^\s*)', line)
+            return m_ws.group(1) + line.strip()[1:-1]
 
         if line.lower().strip().startswith( 'capo' ):
             return line
