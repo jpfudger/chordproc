@@ -22,27 +22,28 @@ except ImportError:
 
 def common_html():
     lines = []
-    #lines = [ '<link rel="stylesheet" type="text/css" href="style.css">' ]
-    lines.append( '<link rel="stylesheet" type="text/css" href="style.css"     id="style">' )
-    lines.append( '<link rel="stylesheet"  type="text/css" href="styleweb.css"  id="styleweb">' )
+    #lines = [ '<link rel="stylesheet" type="text/css" href="style_dark.css">' ]
+    lines.append( '<link rel="stylesheet" type="text/css" href="style_dark.css"   id="style_dark">')
+    lines.append( '<link rel="stylesheet" type="text/css" href="style_light.css" id="style_light">')
     lines.append( '<script>' )
-    lines.append( 'document.getElementById("style").disabled    = false;' )
-    lines.append( 'document.getElementById("styleweb").disabled = true;' )
+    lines.append( 'document.getElementById("style_dark").disabled    = false;' )
+    lines.append( 'document.getElementById("style_light").disabled = true;' )
 
     lines.append( 'function toggleStyle() {' )
-    lines.append( '    if ( document.getElementById("style").disabled ) {' )
-    lines.append( '        document.getElementById("style").disabled    = false;' )
-    lines.append( '        document.getElementById("styleweb").disabled = true;' )
+    lines.append( '    if ( document.getElementById("style_dark").disabled ) {' )
+    lines.append( '        document.getElementById("style_dark").disabled  = false;' )
+    lines.append( '        document.getElementById("style_light").disabled = true;' )
     lines.append( '        }' )
     lines.append( '    else {' )
-    lines.append( '        document.getElementById("style").disabled    = true;' )
-    lines.append( '        document.getElementById("styleweb").disabled = false;' )
+    lines.append( '        document.getElementById("style_dark").disabled  = true;' )
+    lines.append( '        document.getElementById("style_light").disabled = false;' )
     lines.append( '        }' )
     lines.append( '    }' )
 
     lines.append( '</script>' )
-    #lines.append( '<button onclick="toggleStyle()">Toggle Style</button>' )
-
+    lines.append( '<div class=toggle>' )
+    lines.append( '    <a class=toggle href="javascript:void(0);" onclick="toggleStyle()">#</a>' )
+    lines.append( '</div>' )
     return lines
 
 class CRD_artist():
