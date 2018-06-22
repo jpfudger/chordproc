@@ -1107,7 +1107,7 @@ class CRD_data():
             alphastring += '<a href="#%s">%s</a> ' % ( char, char )
         index_lines += [ alphastring ]
 
-        index_lines += [ '<hr>', '<h3>#</h3>', '<div class=songindex>' ]
+        index_lines += [ '<br><hr>', '<h3>#</h3>', '<div class=songindex>' ]
         allsongs = self.all_songs()
         cur_letter = None
         for song in allsongs:
@@ -1118,7 +1118,7 @@ class CRD_data():
             elif cur_letter != song.title_sort[0]:
                 index_lines.append('</div>')
                 index_lines.append('<a name="%s">' % song.title_sort[0])
-                index_lines.append('<hr>')
+                index_lines.append('<br><hr>')
                 index_lines.append('<h3>%s</h3>' % song.title_sort[0])
                 index_lines.append('<div class=songindex>')
             else:
