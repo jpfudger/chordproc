@@ -554,7 +554,7 @@ class CRD_song():
         starter = ''
         ender = ''
         multichars = [ '.' ]
-        chars = [ '*', '|', '-', '[', ']', '{', '}', '(', ')' ]
+        chars = [ '|', '-', '[', ']', '{', '}', '(', ')' ]
 
         for x in multichars:
             while word.startswith(x):
