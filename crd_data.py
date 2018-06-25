@@ -20,6 +20,8 @@ except ImportError:
 #    tunings are listed by their offset notation.
 #
 
+nbsp = ' '  # '&nbsp;'
+
 def common_html():
     lines = []
     #lines = [ '<link rel="stylesheet" type="text/css" href="style_dark.css">' ]
@@ -605,13 +607,14 @@ class CRD_song():
 
         return word, starter, ender
     def markup_chord_line(self,line,transpose=0,prefer_sharp=False):
+        leader = '' # '<br>'
         comline = self.is_comment_line(line)
         if comline:
-            return '<br><div class=commentline>' + re.sub( ' ', '&nbsp;', comline ) + '</div>'
+            return leader + '<div class=commentline>' + re.sub( ' ', nbsp, comline ) + '</div>'
         splits = re.split( r'(\s+)', line)
         # this splits the line at start/end of whitespace regions,
         # so that contiguous whitespace counts as a word
-        formatted = '<br>'
+        formatted = leader
         got_a_not_chord = False
         for word in splits:
             if word == '':
@@ -624,11 +627,11 @@ class CRD_song():
                 got_a_not_chord = True
                 formatted += word
             elif word.isspace():
-                formatted += re.sub( ' ', '&nbsp;', word )
+                formatted += re.sub( ' ', nbsp, word )
             elif word == 'etc' or word == 'etc.':
                 formatted += '...'
             elif word.lower() in [ 'n.c.', 'nc', 'n.c', 'n/c' ]:
-                formatted += len(word) * '&nbsp'
+                formatted += len(word) * nbsp
             elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
                 formatted += '<div class=commentline>' + word + '</div>'
             elif word in [ '|', '-', '%', '*', '.', '|:', ':|', '[', ']' ]:
@@ -646,16 +649,16 @@ class CRD_song():
                     fingering = self.get_fingering(crd,True)
                     # if fingering == "" and self.tuning:
                     #     print( "[%s] No fingering for %s" % ( self.tuning.name(), crd ) )
-                    formatted += starter + '<div class=chordline%s>%s</div>%s' % \
+                    formatted += starter + '<div class=chord%s>%s</div>%s' % \
                                                 ( fingering, crd, ender )
                 else:
                     got_a_not_chord = True
                     formatted += starter + word + ender
         if got_a_not_chord:
-            line = re.sub( ' ', '&nbsp;', line )
+            line = re.sub( ' ', nbsp, line )
             line = re.sub( '<', '&lt;', line )
             line = re.sub( '>', '&gt;', line )
-            return '<br>' + line
+            return leader + line
         return formatted
     def format_song_lines(self,transpose=0,prefer_sharp=False):
         formatted = []
