@@ -358,6 +358,15 @@ class CRD_chord():
             self.bass = None
             return False
 
+        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain' ]:
+            # Come  (Pissing in a River)
+            # Ba    (Looking at Tomorrow)
+            # Bip   (Looking at Tomorrow)
+            # Doo   (Til I Die)
+            # Again (Crumb Begging Baghead)
+            # print("Rejecting: " + self.string)
+            return False
+
         return True
 
 class CRD_tuning():
