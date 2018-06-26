@@ -20,8 +20,6 @@ except ImportError:
 #    tunings are listed by their offset notation.
 #
 
-nbsp = ' '  # '&nbsp;'
-
 def common_html():
     lines = []
     #lines = [ '<link rel="stylesheet" type="text/css" href="style_dark.css">' ]
@@ -615,8 +613,9 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
-    def markup_chord_line(self,line,transpose=0,prefer_sharp=False):
-        leader = '' # '<br>'
+    def markup_chord_line(self,line,transpose=0,prefer_sharp=False,explicit_ws=False):
+        leader = '<br>' if explicit_ws else ''
+        nbsp = '&nbsp;' if explicit_ws else ''
         comline = self.is_comment_line(line)
         if comline:
             return leader + '<div class=commentline>' + re.sub( ' ', nbsp, comline ) + '</div>'
@@ -669,11 +668,11 @@ class CRD_song():
             line = re.sub( '>', '&gt;', line )
             return leader + line
         return formatted
-    def format_song_lines(self,transpose=0,prefer_sharp=False):
+    def format_song_lines(self,transpose=0,prefer_sharp=False,explicit_ws=False):
         formatted = []
         n_tab_lines = 0
         for line in self.lines:
-            newline = self.markup_chord_line(line,transpose,prefer_sharp)
+            newline = self.markup_chord_line(line,transpose,prefer_sharp,explicit_ws)
             formatted.append(newline)
 
             if ('-' in line) and ('|' in line):
@@ -721,7 +720,7 @@ class CRD_song():
         for line in self.lines:
             if re.search('[x0-9]{6}', line):
                 self.is_comment_line(line)
-    def html(self,add_artist=False,transpose=0,prefer_sharp=False):
+    def html(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
         self.inherit_fingerings()
         lines  = [ '<hr> <a name=%s></a>' % self.link ] 
         name = ''
@@ -734,7 +733,7 @@ class CRD_song():
             lines += [ '<div class=chords_2col>' ]
         else:
             lines += [ '<div class=chords_1col>' ]
-        lines += self.format_song_lines(transpose,prefer_sharp)
+        lines += self.format_song_lines(transpose,prefer_sharp,explicit_ws)
         lines += [ '</div>' ]
         lines += [ '<br><br>' ]
         return lines

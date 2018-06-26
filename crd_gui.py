@@ -112,14 +112,14 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
 
     def tweak_html(self, song, transpose, prefer_sharp=False):
         add_artist = self.onTuningsTab()
-        lines = song.html(add_artist,transpose,prefer_sharp)
+        lines = song.html(add_artist,transpose,prefer_sharp,True)
         text = "\n".join(lines)
 
         if self.hide_chord:
-            text = re.sub( '<div class=chordline([^>]*)>([^<]*)</div>',
+            text = re.sub( '<div class=chord([^>]*)>([^<]*)</div>',
                            '', text )
         else:
-            text = re.sub( '<div class=chordline([^>]*)>([^<]*)</div>', 
+            text = re.sub( '<div class=chord([^>]*)>([^<]*)</div>', 
                           r'<font color="%s" \1>\2</font>' % self.colour_chord, 
                           text )
 
