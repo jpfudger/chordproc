@@ -443,7 +443,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
             bar = viewer.verticalScrollBar()
             if bar:
                 bar_value = bar.value()
-            text = self.tweak_html(song, self.currentTranspose(1), False)
+            text = self.tweak_html(song, self.currentTranspose(1), True)
             self.currentViewer().setHtml(text)
             bar.setValue(bar_value)
 
