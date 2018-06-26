@@ -21,29 +21,34 @@ except ImportError:
 #
 
 def common_html():
-    lines = []
-    #lines = [ '<link rel="stylesheet" type="text/css" href="style_dark.css">' ]
-    lines.append( '<link rel="stylesheet" type="text/css" href="style_dark.css"   id="style_dark">')
-    lines.append( '<link rel="stylesheet" type="text/css" href="style_light.css" id="style_light">')
-    lines.append( '<script>' )
-    lines.append( 'document.getElementById("style_dark").disabled    = false;' )
-    lines.append( 'document.getElementById("style_light").disabled = true;' )
-
-    lines.append( 'function toggleStyle() {' )
-    lines.append( '    if ( document.getElementById("style_dark").disabled ) {' )
-    lines.append( '        document.getElementById("style_dark").disabled  = false;' )
-    lines.append( '        document.getElementById("style_light").disabled = true;' )
-    lines.append( '        }' )
-    lines.append( '    else {' )
-    lines.append( '        document.getElementById("style_dark").disabled  = true;' )
-    lines.append( '        document.getElementById("style_light").disabled = false;' )
-    lines.append( '        }' )
-    lines.append( '    }' )
-
-    lines.append( '</script>' )
-    lines.append( '<div class=toggle>' )
-    lines.append( '    <a class=toggle href="javascript:void(0);" onclick="toggleStyle()">#</a>' )
-    lines.append( '</div>' )
+    lines = [
+    # '<link rel="stylesheet" type="text/css" href="style_dark.css">',
+    '<html lang="en">',
+    '<head>',
+    '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
+    '    <link rel="stylesheet" type="text/css" href="style_dark.css"  id="style_dark">',
+    '    <link rel="stylesheet" type="text/css" href="style_light.css" id="style_light">',
+    '    <script>',
+    '    document.getElementById("style_dark").disabled    = false;',
+    '    document.getElementById("style_light").disabled = true;',
+    '    ',
+    '    function toggleStyle() {',
+    '        if ( document.getElementById("style_dark").disabled ) {',
+    '            document.getElementById("style_dark").disabled  = false;',
+    '            document.getElementById("style_light").disabled = true;',
+    '            }',
+    '        else {',
+    '            document.getElementById("style_dark").disabled  = true;',
+    '            document.getElementById("style_light").disabled = false;',
+    '            }',
+    '        }',
+    '    </script>',
+    '</head>',
+    '',
+    '<div class=toggle>',
+    '    <a class=toggle href="javascript:void(0);" onclick="toggleStyle()">#</a>',
+    '</div>',
+    ]
     return lines
 
 class CRD_artist():
@@ -615,7 +620,7 @@ class CRD_song():
         return word, starter, ender
     def markup_chord_line(self,line,transpose=0,prefer_sharp=False,explicit_ws=False):
         leader = '<br>' if explicit_ws else ''
-        nbsp = '&nbsp;' if explicit_ws else ''
+        nbsp = '&nbsp;' if explicit_ws else ' '
         comline = self.is_comment_line(line)
         if comline:
             return leader + '<div class=commentline>' + re.sub( ' ', nbsp, comline ) + '</div>'
