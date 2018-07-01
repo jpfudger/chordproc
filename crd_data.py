@@ -46,7 +46,7 @@ def common_html():
     '</head>',
     '',
     '<div class=toggle>',
-    '    <a class=toggle href="javascript:void(0);" onclick="toggleStyle()">#</a>',
+    '    <a class=toggle href="javascript:void(0);" onclick="toggleStyle()">##</a>',
     '</div>',
     ]
     return lines
@@ -568,7 +568,7 @@ class CRD_song():
         starter = ''
         ender = ''
         multichars = [ '.' ]
-        chars = [ '|', '-', '[', ']', '{', '}', '(', ')' ]
+        chars = [ '"', '|', '-', '[', ']', '{', '}', '(', ')' ]
 
         for x in multichars:
             while word.startswith(x):
@@ -602,14 +602,18 @@ class CRD_song():
 
         if starter == '(' and ender == ')':
             # Ignore () delimiting chords
-            starter = ''
-            ender = '  '
+            starter = '('
+            ender = ')'
         elif starter == '(':
-            word = '(' + word
-            starter = ''
+            word = word
+            starter = '('
         elif ender == ')':
-            word += ')'
-            ender = ''
+            if '(' in word:
+                word += ')'
+                ender = ''
+            else:
+                word += ''
+                ender = ')'
             
 
         # if starter == '{' and ender == '}' ):
@@ -1011,6 +1015,8 @@ class CRD_data():
         #self.summarise_data()
     def build_song_data(self):
         for f in glob.glob(self.opts["root"] + '/*.crd'):
+            #if not 'neil_young.crd' in f: continue
+            #if not 'bob_dylan.crd' in f: continue
             #if not 'bert_jansch.crd' in f: continue
             self.process_chord_file(f)
         self.artists.sort(key=lambda x: x.name)
