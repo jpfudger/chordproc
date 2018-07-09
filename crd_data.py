@@ -871,8 +871,7 @@ class CRD_data():
                 lines = f.readlines()
             self.process_chord_lines(lines,path)
         except:
-            raise
-            #print("Failed to process " + path + " (non-ASCII character?)")
+            raise ValueError("Failed to process " + path + " (non-ASCII character?)")
     def process_chord_lines(self,lines,path=None):
         level = 0
         this_artist = None
