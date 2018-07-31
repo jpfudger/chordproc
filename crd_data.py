@@ -478,6 +478,8 @@ class CRD_song():
         self.fingerings = {}
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
+        if title[0] in [ "'", '"', '(' ]:
+            self.title_sort = self.title[1:]
         self.gui_item = None
     def add_fingering(self,chord,fingering):
         self.fingerings[ chord.format() ] = fingering.lower()
