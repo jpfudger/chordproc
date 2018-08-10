@@ -353,12 +353,13 @@ class CRD_chord():
             self.bass = None
             return False
 
-        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain' ]:
+        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain', 'ocaine!', 'um', 'o' ]:
             # Come  (Pissing in a River)
             # Ba    (Looking at Tomorrow)
             # Bip   (Looking at Tomorrow)
             # Doo   (Til I Die)
             # Again (Crumb Begging Baghead)
+            # Cocaine, Dum, Do
             # print("Rejecting: " + self.string)
             return False
 
@@ -636,6 +637,8 @@ class CRD_song():
                 formatted += word
             elif ',' in word:
                 got_a_not_chord = True
+                formatted += word
+            elif word.replace('.','') == '':
                 formatted += word
             elif word.isspace():
                 formatted += re.sub( ' ', nbsp, word )
