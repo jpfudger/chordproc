@@ -3,6 +3,7 @@ import os
 import pickle
 import re
 import subprocess
+from datetime import datetime
 
 try:
     from laudable.laudable import LAUD_data
@@ -115,7 +116,7 @@ class CRD_artist():
         lines += common_html()
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s Song Index</title></h2>' % (self.index, self.name) ]
-        lines += [ '<hr>', '<div class=songindex>' ]
+        lines += [ '<hr>', '<br>', '<div class=songindex>' ]
         #lines += [ '<ol>' ]
         allsongs = self.all_songs()
         cur_letter = None
@@ -131,7 +132,7 @@ class CRD_artist():
             s_link = song.album.fname + '#' + song.link
             lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.album.title ) )
         #lines += [ '</ol>' ]
-        lines += [ '</div>' ]
+        lines += [ '</div>', '<br>' ]
         lines += [ '</body>', '</html>' ]
         return lines
     def latex(self):
@@ -1042,6 +1043,7 @@ class CRD_data():
         artist_lines += common_html()
         artist_lines += [ '</head>' ]
         artist_lines += [ '<h2>ChordProc</h2>' ]
+        artist_lines += [ 'Last updated: ' + datetime.today().strftime("%d %b %Y") ]
         artist_lines += [ '<hr>' ]
 
         artist_lines += [ '<br>' ]
