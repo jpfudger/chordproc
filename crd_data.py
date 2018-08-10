@@ -33,11 +33,13 @@ def common_html():
     '</head>',
     '',
     '<a class=toggle href="javascript:void(0);" onclick="cycleChords(true);">',
-    '    <div class=toggle_up></div></a>',
+    '    <div id=top_left></div></a>',
     '<a class=toggle href="javascript:void(0);" onclick="cycleChords(false);">',
-    '    <div class=toggle_down></div></a>',
+    '    <div id=bottom_left></div></a>',
     '<a class=toggle href="javascript:void(0);" onclick="toggleStyle();">',
-    '    <div class=toggle_style></div></a>',
+    '    <div id=top_right></div></a>',
+    '<a class=toggle href="javascript:void(0);" onclick="toggleChords();">',
+    '    <div id=bottom_right></div></a>',
     ]
     return lines
 
@@ -496,19 +498,19 @@ class CRD_song():
     def is_comment_line(self,line):
         if line.strip().startswith( self.comchar + ' '):
             comline = line.replace( self.comchar + ' ', '', 1 )
-            return comline
+            return comline, "comment"
         elif line.strip().startswith( self.comchar ):
             comline = line.replace( self.comchar, '', 1 )
-            return comline
+            return comline, "comment"
 
         if line.strip().startswith('[') and line.strip().endswith(']'):
             m_ws = re.search('(^\s*)', line)
-            return m_ws.group(1) + line.strip()[1:-1]
+            return ( m_ws.group(1) + line.strip()[1:-1] ), "comment"
 
         if line.lower().strip().startswith( 'capo' ):
-            return line
+            return line, "capo"
         elif line.lower().strip().startswith( 'tuning' ):
-            return line
+            return line, "tuning"
 
         autocomment = False
         if autocomment:
@@ -518,7 +520,7 @@ class CRD_song():
 
             for cw in commentwords:
                 if cw.lower() in line.lower():
-                    return line
+                    return line, "comment"
 
         regex = '([0-9xX]{6,})' 
         if '---' in line:
@@ -553,9 +555,9 @@ class CRD_song():
                         fingering = None
                 else:
                     chord = CRD_chord(word)
-            return line
+            return line, "comment"
 
-        return None
+        return None, None
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
@@ -617,9 +619,9 @@ class CRD_song():
     def markup_chord_line(self,line,transpose=0,prefer_sharp=False,explicit_ws=False):
         leader = '<br>' if explicit_ws else ''
         nbsp = '&nbsp;' if explicit_ws else ' '
-        comline = self.is_comment_line(line)
+        comline, comtype = self.is_comment_line(line)
         if comline:
-            return leader + '<div class=commentline>' + re.sub( ' ', nbsp, comline ) + '</div>'
+            return leader + '<div class=%s>%s</div>' % ( comtype, re.sub( ' ', nbsp, comline ) )
         splits = re.split( r'(\s+)', line)
         # this splits the line at start/end of whitespace regions,
         # so that contiguous whitespace counts as a word
@@ -642,14 +644,14 @@ class CRD_song():
             elif word.lower() in [ 'n.c.', 'nc', 'n.c', 'n/c' ]:
                 formatted += len(word) * nbsp
             elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
-                formatted += '<div class=commentline>' + word + '</div>'
+                formatted += '<div class=comment>' + word + '</div>'
             elif word in [ '|', '-', '%', '*', '.', '|:', ':|', '[', ']' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
             elif re.match( '\(?\s*[xX]?\s*\d+[xX]?\s*\)?', word ):
                 # this is to match (x4) for repetition
-                formatted += '<div class=commentline>' + word + '</div>'
+                formatted += '<div class=comment>' + word + '</div>'
             else:
                 word, starter, ender = self.strip_delimeters(word)
                 chord = CRD_chord(word)
