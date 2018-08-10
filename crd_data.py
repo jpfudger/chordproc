@@ -522,7 +522,7 @@ class CRD_song():
                 if cw.lower() in line.lower():
                     return line, "comment"
 
-        regex = '([0-9xX]{6,})' 
+        regex = '([0-9xXA-G]{6,})' 
         if '---' in line:
             pass # line is probably a tab
         elif re.search(regex, line):
@@ -721,7 +721,7 @@ class CRD_song():
     def process_local_fingerings(self):
         # extract local fingerings from each song line
         for line in self.lines:
-            if re.search('[x0-9]{6}', line):
+            if re.search('[x0-9A-G]{6}', line):
                 self.is_comment_line(line)
     def html(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
         self.inherit_fingerings()
