@@ -32,14 +32,10 @@ def common_html():
     '    <script src="script.js"></script>',
     '</head>',
     '',
-    '<a class=toggle href="javascript:void(0);" onclick="cycleChords(true);">',
-    '    <div id=top_left></div></a>',
-    '<a class=toggle href="javascript:void(0);" onclick="cycleChords(false);">',
-    '    <div id=bottom_left></div></a>',
-    '<a class=toggle href="javascript:void(0);" onclick="toggleStyle();">',
-    '    <div id=top_right></div></a>',
-    '<a class=toggle href="javascript:void(0);" onclick="toggleChords();">',
-    '    <div id=bottom_right></div></a>',
+    '<a class=toggle onclick="incChords();"><div id=t_l></div></a>',
+    '<a class=toggle onclick="decChords();"><div id=b_l></div></a>',
+    '<a class=toggle onclick="toggleStyle();"><div id=t_r></div></a>',
+    '<a class=toggle onclick="toggleChords();"><div id=b_r></div></a>',
     ]
     return lines
 
