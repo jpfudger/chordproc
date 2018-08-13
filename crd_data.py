@@ -21,7 +21,7 @@ except ImportError:
 #    tunings are listed by their offset notation.
 #
 
-def common_html():
+def common_html(want_chord_controls=True):
     lines = [
     # '<link rel="stylesheet" type="text/css" href="style_dark.css">',
     '<html lang="en">',
@@ -32,11 +32,14 @@ def common_html():
     '    <script src="script.js"></script>',
     '</head>',
     '',
-    '<a class=toggle onclick="incChords();"><div id=t_l></div></a>',
-    '<a class=toggle onclick="decChords();"><div id=b_l></div></a>',
     '<a class=toggle onclick="toggleStyle();"><div id=t_r></div></a>',
-    '<a class=toggle onclick="toggleChords();"><div id=b_r></div></a>',
     ]
+    if want_chord_controls:
+        lines += [
+        '<a class=toggle onclick="incChords();"><div id=t_l></div></a>',
+        '<a class=toggle onclick="decChords();"><div id=b_l></div></a>',
+        '<a class=toggle onclick="toggleChords();"><div id=b_r></div></a>',
+        ]
     return lines
 
 class CRD_artist():
@@ -69,7 +72,7 @@ class CRD_artist():
     def html_songs(self,add_artist=False):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
-        lines += common_html()
+        lines += common_html(False)
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, self.name) ]
         lines += [ '<hr>', '<ol>' ]
@@ -85,7 +88,7 @@ class CRD_artist():
     def html_albums(self,add_artist=False):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
-        lines += common_html()
+        lines += common_html(False)
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s</title></h2>' % (self.index, self.name) ]
         total_songs = sum( [ len(a.songs) for a in self.albums ] )
@@ -111,7 +114,7 @@ class CRD_artist():
     def html_index(self):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
-        lines += common_html()
+        lines += common_html(False)
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s Song Index</title></h2>' % (self.index, self.name) ]
         lines += [ '<hr>', '<br>', '<div class=songindex>' ]
@@ -1041,7 +1044,7 @@ class CRD_data():
     def make_html(self):
         artist_lines  = [ '<html>', '<body>', '<head>' ]
         artist_lines += [ '<title>Chordproc</title>' ]
-        artist_lines += common_html()
+        artist_lines += common_html(False)
         artist_lines += [ '</head>' ]
         artist_lines += [ '<h2>ChordProc</h2>' ]
         artist_lines += [ 'Last updated: ' + datetime.today().strftime("%d %b %Y") ]
@@ -1074,7 +1077,7 @@ class CRD_data():
         
         tuning_lines  = [ '<html>', '<body>', '<head>' ]
         tuning_lines += [ '<title>Chordproc</title>' ]
-        tuning_lines += common_html()
+        tuning_lines += common_html(False)
         tuning_lines += [ '</head>' ]
         tuning_lines += [ '<h2>ChordProc Tunings</h2>' ]
         tuning_lines += [ '<ul>' ]
@@ -1115,7 +1118,7 @@ class CRD_data():
 
         index_lines  = [ '<html>', '<body>', '<head>' ]
         index_lines += [ '<title>Chordproc</title>' ]
-        index_lines += common_html()
+        index_lines += common_html(False)
         index_lines += [ '</head>' ]
         index_lines += [ '<h2>ChordProc Song Index</h2>' ]
 
