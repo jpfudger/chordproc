@@ -23,22 +23,17 @@ except ImportError:
 
 def common_html(want_chord_controls=True):
     lines = [
-    # '<link rel="stylesheet" type="text/css" href="style_dark.css">',
-    '<html lang="en">',
-    '<head>',
-    '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
-    '    <link rel="stylesheet" type="text/css" href="style_dark.css"  id="style_dark">',
-    '    <link rel="stylesheet" type="text/css" href="style_light.css" id="style_light">',
-    '    <script src="script.js"></script>',
-    '</head>',
-    '',
-    '<a class=toggle onclick="toggleStyle();"><div id=t_r></div></a>',
+    '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
+    '<link rel="stylesheet" type="text/css" href="style_dark.css"  id="style_dark">',
+    '<link rel="stylesheet" type="text/css" href="style_light.css" id="style_light">',
+    '<script src="script.js"></script>',
+    '<a onclick="toggleStyle();"><div id=t_r></div></a>',
     ]
     if want_chord_controls:
         lines += [
-        '<a class=toggle onclick="incChords();"><div id=t_l></div></a>',
-        '<a class=toggle onclick="decChords();"><div id=b_l></div></a>',
-        '<a class=toggle onclick="toggleChords();"><div id=b_r></div></a>',
+        '<a onclick="incChords();"><div id=t_l></div></a>',
+        '<a onclick="decChords();"><div id=b_l></div></a>',
+        '<a onclick="toggleChords();"><div id=b_r></div></a>',
         ]
     return lines
 
