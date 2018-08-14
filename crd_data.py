@@ -1060,92 +1060,93 @@ class CRD_data():
                     f.write('\n' + l)
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links
     def make_tuning_index(self):
-        tuning_lines  = [ '<html>', '<body>', '<head>' ]
-        tuning_lines += [ '<title>Chordproc</title>' ]
-        tuning_lines += common_html(False)
-        tuning_lines += [ '</head>' ]
-        tuning_lines += [ '<h2>ChordProc Tunings</h2>' ]
-        tuning_lines += [ '<ul>' ]
+        lines  = [ '<html>', '<body>', '<head>' ]
+        lines += [ '<title>Chordproc</title>' ]
+        lines += common_html(False)
+        lines += [ '</head>' ]
+        lines += [ '<h2>ChordProc Tuning Index</h2>' ]
+        lines += [ '<ul>' ]
 
         n_tunings = 0
         n_tunings_songs = 0
         for tuning in self.group_songs_by_tunings():
             n_tunings += 1
             n_tunings_songs += len(tuning.all_songs())
-            tuning_lines.append( '<li><a class=tuning href="tuning_%s">%s</a> <div class=count>%d</div>' % 
+            lines.append( '<li><a class=tuning href="tuning_%s">%s</a> <div class=count>%d</div>' % 
                     ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
             with open(self.opts["html_root"] + 'tuning_' + tuning.fname, 'w') as f:
                 for l in tuning.html(True):
                     f.write('\n' + l)
 
-        tuning_lines += [ '</ul>', '</body>', '</html>' ]
+        lines += [ '</ul>', '</body>', '</html>' ]
         with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
-            for l in tuning_lines:
+            for l in lines:
                 f.write('\n' + l)
 
         return "%d/%d" % (n_tunings_songs, n_tunings)
-    def make_html(self):
-        artists_summary, artists_links = self.make_artists_index()
-        tunings_summary = self.make_tuning_index()
-
-        artist_lines  = [ '<html>', '<body>', '<head>' ]
-        artist_lines += [ '<title>Chordproc</title>' ]
-        artist_lines += common_html(False)
-        artist_lines += [ '</head>' ]
-        artist_lines += [ '<h2>ChordProc</h2>' ]
-        artist_lines += [ '<hr>', '<ul>' ]
-        artist_lines += [ '<li> Last updated: ' + datetime.now().strftime("%d %b %Y %X") ]
-        artist_lines += [ '<li> <a href=allsongs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
-        artist_lines += [ '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
-        artist_lines += [ '</ul>', '<hr>' ]
-        artist_lines += [ '<br>' ]
-
-        artist_lines += [ '<div class=artistlist>' ]
-        artist_lines += [ '<ul>' ]
-        artist_lines += artists_links
-        artist_lines += [ '</ul>' ] 
-        artist_lines += [ '</div>' ] 
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<hr>' ]
-        artist_lines += [ '</body>', '</html>' ]
-
-        with open(self.opts["html_root"] + 'index.html', 'w') as f:
-            for l in artist_lines:
-                f.write('\n' + l)
-
-        index_lines  = [ '<html>', '<body>', '<head>' ]
-        index_lines += [ '<title>Chordproc</title>' ]
-        index_lines += common_html(False)
-        index_lines += [ '</head>' ]
-        index_lines += [ '<h2>ChordProc Song Index</h2>' ]
+    def make_song_index(self):
+        lines  = [ '<html>', '<body>', '<head>' ]
+        lines += [ '<title>Chordproc</title>' ]
+        lines += common_html(False)
+        lines += [ '</head>' ]
+        lines += [ '<h2>ChordProc Song Index</h2>' ]
 
         alphastring = ''
         for char in list('#ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
             alphastring += '<a href="#%s">%s</a> ' % ( char, char )
-        index_lines += [ alphastring ]
+        lines += [ alphastring ]
 
-        index_lines += [ '<br><hr>', '<h3>#</h3>', '<div class=songindex>' ]
+        lines += [ '<br><hr>', '<h3>#</h3>', '<div class=songindex>' ]
         allsongs = self.all_songs()
         cur_letter = None
         for song in allsongs:
             if cur_letter == None:
                 pass
             elif not song.title_sort[0] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                index_lines.append( '<br>' ) # all non alpha characters in same section
+                lines.append( '<br>' ) # all non alpha characters in same section
             elif cur_letter != song.title_sort[0]:
-                index_lines.append('</div>')
-                index_lines.append('<a name="%s">' % song.title_sort[0])
-                index_lines.append('<br><hr>')
-                index_lines.append('<h3>%s</h3>' % song.title_sort[0])
-                index_lines.append('<div class=songindex>')
+                lines.append('</div>')
+                lines.append('<a name="%s">' % song.title_sort[0])
+                lines.append('<br><hr>')
+                lines.append('<h3>%s</h3>' % song.title_sort[0])
+                lines.append('<div class=songindex>')
             else:
-                index_lines.append( '<br>' )
+                lines.append( '<br>' )
             cur_letter = song.title_sort[0]
             s_link = song.album.fname + '#' + song.link
-            index_lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.artist.name ) )
-        index_lines += [ '</div>', '</body>', '</html>' ]
+            lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.artist.name ) )
+        lines += [ '</div>', '</body>', '</html>' ]
         with open(self.opts["html_root"] + 'allsongs.html', 'w') as f:
-            for l in index_lines:
+            for l in lines:
+                f.write('\n' + l)
+    def make_html(self):
+        self.make_song_index()
+        artists_summary, artists_links = self.make_artists_index()
+        tunings_summary = self.make_tuning_index()
+
+        lines  = [ '<html>', '<body>', '<head>' ]
+        lines += [ '<title>Chordproc</title>' ]
+        lines += common_html(False)
+        lines += [ '</head>' ]
+        lines += [ '<h2>ChordProc</h2>' ]
+        lines += [ '<hr>', '<ul>' ]
+        lines += [ '<li> <a href=allsongs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
+        lines += [ '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
+        lines += [ '<li> Last updated: ' + datetime.now().strftime("%d %b %Y %X") ]
+        lines += [ '</ul>', '<hr>' ]
+        lines += [ '<br>' ]
+
+        lines += [ '<div class=artistlist>' ]
+        lines += [ '<ul>' ]
+        lines += artists_links
+        lines += [ '</ul>' ] 
+        lines += [ '</div>' ] 
+        lines += [ '<br>' ]
+        lines += [ '<hr>' ]
+        lines += [ '</body>', '</html>' ]
+
+        with open(self.opts["html_root"] + 'index.html', 'w') as f:
+            for l in lines:
                 f.write('\n' + l)
     def lookup_chord(self,tuning,chord):
         fingerings = []
