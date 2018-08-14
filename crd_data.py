@@ -27,13 +27,13 @@ def common_html(want_chord_controls=True):
     '<link rel="stylesheet" type="text/css" href="style_dark.css"  id="style_dark">',
     '<link rel="stylesheet" type="text/css" href="style_light.css" id="style_light">',
     '<script src="script.js"></script>',
-    '<a onclick="toggleStyle();"><div id=t_r></div></a>',
+    '<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
     ]
     if want_chord_controls:
         lines += [
-        '<a onclick="incChords();"><div id=t_l></div></a>',
-        '<a onclick="decChords();"><div id=b_l></div></a>',
-        '<a onclick="toggleChords();"><div id=b_r></div></a>',
+        '<a onclick="transpose_up();" title="Transpose Up"><div id=t_l></div></a>',
+        '<a onclick="transpose_down();" title="Transpose Down"><div id=b_l></div></a>',
+        '<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>',
         ]
     return lines
 
@@ -517,10 +517,10 @@ class CRD_song():
                 if cw.lower() in line.lower():
                     return line, "comment"
 
-        regex = '([0-9xXA-G]{6,})' 
+        finger_regex = '([0-9xXA-G]{6,})' 
         if '---' in line:
             pass # line is probably a tab
-        elif re.search(regex, line):
+        elif re.search(finger_regex, line):
             # there is at least 1 fingering on this line
             # fingerings (e.g. 0x0434) should always be commented
             splits = re.split( r'(\s+)', line)
@@ -541,7 +541,7 @@ class CRD_song():
 
                 if chord and chord.is_chord():
                     # already got a chord... check for fingerings
-                    m = re.search(regex, word)
+                    m = re.search(finger_regex, word)
                     if m:
                         # word is fingering
                         fingering = m.group(1)
@@ -550,7 +550,7 @@ class CRD_song():
                         fingering = None
                 else:
                     chord = CRD_chord(word)
-            return line, "comment"
+            return line, "fingering"
 
         return None, None
     def strip_delimeters(self,word):
@@ -1042,7 +1042,7 @@ class CRD_data():
         artist_lines += common_html(False)
         artist_lines += [ '</head>' ]
         artist_lines += [ '<h2>ChordProc</h2>' ]
-        artist_lines += [ 'Last updated: ' + datetime.today().strftime("%d %b %Y") ]
+        artist_lines += [ 'Last updated: ' + datetime.now().strftime("%d %b %Y %X") ]
         artist_lines += [ '<hr>' ]
 
         artist_lines += [ '<br>' ]
