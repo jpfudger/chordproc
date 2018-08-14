@@ -67,7 +67,7 @@ class CRD_artist():
     def html_songs(self,add_artist=False):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
-        lines += common_html(False)
+        lines += common_html()
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, self.name) ]
         lines += [ '<hr>', '<ol>' ]
