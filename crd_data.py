@@ -1036,27 +1036,16 @@ class CRD_data():
             # sort by offset => similar tuning appear next to each other
             self.tunings.sort(key=lambda x: x.tuning.offset())
         return self.tunings
-    def make_html(self):
-        artist_lines  = [ '<html>', '<body>', '<head>' ]
-        artist_lines += [ '<title>Chordproc</title>' ]
-        artist_lines += common_html(False)
-        artist_lines += [ '</head>' ]
-        artist_lines += [ '<h2>ChordProc</h2>' ]
-        artist_lines += [ 'Last updated: ' + datetime.now().strftime("%d %b %Y %X") ]
-        artist_lines += [ '<hr>' ]
-
-        artist_lines += [ '<br>' ]
-        artist_lines += [ '<div class=artistlist>' ]
-        artist_lines += [ '<ul>' ]
-
+    def make_artists_index(self):
         n_artists = 0
         n_albums = 0
         n_songs = 0
+        links = []
         for artist in self.artists:
             n_artists += 1
             n_albums += len(artist.albums)
             n_songs += len(artist.all_songs())
-            artist_lines.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
+            links.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
                ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
             with open(self.opts["html_root"] + artist.fname, 'w') as f:
                 for l in artist.html():
@@ -1069,7 +1058,8 @@ class CRD_data():
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 for l in artist.html_index():
                     f.write('\n' + l)
-        
+        return "%d/%d/%d" % (n_songs, n_albums, n_artists), links
+    def make_tuning_index(self):
         tuning_lines  = [ '<html>', '<body>', '<head>' ]
         tuning_lines += [ '<title>Chordproc</title>' ]
         tuning_lines += common_html(False)
@@ -1093,16 +1083,28 @@ class CRD_data():
             for l in tuning_lines:
                 f.write('\n' + l)
 
-        artist_lines += [ '</ul>', '</div>' ] 
+        return "%d/%d" % (n_tunings_songs, n_tunings)
+    def make_html(self):
+        artists_summary, artists_links = self.make_artists_index()
+        tunings_summary = self.make_tuning_index()
+
+        artist_lines  = [ '<html>', '<body>', '<head>' ]
+        artist_lines += [ '<title>Chordproc</title>' ]
+        artist_lines += common_html(False)
+        artist_lines += [ '</head>' ]
+        artist_lines += [ '<h2>ChordProc</h2>' ]
+        artist_lines += [ '<hr>', '<ul>' ]
+        artist_lines += [ '<li> Last updated: ' + datetime.now().strftime("%d %b %Y %X") ]
+        artist_lines += [ '<li> <a href=allsongs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
+        artist_lines += [ '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
+        artist_lines += [ '</ul>', '<hr>' ]
         artist_lines += [ '<br>' ]
-        artist_lines += [ '<hr>' ]
-        artist_lines += [ '<br>' ]
+
+        artist_lines += [ '<div class=artistlist>' ]
         artist_lines += [ '<ul>' ]
-        artist_lines.append( '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%d/%d</div>' 
-                % (n_tunings_songs, n_tunings) )
-        artist_lines.append( '<li> <a href=allsongs.html>Song Index</a> <div class=count>%d/%d/%d</div>' 
-                % (n_songs, n_albums, n_artists) )
-        artist_lines += [ '</ul>' ]
+        artist_lines += artists_links
+        artist_lines += [ '</ul>' ] 
+        artist_lines += [ '</div>' ] 
         artist_lines += [ '<br>' ]
         artist_lines += [ '<hr>' ]
         artist_lines += [ '</body>', '</html>' ]
