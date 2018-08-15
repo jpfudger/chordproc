@@ -509,7 +509,7 @@ class CRD_song():
         if line.lower().strip().startswith( 'capo' ):
             return line, "capo"
         elif self.tuning and line.lower().strip().startswith( 'tuning' ):
-            link = "<a href=\"tuning_%s\">%s</a>" % ( self.tuning.offset() + '.html', line )
+            link = "<a href=\"tunings.html#%s\">%s</a>" % ( self.tuning.offset(), line )
             return link, "tuning"
 
         autocomment = False
@@ -1072,18 +1072,31 @@ class CRD_data():
         lines += [ '<h2>ChordProc Tuning Index</h2>' ]
         lines += [ '<ul>' ]
 
+        body = []
+
         n_tunings = 0
         n_tunings_songs = 0
-        for tuning in self.group_songs_by_tunings():
+        for tartist in self.group_songs_by_tunings():
             n_tunings += 1
-            n_tunings_songs += len(tuning.all_songs())
-            lines.append( '<li><a class=tuning href="tuning_%s">%s</a> <div class=count>%d</div>' % 
-                    ( tuning.fname, tuning.name, len(tuning.all_songs() ) ) )
-            with open(self.opts["html_root"] + 'tuning_' + tuning.fname, 'w') as f:
-                for l in tuning.html(True):
-                    f.write('\n' + l)
+            n_tunings_songs += len(tartist.all_songs())
+            offset = tartist.tuning.offset()
+            lines.append( '<li><a class=tuning href="#%s">%s</a> <div class=count>%d</div>' %
+                    ( offset, tartist.name, len(tartist.all_songs() ) ) )
+
+            body.append( '<hr> <a name=%s></a>' % offset )
+            body.append( '<h3>%s</h3>' % tartist.name )
+            body.append( '<ol>' )
+
+            for song in tartist.all_songs():
+                s_link = song.album.fname + '#' + song.link
+                body.append( '<li> <a href="%s">%s</a> (%s)' % ( s_link, song.title, song.artist.name ) )
+            body.append( '</ol>' )
+            body.append( '<br>' )
 
         lines += [ '</ul>', '</body>', '</html>' ]
+
+        lines += body
+
         with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
             for l in lines:
                 f.write('\n' + l)
