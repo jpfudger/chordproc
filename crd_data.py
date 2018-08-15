@@ -72,7 +72,11 @@ class CRD_artist():
         lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, self.name) ]
         lines += [ '<hr>', '<ol>' ]
         for song in self.all_songs():
-            lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
+            link = '<li><a href=#%s>%s</a>' % ( song.link, song.title )
+            if self.tuning:
+                link += ' (%s)' % song.artist.name
+            lines.append( link )
+
         lines += [ '</ol>' ]
         for song in self.all_songs():
             lines += song.html(add_artist)[:]
@@ -504,8 +508,9 @@ class CRD_song():
 
         if line.lower().strip().startswith( 'capo' ):
             return line, "capo"
-        elif line.lower().strip().startswith( 'tuning' ):
-            return line, "tuning"
+        elif self.tuning and line.lower().strip().startswith( 'tuning' ):
+            link = "<a href=\"tuning_%s\">%s</a>" % ( self.tuning.offset() + '.html', line )
+            return link, "tuning"
 
         autocomment = False
         if autocomment:
@@ -1132,7 +1137,6 @@ class CRD_data():
         lines += [ '<hr>', '<ul>' ]
         lines += [ '<li> <a href=allsongs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
         lines += [ '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
-        lines += [ '<li> Last updated: ' + datetime.now().strftime("%d %b %Y %X") ]
         lines += [ '</ul>', '<hr>' ]
         lines += [ '<br>' ]
 
@@ -1143,6 +1147,9 @@ class CRD_data():
         lines += [ '</div>' ] 
         lines += [ '<br>' ]
         lines += [ '<hr>' ]
+        lines += [ '<ul>' ]
+        lines += [ '<li> ' + datetime.now().strftime("%d %b %Y %X") ]
+        lines += [ '</ul>' ]
         lines += [ '</body>', '</html>' ]
 
         with open(self.opts["html_root"] + 'index.html', 'w') as f:
