@@ -1070,6 +1070,7 @@ class CRD_data():
         lines += common_html(False)
         lines += [ '</head>' ]
         lines += [ '<h2>ChordProc Tuning Index</h2>' ]
+        lines += [ '<hr>' ]
         lines += [ '<ul>' ]
 
         body = []
@@ -1093,9 +1094,9 @@ class CRD_data():
             body.append( '</ol>' )
             body.append( '<br>' )
 
-        lines += [ '</ul>', '</body>', '</html>' ]
-
+        lines += [ '</ul>', '<br>' ]
         lines += body
+        lines += [ '<br>', '</body>', '</html>' ]
 
         with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
             for l in lines:
