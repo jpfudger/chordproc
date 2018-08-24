@@ -124,10 +124,10 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                           text )
 
         if self.hide_comment:
-            text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
+            text = re.sub( '<div class=comment([^>]*)>([^<]*)</div>', 
                            '', text )
         else:
-            text = re.sub( '<div class=commentline([^>]*)>([^<]*)</div>', 
+            text = re.sub( '<div class=comment([^>]*)>([^<]*)</div>', 
                           r'<font color="%s" \1>\2</font>' % self.colour_comment, 
                           text )
 
