@@ -89,6 +89,7 @@ class Ui_MainWindow(object):
         self.lineEdit.setObjectName("lineEdit")
         self.horizontalLayout_5.addWidget(self.lineEdit)
         self.checkLyrics = QtWidgets.QCheckBox(self.tab_search)
+        self.checkLyrics.setChecked(True)
         self.checkLyrics.setObjectName("checkLyrics")
         self.horizontalLayout_5.addWidget(self.checkLyrics)
         self.verticalLayout_7.addLayout(self.horizontalLayout_5)
