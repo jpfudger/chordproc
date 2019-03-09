@@ -24,8 +24,8 @@ except ImportError:
 def common_html(want_chord_controls=True):
     lines = [
     '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
-    '<link rel="stylesheet" type="text/css" href="style_dark.css"  id="style_dark">',
-    '<link rel="stylesheet" type="text/css" href="style_light.css" id="style_light">',
+    '<link rel="stylesheet" type="text/css" href="style.css" id="style">',
+    '<link rel="stylesheet" type="text/css" href="style_alt.css"  id="style_alt">',
     '<script src="script.js"></script>',
     '<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
     ]
@@ -1147,7 +1147,8 @@ class CRD_data():
         lines += [ '<title>Chordproc</title>' ]
         lines += common_html(False)
         lines += [ '</head>' ]
-        lines += [ '<h2>ChordProc</h2>' ]
+        timestamp =  datetime.now().strftime("%d %b %Y %X")
+        lines += [ '<h2><div title="%s">ChordProc</div></h2>' % timestamp ]
         lines += [ '<hr>', '<ul>' ]
         lines += [ '<li> <a href=allsongs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
         lines += [ '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
@@ -1161,9 +1162,6 @@ class CRD_data():
         lines += [ '</div>' ] 
         lines += [ '<br>' ]
         lines += [ '<hr>' ]
-        lines += [ '<ul>' ]
-        lines += [ '<li> ' + datetime.now().strftime("%d %b %Y %X") ]
-        lines += [ '</ul>' ]
         lines += [ '</body>', '</html>' ]
 
         with open(self.opts["html_root"] + 'index.html', 'w') as f:
