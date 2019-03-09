@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     opts = proc_options()
 
-    opts["lookup"] = GetPathToSong
+    opts["player"] = GetPathToSong
 
     if opts["test"]:
         CRD_test().run()
