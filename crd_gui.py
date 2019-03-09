@@ -9,6 +9,32 @@ from PyQt5.QtWidgets import *
 from chordproc.crd_data import CRD_data, CRD_artist, CRD_album, CRD_song
 from chordproc.crd_gui_design import Ui_MainWindow
 
+class Highlighter(QSyntaxHighlighter):
+    def __init__( self, parent, pattern ):
+        QSyntaxHighlighter.__init__( self, parent )
+        self.parent = parent
+
+        keyword = QTextCharFormat()
+        keyword.setForeground( Qt.darkBlue )
+        keyword.setBackground( Qt.yellow )
+        keyword.setFontWeight( QFont.Bold )
+
+        self.rule_format = keyword
+        self.rule_pattern = pattern.replace( '*', '.*' )
+
+    def highlightBlock( self, text ):
+        expression = QRegExp( self.rule_pattern, Qt.CaseInsensitive  )
+        print(expression)
+        index = expression.indexIn( text )
+        while index >= 0:
+            length = expression.matchedLength()
+            print(length)
+            self.setFormat( index, length, self.rule_format )
+            # index = text.indexOf( expression, index + length )
+            index = text.find( self.rule_pattern, index+length )
+
+        self.setCurrentBlockState( 0 )
+
 class CRD_gui(QMainWindow, Ui_MainWindow):
     def __init__(self, chords, app):
         super(self.__class__, self).__init__()
@@ -21,6 +47,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.currentPlayLink = None
         self.currentEditLink = None
         self.currentEditLnum = None
+        self.highlight = None
 
         self.modelArtists = QStandardItemModel()
         self.treeArtists.setModel(self.modelArtists)
@@ -434,18 +461,23 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
                                 artist_item.appendRow(album_item)
 
                             song_item = QStandardItem(song.title)
+                            self.highlight = Highlighter(self.currentViewer(), pattern)
+
                             song_item.setData(song)
                             song_item.setToolTip("%s - %s" % (artist.name, album.title))
                             if first == None:
                                 first = song_item
                             album_item.appendRow(song_item)
 
-            # if first:
-            #     # select and view first match:
-            #     index = first.index()
-            #     self.treeSearch.setCurrentIndex(index)
-            #     self.treeSearch.setFocus()
-            #     self.treeIndexClicked(index)
+            if first:
+                # select and view first match:
+                pass
+                # index = first.index()
+                # self.treeSearch.setCurrentIndex(index)
+                # self.treeSearch.setFocus()
+                # self.treeIndexClicked(index)
+            else:
+                self.highlight.setDocument(None)
 
     def transposeUp(self):
         song = self.currentSong()
