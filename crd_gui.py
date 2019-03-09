@@ -15,7 +15,7 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         self.chords = chords
         self.app = app
         self.setupUi(self)
-        self.searchLyrics = False
+        self.searchLyrics = True
         self.searchPattern = ''
         self.importPattern = ''
         self.currentPlayLink = None
@@ -419,21 +419,33 @@ class CRD_gui(QMainWindow, Ui_MainWindow):
         if pattern != '':
             first = None
             for artist in self.chords.artists:
+                artist_item = None
                 for album in artist.albums:
+                    album_item = None
                     for song in album.songs:
                         if song.search(pattern,lyrics):
+
+                            if not artist_item:
+                                artist_item = QStandardItem(artist.name)
+                                self.rootSearch.appendRow(artist_item)
+
+                            if not album_item:
+                                album_item = QStandardItem(album.title)
+                                artist_item.appendRow(album_item)
+
                             song_item = QStandardItem(song.title)
                             song_item.setData(song)
                             song_item.setToolTip("%s - %s" % (artist.name, album.title))
                             if first == None:
                                 first = song_item
-                            self.rootSearch.appendRow(song_item)
-            if first:
-                # select and view first match:
-                index = first.index()
-                self.treeSearch.setCurrentIndex(index)
-                self.treeSearch.setFocus()
-                self.treeIndexClicked(index)
+                            album_item.appendRow(song_item)
+
+            # if first:
+            #     # select and view first match:
+            #     index = first.index()
+            #     self.treeSearch.setCurrentIndex(index)
+            #     self.treeSearch.setFocus()
+            #     self.treeIndexClicked(index)
 
     def transposeUp(self):
         song = self.currentSong()
