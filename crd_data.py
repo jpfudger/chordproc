@@ -5,11 +5,6 @@ import re
 import subprocess
 from datetime import datetime
 
-try:
-    from laudable.laudable import LAUD_data
-except ImportError:
-    pass
-
 # Todo:
 #
 # 1) Currently the fingerings for each songs are stored in the song class,
@@ -42,10 +37,10 @@ class CRD_artist():
         self.name = name.strip()
         self.albums = []
         self.index = index
-        self.laud_data = None
+        self.player = None
         self.stock_tunings = None
         if data:
-            self.laud_data = data.laud_data
+            self.player = data.player
             self.stock_tunings = data.stock_tunings
 
         alphaname = ''.join( [y for y in self.name if y.isalnum()] )
@@ -54,7 +49,7 @@ class CRD_artist():
         self.tuning = None
     def add_album(self,title):
         album_index = '%d.%d' % ( self.index, len(self.albums) + 1 )
-        new_album = CRD_album( title, self, album_index, self.laud_data )
+        new_album = CRD_album( title, self, album_index, self.player )
         self.albums.append(new_album)
         return new_album
     def all_songs(self):
@@ -163,11 +158,11 @@ class CRD_artist():
         #print(output)
 
 class CRD_album():
-    def __init__(self,title,artist,index,laud_data):
+    def __init__(self,title,artist,index,player):
         self.title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
         self.artist = artist
         self.index  = index
-        self.laud_data = laud_data
+        self.player = player
         self.songs  = []
         name = ( artist.name if artist else '' ) + '_' + title
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
@@ -223,28 +218,13 @@ class CRD_album():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
-    def laud(self):
-        try:
-            alb = self.laud_data.find_album(self.artist.name,self.title)
-        except:
-            alb = None
-        return alb
     def get_playlist(self):
-        try:
-            alb = self.laud_data.find_album(self.artist.name,self.title)
-            link = alb.playlist
-        except:
-            link = None
-        return link
+        playlist, image = self.player(self.artist.name, self.title)
+        return playlist
     def get_playlist_link(self):
-        link = ''
-        try:
-            alb = self.laud_data.find_album(self.artist.name,self.title)
-            m3u = alb.playlist
-            img = alb.image
-            link = '<a href="%s"><img class=cover src="%s"></a>' % ( alb.playlist, alb.image )
-        except AttributeError:
-            pass
+        playlist, image = self.player(self.artist.name, self.title)
+        if playlist and image:
+            link = '<a href="%s"><img class=cover src="%s"></a>' % ( playlist, image )
         return link
 
 class CRD_chord():
@@ -773,21 +753,9 @@ class CRD_song():
 
         return pattern in string
     def get_mp3_link(self):
-        link = None
-        if self.album and self.album.laud():
-            songs = self.album.laud().findSong(self.title)
-
-        if not link:
-            # search all songs of artist
-            try:
-                a = self.album.laud_data.find_artist(self.album.artist.name)
-                songs = a.findSong(self.title, True) if a else []
-            except:
-                songs = []
-            if len(songs) > 0:
-                link = songs[0].path
-
-        return link
+        playlist, image  = self.album.player(self.album.artist.name, \
+                                             self.album.title, self.title)
+        return playlist
 
 class CRD_data():
     def __init__(self,opts,lines=None):
@@ -798,11 +766,12 @@ class CRD_data():
         self.albums = []
         self.songs = []
         self.collections = []
+        self.player = opts.get('player')
 
-        try:
-            self.laud_data = LAUD_data()
-        except NameError:
-            self.laud_data = None
+        # Note: the "player" callback is a function which takes three strings:
+        # an artist name, an album name, and/or a song name
+        # It should return a tuple of playlist path and image path
+        # (both of which can be None).
 
         self.stock_tunings = self.load_tuning_data()
 
