@@ -2,6 +2,26 @@
 import sys, argparse, time
 from chordproc.crd_test import CRD_test
 from chordproc.crd_gui  import CRD_data, CRD_interface
+from laudable.laudable import LAUD_data
+laud = LAUD_data()
+
+def GetPathToSong(artist, album=None, song=None):
+    path = None
+    image = None
+
+    if song:
+        songs = []
+        if album:
+            songs = laud.find_album(artist, album).findSong(song)
+        else:
+            songs = laud.find_artist(artist).findSong(song, True)
+        path = songs[0].path
+    elif album:
+        a = laud.find_album(artist, album)
+        path = a.playlist
+        image = a.image
+
+    return path, image
 
 def proc_options():
     parser = argparse.ArgumentParser()
@@ -25,6 +45,8 @@ if __name__ == "__main__":
     time.clock()
 
     opts = proc_options()
+
+    opts["lookup"] = GetPathToSong
 
     if opts["test"]:
         CRD_test().run()
