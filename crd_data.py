@@ -819,7 +819,7 @@ class CRD_data():
             for album in self.all_albums():
                 for song in album.songs:
                     self.songs.append(song)
-            self.songs.sort( key=lambda x: x.title_sort )
+            self.songs.sort( key=lambda x: x.title_sort.lower() )
         return self.songs
     def get_artist(self,name):
         for a in self.artists:
