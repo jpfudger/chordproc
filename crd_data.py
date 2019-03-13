@@ -1102,7 +1102,7 @@ class CRD_data():
                 lines.append( '<br>' )
             cur_letter = song.title_sort[0]
             s_link = song.album.fname + '#' + song.link
-            lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.artist.name ) )
+            lines.append( '<a href=%s>%s</a> (%s, %s)' % ( s_link, song.title, song.artist.name, song.album.title ) )
         lines += [ '</div>', '</body>', '</html>' ]
         with open(self.opts["html_root"] + 'allsongs.html', 'w') as f:
             for l in lines:
