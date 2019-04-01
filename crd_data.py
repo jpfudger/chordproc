@@ -751,7 +751,7 @@ class CRD_song():
         pattern = pattern.lower()
         string = string.lower()
 
-        return pattern in string
+        return re.search(pattern, string)
     def get_mp3_link(self):
         playlist, image  = self.album.player(self.album.artist.name, \
                                              self.album.title, self.title)
