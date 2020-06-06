@@ -488,6 +488,8 @@ class CRD_song():
 
         if line.lower().strip().startswith( 'capo' ):
             return line, "capo"
+        elif line.lower().strip().startswith( 'harp key:' ):
+            return line, "harp"
         elif self.tuning and line.lower().strip().startswith( 'tuning' ):
             link = "<a href=\"tunings.html#%s\">%s</a>" % ( self.tuning.offset(), line )
             return link, "tuning"
@@ -601,6 +603,15 @@ class CRD_song():
         nbsp = '&nbsp;' if explicit_ws else ' '
         comline, comtype = self.is_comment_line(line)
         if comline:
+            if comtype == "harp":
+                # strip leading "Harp key:" and format key as chord
+                splits = comline.split()
+                hkey = splits[2]
+                chord = CRD_chord(hkey)
+                if chord.is_chord():
+                    splits[2] = "<div class=chord>%s</div>" % chord.format(transpose,prefer_sharp)
+                    comline = " ".join(splits)
+                    comtype = "comment"
             return leader + '<div class=%s>%s</div>' % ( comtype, re.sub( ' ', nbsp, comline ) )
         splits = re.split( r'(\s+)', line)
         # this splits the line at start/end of whitespace regions,
