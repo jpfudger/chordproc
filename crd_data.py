@@ -689,9 +689,20 @@ class CRD_song():
     def format_song_lines(self,transpose=0,prefer_sharp=False,explicit_ws=False):
         formatted = []
         n_tab_lines = 0
+        in_span = False
         for ii,line in enumerate(self.lines):
             lastline = ii == len(self.lines)-1
             newline = self.markup_chord_line(line,transpose,prefer_sharp,explicit_ws)
+
+            if newline.strip() == "":
+                # This ensures that newline-delimited blocks
+                # are not split between columns.
+                if in_span:
+                    newline += "</span>"
+                if not lastline:
+                    newline += "<span>"
+                    in_span = True
+
             formatted.append(newline)
 
             change_range = []
