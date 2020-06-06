@@ -10,28 +10,49 @@ D   000000
 {{{ tuning: DADFAD    [open Dm]
 Dm  000000
 }}}
+{{{ tuning: DADFAD    [open Dm]
+Dm  000000
+}}}
 {{{ tuning: EAC#EAE   [open A]
 A   000000
 }}}
 {{{ tuning: DADGBE    [drop D] [dropped D]
-A   202220
-C   x32010
-D   0xx232
-E   222100
-Em  222000
-G   5xx033
+A       202220
+A/e     202220
+C       x32010
+D       0xx232
+Dsus2   000230
+Dsus4   000233
+D7      000210
+D/c     030030
+E       222100
+Em      222000
+F#m     444222
+G       5xx003 
+G/d     020003
+G/b     x20033
+D/c     x30030
+D/b     x20030
 }}}
-{{{ tuning: CADGBE    [drop C] [dropped C]
+{{{ tuning: CADGBE    [drop C]
 
 C       032010
-
+Csus4   033010
+G7      220001
+G7sus4  330001
+G7sus2  300001
+G       220003
+E       x22100
+Em/b    x22000
+Dm      xx0231    or 200231
+F       033211 or 003211
 Am      x22210
 
 }}}
-{{{ tuning: CGDGBE    [open C] [dropped C]
+{{{ tuning: CGDGBE    [dropped C]
 G   x00033
 C   002010
-Em  x22210
+Am  x22210
 D   2xx232
 }}}
 {{{ tuning: DADGBD    [double drop D] [double dropped D]
@@ -40,6 +61,29 @@ D       0xx230
 
 }}}
 {{{ tuning: EADGBE    [standard]
+
+Cdim    x3454x
+C#dim   x4565x
+Ddim    x5676x
+D#dim   x6787x
+Edim    x7898x
+Fdim    x89A9x / 1231xx
+F#dim   x9ABAx / 2342xx
+Gdim    xABCBx / 3453xx
+G#dim   4564Xx
+Adim    5675Xx
+A#dim   6786Xx
+Bdim    x2343x
+
+Cdim7   xxABAB
+Ddim7   xx0101
+Edim7   xx2323
+Fdim7   xx3434 / 123131
+Gdim7   xx5656 / 345353
+Adim7   xx7878 / 567575
+Bdim7   xx9A9A / 789797
+
+
 
 A       x02220
 A/e     002220
@@ -63,6 +107,7 @@ C/g     332010
 C/e     032010
 Csus4   x33010
 Csus2   x30010
+C6      x32210
 C7      x32310
 
 Db      553335
@@ -95,6 +140,7 @@ G       320003
 G7      320001
 G6      320000
 Gsus4   3x2013
+Gmaj9   3x0202
 
 G#      466544
 G#m     466444

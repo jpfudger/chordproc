@@ -381,7 +381,7 @@ class CRD_tuning():
         notes = notes[root_index:]
         return notes.index(note)
     def note_list(self):
-        chars = list(self.tuning)
+        chars = list(self.tuning.upper())
         notes = []
         for char in chars:
             if re.match( '[A-G]', char ):
@@ -412,7 +412,7 @@ class CRD_tuning():
                      [ 'DADFAD',  'open Dm' ],
                      [ 'DADGBE',  'drop D' ],
                      [ 'CADGBE',  'drop C' ],
-                     [ 'CGDGBE',  'drop C' ],
+                     [ 'CGDGBE',  'drop C/g' ],
                      [ 'DADGBD',  'double drop D' ],
                      [ 'EADGBE',  'standard' ],
                      [ 'EAC#EAE', 'open A' ],
