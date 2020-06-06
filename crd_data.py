@@ -85,8 +85,13 @@ class CRD_artist():
         lines += common_html(False)
         lines += [ '</head>' ]
         lines += [ '<h2><div title="%s">%s</title></h2>' % (self.index, self.name) ]
-        total_songs = sum( [ len(a.songs) for a in self.albums ] )
-        lines += [ '<hr>', '<a href="%s">Song Index (%d)</a>' % ( self.index_fname, total_songs ) ]
+        #total_songs = sum( [ len(a.songs) for a in self.albums ] )
+        c_origs, c_covers = self.song_counts()
+        if c_covers:
+            count_string = "(%d) (%d originals)" % (c_origs + c_covers, c_origs)
+        else:
+            count_string = "(%d)" % (c_origs + c_covers)
+        lines += [ '<hr>', '<a href="%s">Song Index %s</a>' % ( self.index_fname, count_string ) ]
         lines += [ '<hr>' ]
         #lines += [ '<ol>' ]
         for album in self.albums:
@@ -156,6 +161,17 @@ class CRD_artist():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+    def song_counts(self):
+        origs = 0
+        covers = 0
+        for a in self.albums:
+            for s in a.songs:
+                if s.cover:
+                    covers += 1
+                else:
+                    origs += 1
+
+        return (origs, covers)
 
 class CRD_album():
     def __init__(self,title,artist,index,player):
@@ -463,6 +479,7 @@ class CRD_song():
         if title[0] in [ "'", '"', '(' ]:
             self.title_sort = self.title[1:]
         self.gui_item = None
+        self.cover = None
     def add_fingering(self,chord,fingering):
         self.fingerings[ chord.format() ] = fingering.lower()
     def get_fingering(self,crd_string,as_title=False):
@@ -485,6 +502,12 @@ class CRD_song():
         if line.strip().startswith('[') and line.strip().endswith(']'):
             m_ws = re.search('(^\s*)', line)
             return ( m_ws.group(1) + line.strip()[1:-1] ), "comment"
+
+        if line.strip().startswith('<') and line.strip().endswith('>'):
+            self.cover = line.strip()[1:-1].strip()
+            newline = line.replace('<', '&lt;')
+            newline = newline.replace('>', '&gt;')
+            return newline, "comment"
 
         if line.lower().strip().startswith( 'capo' ):
             return line, "capo"
