@@ -689,21 +689,27 @@ class CRD_song():
     def format_song_lines(self,transpose=0,prefer_sharp=False,explicit_ws=False):
         formatted = []
         n_tab_lines = 0
-        for line in self.lines:
+        for ii,line in enumerate(self.lines):
+            lastline = ii == len(self.lines)-1
             newline = self.markup_chord_line(line,transpose,prefer_sharp,explicit_ws)
             formatted.append(newline)
 
+            change_range = []
             if ('-' in line) and ('|' in line):
                 n_tab_lines += 1
+                if lastline:
+                    change_range = range(1,n_tab_lines+1)
             else:
+                if n_tab_lines > 0:
+                    change_range = range(2,n_tab_lines+2)
+                
+            if change_range:
+                if n_tab_lines in [4,5,6]: # bass/banjo/guitar tabs
+                    for i in change_range:
+                        l = formatted[-i]
+                        formatted[-i] = '<div class=tabline>%s</div>' % l
                 n_tab_lines = 0
-
-            if n_tab_lines == 6:
-                n_tab_lines = 0
-                for i in range(1,7):
-                    l = formatted[-i]
-                    formatted[-i] = '<div class=tabline>%s</div>' % l
-
+        
         return formatted
     def add_line(self,newline):
         line = newline.rstrip()
