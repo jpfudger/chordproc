@@ -19,8 +19,7 @@ from datetime import datetime
 def common_html(want_chord_controls=True):
     lines = [
     '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
-    '<link rel="stylesheet" type="text/css" href="style.css" id="style">',
-    '<link rel="stylesheet" type="text/css" href="style_alt.css"  id="style_alt">',
+    '<link rel="stylesheet" type="text/css" href="style1.css" id="style">',
     '<script src="script.js"></script>',
     '<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
     ]
@@ -661,7 +660,7 @@ class CRD_song():
                 formatted += len(word) * nbsp
             elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
                 formatted += '<div class=comment>' + word + '</div>'
-            elif word in [ '|', '-', '%', '*', '.', '|:', ':|', '[', ']' ]:
+            elif word in [ '|', '-', '%', '*', '.', '|:', ':|', '[', ']', '||' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
@@ -978,7 +977,7 @@ class CRD_data():
                             print("Tuning %s has no name" % notes)
             elif current_tuning:
                 splits = line.strip().split()
-                if len(splits) == 2:
+                if len(splits) > 1:
                     chord = splits[0]
                     fingering = splits[1]
                     current_tuning.fingerings[chord] = fingering
@@ -1066,6 +1065,7 @@ class CRD_data():
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 for l in artist.html_index():
                     f.write('\n' + l)
+
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links
     def make_tuning_index(self):
         lines  = [ '<html>', '<body>', '<head>' ]
