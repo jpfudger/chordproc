@@ -448,7 +448,10 @@ class CRD_tuning():
     def standard(self):
         return self._name and self._name.lower() == 'standard'
     def summary(self):
-        return self.tuning.ljust(12,"_") + ("[" + self.offset() + "]").ljust(10,"_")
+        tuning = self.tuning
+        offset = "[" + self.offset() + "]"
+        name = self._name if self._name else ""
+        return tuning.ljust(12,"_") + offset.ljust(10,"_") + name.ljust(20,"_")
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
