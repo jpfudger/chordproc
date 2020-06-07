@@ -649,7 +649,10 @@ class CRD_song():
                 formatted += len(word) * nbsp
             elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
                 formatted += '<div class=comment>' + word + '</div>'
-            elif word in [ '|', '-', '%', '*', '.', '|:', ':|', '[', ']', '||' ]:
+            elif re.match( '\$\d+', word ):
+                # $1 $2 etc used for links between sections
+                formatted += word
+            elif word in [ '|', '-', '%', '*', '**', '***', '.', '|:', ':|', '[', ']', '||', '(', ')' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
