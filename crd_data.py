@@ -16,6 +16,8 @@ from datetime import datetime
 #    tunings are listed by their offset notation.
 #
 
+DO_WORDLISTS = False
+
 def common_html(want_chord_controls=True):
     lines = [
     '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
@@ -45,7 +47,9 @@ class CRD_artist():
         alphaname = ''.join( [y for y in self.name if y.isalnum()] )
         self.fname = 'artist_' + alphaname + '.html'
         self.index_fname = 'artist_' + alphaname + '_index.html'
+        self.words_fname = 'artist_' + alphaname + '_words.html'
         self.tuning = None
+        self.words = {}
     def add_album(self,title):
         album_index = '%d.%d' % ( self.index, len(self.albums) + 1 )
         new_album = CRD_album( title, self, album_index, self.player )
@@ -91,6 +95,10 @@ class CRD_artist():
         else:
             count_string = "(%d)" % (c_origs + c_covers)
         lines += [ '<hr>', '<a href="%s">Song Index %s</a>' % ( self.index_fname, count_string ) ]
+
+        if DO_WORDLISTS:
+            lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
+
         lines += [ '<hr>' ]
         #lines += [ '<ol>' ]
         for album in self.albums:
@@ -160,6 +168,73 @@ class CRD_artist():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+    def get_words(self):
+        if not self.words:
+            for album in self.albums:
+                for song in album.songs:
+                    song.get_words(self.words)
+
+            delwords = []
+            for word in self.words.keys():
+                if word.endswith("'"):
+                    unabbr = word[:-1] + "G"
+                    if unabbr in self.words:
+                        self.words[unabbr] += self.words[word]
+                        delwords.append(word)
+
+            for word in delwords:
+                del self.words[word]
+
+        return self.words
+    def words_html(self):
+        words = self.get_words()
+        wordlist = list(words.keys())
+        wordlist.sort()
+        print("%d words" % len(wordlist))
+        #wordlist.sort(key=lambda w: len(words[w])) # sort by number of songs
+
+        lines  = [ '<html>', '<body>', '<head>' ]
+        lines += [ '<title>Concordance: %s</title>' % self.name ]
+        lines += [ '</head>' ]
+        lines += [ '<h2>Concordance: %s</h2>' % self.name ]
+        lines += [ '<hr>' ]
+        lines += [ str(len(wordlist)) ]
+
+        alphastring = ''
+        for char in list('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+            alphastring += '<a href="#%s">%s</a> ' % ( char, char )
+        lines += [ alphastring ]
+
+        lines += [ '<hr>' ]
+
+        cur_letter = None
+        for word in wordlist:
+            if cur_letter == None:
+                pass
+            elif not word[0] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                lines.append('<br>')
+            elif cur_letter != word[0]:
+                lines.append('</div>')
+                lines.append('<a name="%s">' % word[0])
+                lines.append('<br><hr>')
+                #lines.append('<h3>%s</h3>' % word[0])
+                lines.append('<div class=songindex>')
+            else:
+                lines.append('<br>')
+            cur_letter = word[0]
+
+            line = "<b>" + word + "</b>"
+            songs = words[word]
+            songs.sort(key = lambda s: s.title_sort.lower())
+            for song in songs:
+                link = song.album.fname + '#' + song.link
+                line += ' | <a href="%s">%s</a>' % ( link, song.title ) 
+            lines.append(line)
+
+        lines += [ '</ul>' ]
+        lines += [ '</body>', '</html>' ]
+
+        return lines
     def song_counts(self):
         origs = 0
         covers = 0
@@ -471,6 +546,7 @@ class CRD_song():
             self.title_sort = self.title[1:]
         self.gui_item = None
         self.cover = None
+        self.wordlist = []
     def add_fingering(self,chord,fingering):
         self.fingerings[ chord.format() ] = fingering.lower()
     def get_fingering(self,crd_string,as_title=False):
@@ -716,7 +792,90 @@ class CRD_song():
                         formatted[-i] = '<div class=tabline>%s</div>' % l
                 n_tab_lines = 0
         
+        if DO_WORDLISTS:
+            self.wordlist_from_formatted_lines(formatted)
+
         return formatted
+    def ignore_word(self,word):
+        return word in [
+        "IT", "THE", "TO", "AND", "THAT", "IN", "YOU", "OF", "MY", "ON",
+        "ME", "FOR", "BUT", "ALL", "THERE", "WITH", "IS", "BE", "YOUR", "DOWN",
+        "SO", "JUST", "UP", "WHEN", "LIKE", "WHAT", "HE", "NO", "WAS", "DON'T",
+        "KNOW", "I'M", "ARE", "FROM", "CAN", "OUT", "GOT", "HAVE", "SHE", "SEE",
+        "WELL", "ONE", "IF", "THEY", "NOW", "AT", "GO", "DO", "NOT", "BY",
+        "WHERE", "YOU'RE", "AS", "BACK", "THIS", "WILL", "BEEN", "COME", "HIS", "GET",
+        "SAY", "CAN'T", "DAY", "OR", "TWO", "WHO", "HAD", "HER", "THROUGH", "SOME", 
+        "OH", "COULD", "MORE", "I'LL", "I'VE", "AIN'T", "THEN", "THEM", "THIS", "LET",
+        "DID", "GONE", "GONNA", "WOULD", "WERE", "HIM", "ABOUT", "AROUND", "INTO", "ONLY",
+        "AN", "MUCH", "ALWAYS", "THEIR", "THEY'RE", "DIDN'T", "YOU'VE", "AM", "I", "THESE",
+        ]
+    def wordlist_from_formatted_lines(self, formatted):
+        songwords = []
+        for line in formatted:
+            if "<" in line: continue
+            line_words = re.findall("([A-Z']+)", line.upper())
+            songwords += line_words
+
+        songwords = list(set(songwords))
+
+        for word in songwords:
+            if word.startswith("-") or word.startswith("'"):
+                continue
+            if word.endswith("-"):
+                word = word[:-1]
+
+            # Possessive 's (girl's)
+            if word.endswith("'S"):
+                word = word[:-2]
+
+            # Grammatical trailing apostrophe (girls')
+            if word.endswith("S'"):
+                word = word[:-1]
+
+            if len(word) == 1:
+                continue
+
+            if re.match('^(LA+)+$', word):
+                word = 'LA'
+            elif re.match('^O+H+$', word):
+                word = 'OH'
+            elif re.match('^A+H+$', word):
+                word = 'AH'
+            elif re.match('^BA+$', word):
+                word = 'BA'
+            elif re.match('^OO+$', word):
+                word = 'OO'
+            elif re.match('^DA+$', word):
+                word = 'DA'
+            elif re.match('^HA+$', word):
+                word = 'HA'
+            elif re.match('^HO+$', word):
+                word = 'HO'
+            elif re.match('^HM+$', word):
+                word = 'HM'
+            elif re.match('^MM+$', word):
+                word = 'MM'
+            elif re.match('^U+H+$', word):
+                word = 'UH'
+            elif re.match('^WOO+H*$', word):
+                word = 'WOO'
+
+            # Split up a-changing:
+            if word.startswith("A-"):
+                word = word[2:]
+            elif word.startswith("A'"):
+                word = word[2:]
+
+            if len(word) == 0:
+                continue
+            if self.ignore_word(word):
+                continue
+
+            self.wordlist.append(word)
+
+        self.wordlist = list(set(self.wordlist))
+
+        return
     def add_line(self,newline):
         line = newline.rstrip()
         self.lines.append(line)
@@ -801,6 +960,13 @@ class CRD_song():
         playlist, image  = self.album.player(self.album.artist.name, \
                                              self.album.title, self.title)
         return playlist
+    def get_words(self,words):
+        for word in self.wordlist:
+            if word in words:
+                words[word].append(self)
+            else:
+                words[word] = [self]
+        return
 
 class CRD_data():
     def __init__(self,opts,lines=None):
@@ -1066,14 +1232,20 @@ class CRD_data():
             n_songs += len(artist.all_songs())
             links.append( '<a href="%s">%s</a> <div class=count>%d/%d</div><br>' % 
                ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
-            with open(self.opts["html_root"] + artist.fname, 'w') as f:
-                for l in artist.html():
-                    f.write('\n' + l)
             for album in artist.albums:
                 album_path = self.opts["html_root"] + album.fname
                 with open(album_path, 'w') as f:
                     for l in album.html():
                         f.write('\n' + l)
+            with open(self.opts["html_root"] + artist.fname, 'w') as f:
+                for l in artist.html():
+                    f.write('\n' + l)
+
+            if DO_WORDLISTS:
+                with open(self.opts["html_root"] + artist.words_fname, 'w') as f:
+                    for line in artist.words_html():
+                        f.write('\n' + line)
+
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 for l in artist.html_index():
                     f.write('\n' + l)
