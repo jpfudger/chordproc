@@ -396,7 +396,7 @@ class CRD_tuning():
         notes = notes[root_index:]
         return notes.index(note)
     def note_list(self):
-        chars = list(self.tuning.upper())
+        chars = list(self.tuning)
         notes = []
         for char in chars:
             if re.match( '[A-G]', char ):
@@ -448,18 +448,7 @@ class CRD_tuning():
     def standard(self):
         return self._name and self._name.lower() == 'standard'
     def summary(self):
-        tuning_pad = 12 - len(self.tuning)
-        name_pad = 15 
-        if self._name:
-            name_pad -= len(self._name)
-
-        string = self.tuning + ' ' + ( '_' * tuning_pad )
-        string += ' [' + self.offset() + '] __'
-        if self._name:
-            string += self._name
-        string += '_' * name_pad
-
-        return string
+        return self.tuning.ljust(12,"_") + ("[" + self.offset() + "]").ljust(10,"_")
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
@@ -1069,7 +1058,7 @@ class CRD_data():
             n_artists += 1
             n_albums += len(artist.albums)
             n_songs += len(artist.all_songs())
-            links.append( '<li><a href="%s">%s</a> <div class=count>%d/%d</div>' % 
+            links.append( '<a href="%s">%s</a> <div class=count>%d/%d</div><br>' % 
                ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
             with open(self.opts["html_root"] + artist.fname, 'w') as f:
                 for l in artist.html():
@@ -1169,18 +1158,14 @@ class CRD_data():
         lines += [ '</head>' ]
         timestamp =  datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2><div title="%s">ChordProc</div></h2>' % timestamp ]
-        lines += [ '<hr>', '<ul>' ]
-        lines += [ '<li> <a href=allsongs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
-        lines += [ '<li> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
-        lines += [ '</ul>', '<hr>' ]
-        lines += [ '<br>' ]
+        lines += [ '<hr>' ]
+        lines += [ '<a href=allsongs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary ]
+        lines += [ '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary ]
+        lines += [ '<hr>' ]
 
         lines += [ '<div class=artistlist>' ]
-        lines += [ '<ul>' ]
         lines += artists_links
-        lines += [ '</ul>' ] 
         lines += [ '</div>' ] 
-        lines += [ '<br>' ]
         lines += [ '<hr>' ]
         lines += [ '</body>', '</html>' ]
 
