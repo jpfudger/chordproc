@@ -507,6 +507,7 @@ class CRD_tuning():
                      [ 'EADGBE',  'standard' ],
                      [ 'EAC#EAE', 'open A' ],
                      [ 'EBEG#BE', 'open E' ],
+                     [ 'EBEGBE', 'open Em' ],
                    ]
             if 'standard' in self.input_string.lower():
                 self.tuning = 'EADGBE'
@@ -519,6 +520,7 @@ class CRD_tuning():
                     elif m[1].lower() in self.input_string.lower():
                         self.tuning = m[0]
                         self._name = m[1]
+        print("Error: no name for tuning: " + self.input_string)
         return self._name
     def standard(self):
         return self._name and self._name.lower() == 'standard'
