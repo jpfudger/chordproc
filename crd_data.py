@@ -713,7 +713,7 @@ class CRD_song():
         for word in splits:
             if word == '':
                 pass
-            elif '---' in word:
+            elif '--' in word:
                 # disables highlighting on tab lines
                 got_a_not_chord = True
                 formatted += word
