@@ -760,19 +760,9 @@ class CRD_song():
     def format_song_lines(self,transpose=0,prefer_sharp=False,explicit_ws=False):
         formatted = []
         n_tab_lines = 0
-        in_span = False
         for ii,line in enumerate(self.lines):
             lastline = ii == len(self.lines)-1
             newline = self.markup_chord_line(line,transpose,prefer_sharp,explicit_ws)
-
-            if newline.strip() == "":
-                # This ensures that newline-delimited blocks
-                # are not split between columns.
-                if in_span:
-                    newline += "</span>"
-                if not lastline:
-                    newline += "<span>"
-                    in_span = True
 
             formatted.append(newline)
 
@@ -791,11 +781,31 @@ class CRD_song():
                         l = formatted[-i]
                         formatted[-i] = '<div class=tabline>%s</div>' % l
                 n_tab_lines = 0
-        
+
         if DO_WORDLISTS:
             self.wordlist_from_formatted_lines(formatted)
 
-        return formatted
+        # Now run over list of formatted lines adding spans around 
+        # blocks of non-empty lines.
+
+        formatted_with_spans = []
+        in_span = False
+        for ii, line in enumerate(formatted):
+            lastline = ii == len(formatted)-1
+
+            if line == "":
+                if in_span:
+                    line = "</span>"
+                    in_span = False
+            elif not in_span and not lastline:
+                nextline = formatted[ii+1]
+                if nextline != "":
+                    line = "<span>" + line
+                    in_span = True
+
+            formatted_with_spans.append(line)
+
+        return formatted_with_spans
     def ignore_word(self,word):
         return word in [
         "IT", "THE", "TO", "AND", "THAT", "IN", "YOU", "OF", "MY", "ON",
