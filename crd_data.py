@@ -168,29 +168,46 @@ class CRD_artist():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+
+    def remove_abbreviations(self, words):
+        delwords = []
+        for word in words.keys():
+            if word.endswith("'"):
+                unabbr = word[:-1] + "G"
+                if unabbr in words:
+                    words[unabbr] += words[word]
+                    delwords.append(word)
+
+        for word in delwords:
+            del words[word]
+
     def get_words(self):
         if not self.words:
             for album in self.albums:
                 for song in album.songs:
+                    song.get_words(album.words)
+
+                self.remove_abbreviations(album.words)
+
+                for word in album.words:
+                    if word not in self.words:
+                        album.new_words.append(word)
+
+                for song in album.songs:
                     song.get_words(self.words)
 
-            delwords = []
-            for word in self.words.keys():
-                if word.endswith("'"):
-                    unabbr = word[:-1] + "G"
-                    if unabbr in self.words:
-                        self.words[unabbr] += self.words[word]
-                        delwords.append(word)
+                print(str(len(album.words)).rjust(10), album.title, len(album.new_words))
 
             for word in delwords:
                 del self.words[word]
+            self.remove_abbreviations(self.words)
 
         return self.words
     def words_html(self):
         words = self.get_words()
         wordlist = list(words.keys())
         wordlist.sort()
-        print("%d words" % len(wordlist))
+        print(self.name, len(words), "words")
         #wordlist.sort(key=lambda w: len(words[w])) # sort by number of songs
 
         lines  = [ '<html>', '<body>', '<head>' ]
@@ -275,6 +292,8 @@ class CRD_album():
         self.index  = index
         self.player = player
         self.songs  = []
+        self.words  = {}
+        self.new_words = []
         name = ( artist.name if artist else '' ) + '_' + title
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
         alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(title)
@@ -850,7 +869,7 @@ class CRD_song():
     def wordlist_from_formatted_lines(self, formatted):
         songwords = []
         for line in formatted:
-            if "<" in line: continue
+            if "<" in line: continue # this is safe because we haven't added <span> yet
             line_words = re.findall("([A-Z']+)", line.upper())
             songwords += line_words
 
@@ -998,7 +1017,10 @@ class CRD_song():
         playlist, image  = self.album.player(self.album.artist.name, \
                                              self.album.title, self.title)
         return playlist
-    def get_words(self,words):
+    def get_words(self,words,include_covers=False):
+        if not include_covers and self.cover: 
+            return
+
         for word in self.wordlist:
             if word in words:
                 words[word].append(self)
