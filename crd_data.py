@@ -3,7 +3,7 @@ import os
 import pickle
 import re
 import subprocess
-from datetime import datetime
+import datetime
 
 # Todo:
 #
@@ -247,9 +247,30 @@ class CRD_artist():
 
         return (origs, covers)
 
+def set_title_and_date(title):
+    date = None
+    
+    regex_date = "\s*<(\d\d\d\d)-(\d\d)-(\d\d)>\s*$"
+    m_date = re.search(regex_date, title)
+
+    if m_date:
+        title = re.sub(regex_date, "", title)
+        date = datetime.date(int(m_date.group(1)), int(m_date.group(2)), int(m_date.group(3)))
+    else:
+        regex_year = "\s*<(\d\d\d\d)>\s*$"
+        m_year = re.search(regex_year, title)
+
+        if m_year:
+            title = re.sub(regex_year, "", title)
+            date = datetime.date(int(m_year.group(1)), 1, 1)
+
+    # if date: print(date)
+    title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
+    return title, date
+
 class CRD_album():
     def __init__(self,title,artist,index,player):
-        self.title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
+        self.title, self.date = set_title_and_date(title)
         self.artist = artist
         self.index  = index
         self.player = player
@@ -537,7 +558,7 @@ class CRD_tuning():
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
-        self.title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
+        self.title, self.date = set_title_and_date(title)
         self.artist = artist
         self.fpath = fpath
         self.lnum = lnum
@@ -1351,7 +1372,7 @@ class CRD_data():
         lines += [ '<title>Chordproc</title>' ]
         lines += common_html(False)
         lines += [ '</head>' ]
-        timestamp =  datetime.now().strftime("%d %b %Y %X")
+        timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2><div title="%s">ChordProc</div></h2>' % timestamp ]
         lines += [ '<hr>' ]
         lines += [ '<a href=allsongs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary ]
