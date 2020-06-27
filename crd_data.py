@@ -16,7 +16,7 @@ from datetime import datetime
 #    tunings are listed by their offset notation.
 #
 
-DO_WORDLISTS = False
+DO_WORDLISTS = [] # [ "Bob Dylan" ]
 
 def common_html(want_chord_controls=True):
     lines = [
@@ -96,7 +96,7 @@ class CRD_artist():
             count_string = "(%d)" % (c_origs + c_covers)
         lines += [ '<hr>', '<a href="%s">Song Index %s</a>' % ( self.index_fname, count_string ) ]
 
-        if DO_WORDLISTS:
+        if DO_WORDLISTS and self.name in DO_WORDLISTS:
             lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
 
         lines += [ '<hr>' ]
@@ -789,7 +789,7 @@ class CRD_song():
                         formatted[-i] = '<div class=tabline>%s</div>' % l
                 n_tab_lines = 0
 
-        if DO_WORDLISTS:
+        if DO_WORDLISTS and self.artist.name in DO_WORDLISTS:
             self.wordlist_from_formatted_lines(formatted)
 
         # Now run over list of formatted lines adding spans around 
@@ -1258,7 +1258,7 @@ class CRD_data():
                 for l in artist.html():
                     f.write('\n' + l)
 
-            if DO_WORDLISTS:
+            if DO_WORDLISTS and artist.name in DO_WORDLISTS:
                 with open(self.opts["html_root"] + artist.words_fname, 'w') as f:
                     for line in artist.words_html():
                         f.write('\n' + line)
