@@ -502,12 +502,16 @@ class CRD_tuning():
                      [ 'DADFAD',  'open Dm' ],
                      [ 'DADGBE',  'drop D' ],
                      [ 'CADGBE',  'drop C' ],
+                     [ 'CGCGCE',  'open C' ],
                      [ 'CGDGBE',  'drop C/g' ],
                      [ 'DADGBD',  'double drop D' ],
                      [ 'EADGBE',  'standard' ],
                      [ 'EAC#EAE', 'open A' ],
                      [ 'EBEG#BE', 'open E' ],
                      [ 'EBEGBE', 'open Em' ],
+                     [ 'DADGAD', 'open Dsus4' ],
+                     [ 'CFCFCF', 'open F5' ],
+                     [ 'DADEAD', 'open Dsus2' ],
                    ]
             if 'standard' in self.input_string.lower():
                 self.tuning = 'EADGBE'
