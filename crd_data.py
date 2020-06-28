@@ -169,7 +169,6 @@ class CRD_artist():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
-
     def remove_abbreviations(self, words):
         delwords = []
         for word in words.keys():
@@ -181,7 +180,6 @@ class CRD_artist():
 
         for word in delwords:
             del words[word]
-
     def get_words(self):
         if not self.words:
             for album in self.albums:
@@ -1057,11 +1055,16 @@ class CRD_song():
         if not include_covers and self.cover: 
             return
 
-        for word in self.wordlist:
-            if word in words:
-                words[word].append(self)
-            else:
-                words[word] = [self]
+        wordlists = [ self.wordlist ]
+        for version in self.versions:
+            wordlists.append(version.wordlist)
+
+        for wordlist in wordlists:
+            for word in wordlist:
+                if word in words:
+                    words[word].append(self)
+                else:
+                    words[word] = [self]
         return
 
 class CRD_data():
