@@ -17,6 +17,7 @@ import datetime
 #
 
 DO_WORDLISTS = [] # [ "Bob Dylan" ]
+VERSIONS_ARE_SONGS = False # whether versions are separate songs, or appended to main song
 
 def common_html(want_chord_controls=True):
     lines = [
@@ -316,9 +317,17 @@ class CRD_album():
         lines += [ '<hr>', '<ol>' ]
         for song in self.songs:
             lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
+            if VERSIONS_ARE_SONGS and song.versions:
+                lines.append('<ul>')
+                for version in song.versions:
+                    lines.append( '<li><a href=#%s>%s</a>' % ( version.link, version.title ) )
+                lines.append('</ul>')
         lines += [ '</ol>' ]
         for song in self.songs:
             lines += song.html()[:]
+            if VERSIONS_ARE_SONGS:
+                for version in song.versions:
+                    lines += version.html()[:]
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
@@ -583,6 +592,7 @@ class CRD_song():
         self.lnum = lnum
         self.index = index
         self.lines = []
+        self.versions = []
         self.tuning = None
         self.album = None
         self.comchar = '%'
@@ -596,6 +606,10 @@ class CRD_song():
         self.wordlist = []
     def add_fingering(self,chord,fingering):
         self.fingerings[ chord.format() ] = fingering.lower()
+    def add_version(self,name,path,lnum):
+        version = CRD_song(name,self.artist,path,lnum,-1)
+        self.versions.append(version)
+        return version
     def get_fingering(self,crd_string,as_title=False):
         fingering = ''
         try:
@@ -980,6 +994,13 @@ class CRD_song():
         else:
             lines += [ '<div class=chords_1col>' ]
         lines += self.format_song_lines(transpose,prefer_sharp,explicit_ws)
+
+        if not VERSIONS_ARE_SONGS:
+            for version in self.versions:
+                version.inherit_fingerings()
+                lines += [ "<br> <hr> <h2>%s</h3>" % version.title ]
+                lines += version.format_song_lines(transpose,prefer_sharp,explicit_ws)
+
         lines += [ '</div>' ]
         lines += [ '<br><br>' ]
         return lines
@@ -1110,9 +1131,10 @@ class CRD_data():
             raise ValueError("Failed to process " + path + " (non-ASCII character?)")
     def process_chord_lines(self,lines,path=None):
         level = 0
-        this_artist = None
-        this_album  = None
-        this_song   = None
+        this_artist  = None
+        this_album   = None
+        this_song    = None
+        this_version = None
         level_artist = 0
         level_album  = 0
         level_song   = 0
@@ -1151,6 +1173,16 @@ class CRD_data():
                     this_song = this_album.add_song(s_name,path,lnum)
                     newsongs.append(this_song)
                     level_song = level
+                elif len(title) > 9 and title[0:7] == 'version':
+                    v_name = re.match( '.*version:\s+(.*)', line ).group(1)
+                    if not this_artist:
+                        print("No artist for version: " + v_name)
+                    if not this_album:
+                        print("No album for version: " + v_name)
+                    if not this_song:
+                        print("No song for version: " + v_name)
+                    this_version = this_song.add_version(v_name,path,lnum)
+                    level_version = level
                 else:
                     print("Unknown fold type in %s: %s" % (path, line.strip()))
             elif mclose:
@@ -1160,9 +1192,13 @@ class CRD_data():
                     this_album  = None
                 if this_artist and level_artist == level:
                     this_artist = None
+                if this_version and level_version == level:
+                    this_version = None
                 if comment_level > 0 and comment_level == level:
                     comment_level = 0
                 level -= 1
+            elif this_version:
+                this_version.add_line(line.rstrip())
             elif this_song:
                 this_song.add_line(line.rstrip())
         for song in newsongs:
