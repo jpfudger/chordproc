@@ -199,8 +199,6 @@ class CRD_artist():
 
                 print(str(len(album.words)).rjust(10), album.title, len(album.new_words))
 
-            for word in delwords:
-                del self.words[word]
             self.remove_abbreviations(self.words)
 
         return self.words
