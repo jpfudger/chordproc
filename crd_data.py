@@ -866,6 +866,8 @@ class CRD_song():
 
             formatted_with_spans.append(line)
 
+        formatted_with_spans.append("</span>") # close last one
+
         return formatted_with_spans
     def ignore_word(self,word):
         return word in [
