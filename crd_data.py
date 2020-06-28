@@ -593,6 +593,7 @@ class CRD_song():
         self.index = index
         self.lines = []
         self.versions = []
+        self.version = False
         self.tuning = None
         self.album = None
         self.comchar = '%'
@@ -608,6 +609,7 @@ class CRD_song():
         self.fingerings[ chord.format() ] = fingering.lower()
     def add_version(self,name,path,lnum):
         version = CRD_song(name,self.artist,path,lnum,-1)
+        version.version = True
         self.versions.append(version)
         return version
     def get_fingering(self,crd_string,as_title=False):
@@ -984,27 +986,40 @@ class CRD_song():
                 self.is_comment_line(line)
     def html(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
         self.inherit_fingerings()
-        lines  = [ '<hr> <a name=%s></a>' % self.link ] 
+        lines = []
+        if not self.version:
+            lines += [ '<hr> <a name=%s></a>' % self.link ] 
         name = ''
         if add_artist:
             name = ' (%s)' % self.artist.name
         lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, self.title + name) ]
-        if len(self.lines) > 100 and self.longest_line() <= 65:
-            lines += [ '<div class=chords_3col>' ]
-        elif len(self.lines) > 50:
-            lines += [ '<div class=chords_2col>' ]
-        else:
-            lines += [ '<div class=chords_1col>' ]
+
+        n_lines = len(self.lines)
+        if not VERSIONS_ARE_SONGS:
+            for version in self.versions:
+                n_lines += len(version.lines)
+
+        if not self.version:
+            if n_lines > 100 and self.longest_line() <= 65:
+                lines += [ '<div class=chords_3col>' ]
+            elif n_lines > 50:
+                lines += [ '<div class=chords_2col>' ]
+            else:
+                lines += [ '<div class=chords_1col>' ]
+
         lines += self.format_song_lines(transpose,prefer_sharp,explicit_ws)
 
         if not VERSIONS_ARE_SONGS:
             for version in self.versions:
-                version.inherit_fingerings()
-                lines += [ "<br> <hr> <h2>%s</h3>" % version.title ]
-                lines += version.format_song_lines(transpose,prefer_sharp,explicit_ws)
+                lines += [ "<br>" ]
+                lines += version.html(add_artist,transpose,prefer_sharp,explicit_ws)
+                #version.inherit_fingerings()
+                #lines += [ "<br> <hr> <h2>%s</h3>" % version.title ]
+                #lines += version.format_song_lines(transpose,prefer_sharp,explicit_ws)
 
-        lines += [ '</div>' ]
-        lines += [ '<br><br>' ]
+        if not self.version:
+            lines += [ '</div>' ]
+            lines += [ '<br><br>' ]
         return lines
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
