@@ -124,7 +124,7 @@ class CRD_artist():
         return lines
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
-        lines += [ r'\usepackage[a4paper,margin=2cm]{geometry}' ]
+        lines += [ r'\usepackage[a4paper,margin=1cm]{geometry}' ]
         lines += [ r'\begin{document}' ]
         lines += [ r'\pagenumbering{gobble}' ]
 
@@ -144,10 +144,12 @@ class CRD_artist():
         if not os.path.isdir('tex'):
             os.makedirs('tex')
 
-        p = subprocess.Popen(['pdflatex','-output-directory=tex', '-jobname=chordproc'], shell=False,
+        name = self.fname.replace(".html", "")
+
+        p = subprocess.Popen(['pdflatex','-output-directory=tex', '-jobname='+name], shell=False,
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
-        #print(output)
+        print(name)
     def remove_abbreviations(self, words):
         delwords = []
         for word in words.keys():
@@ -1458,4 +1460,10 @@ class CRD_data():
 
         fingerings = list(set(fingerings))
         return fingerings
+    def make_latex_book(self):
+        n_artists = 0
+        n_albums = 0
+        n_songs = 0
+        for artist in self.artists:
+            artist.latex()
 
