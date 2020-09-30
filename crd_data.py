@@ -18,6 +18,7 @@ import datetime
 
 DO_WORDLISTS = [] # [ "Bob Dylan" ]
 VERSIONS_ARE_SONGS = False # whether versions are separate songs, or appended to main song
+ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def common_html(want_chord_controls=True):
     lines = [
@@ -106,6 +107,8 @@ class CRD_artist():
         for song in allsongs:
             if cur_letter == None:
                 pass
+            elif not song.title_sort[0] in ALPHABET:
+                lines.append( '<br>' ) # all non alpha characters in same section
             elif cur_letter != song.title_sort[0]:
                 lines.append('<br>')
                 lines.append('<br>')
@@ -190,7 +193,7 @@ class CRD_artist():
         lines += [ str(len(wordlist)) ]
 
         alphastring = ''
-        for char in list('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+        for char in list(ALPHABET):
             alphastring += '<a href="#%s">%s</a> ' % ( char, char )
         lines += [ alphastring ]
 
@@ -200,7 +203,7 @@ class CRD_artist():
         for word in wordlist:
             if cur_letter == None:
                 pass
-            elif not word[0] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+            elif not word[0] in ALPHABET:
                 lines.append('<br>')
             elif cur_letter != word[0]:
                 lines.append('</div>')
@@ -1387,7 +1390,7 @@ class CRD_data():
         lines += [ '<h2>ChordProc Song Index</h2>' ]
 
         alphastring = ''
-        for char in list('#ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+        for char in list('#' + ALPHABET):
             alphastring += '<a href="#%s">%s</a> ' % ( char, char )
         lines += [ alphastring ]
 
@@ -1397,7 +1400,7 @@ class CRD_data():
         for song in allsongs:
             if cur_letter == None:
                 pass
-            elif not song.title_sort[0] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+            elif not song.title_sort[0] in ALPHABET:
                 lines.append( '<br>' ) # all non alpha characters in same section
             elif cur_letter != song.title_sort[0]:
                 lines.append('</div>')
