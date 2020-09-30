@@ -116,7 +116,8 @@ class CRD_artist():
                 lines.append( '<br>' )
             cur_letter = song.title_sort[0]
             s_link = song.album.fname + '#' + song.link
-            lines.append( '<a href=%s>%s</a> (%s)' % ( s_link, song.title, song.album.title ) )
+            s_class = ' class=cover' if song.cover else ''
+            lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
         #lines += [ '</ol>' ]
         lines += [ '</div>', '<br>' ]
         lines += [ '</body>', '</html>' ]
@@ -289,19 +290,22 @@ class CRD_album():
         lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, title) ]
         #lines += [ self.get_playlist_link() ]
         lines += [ '<hr>', '<ol>' ]
+        songs_body = []
         for song in self.songs:
-            lines.append( '<li><a href=#%s>%s</a>' % ( song.link, song.title ) )
+            songs_body += song.html()[:] # must do this first, to set song.cover
+            if VERSIONS_ARE_SONGS:
+                for version in song.versions:
+                    songs_body += version.html()[:]
+        for song in self.songs:
+            s_class = ' class=cover' if song.cover else ''
+            lines.append( '<li><a href=#%s%s>%s</a>' % ( song.link, s_class, song.title ) )
             if VERSIONS_ARE_SONGS and song.versions:
                 lines.append('<ul>')
                 for version in song.versions:
                     lines.append( '<li><a href=#%s>%s</a>' % ( version.link, version.title ) )
                 lines.append('</ul>')
         lines += [ '</ol>' ]
-        for song in self.songs:
-            lines += song.html()[:]
-            if VERSIONS_ARE_SONGS:
-                for version in song.versions:
-                    lines += version.html()[:]
+        lines += songs_body
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
