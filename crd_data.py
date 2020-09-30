@@ -63,27 +63,7 @@ class CRD_artist():
                 allsongs.append(song)
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
-    def html_songs(self,add_artist=False):
-        lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc: %s</title>' % self.name ]
-        lines += common_html()
-        lines += [ '</head>' ]
-        lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, self.name) ]
-        lines += [ '<hr>', '<ol>' ]
-        for song in self.all_songs():
-            link = '<li><a href=#%s>%s</a>' % ( song.link, song.title )
-            if self.tuning:
-                link += ' (%s)' % song.artist.name
-            lines.append( link )
-
-        lines += [ '</ol>' ]
-        for song in self.all_songs():
-            lines += song.html(add_artist)[:]
-        lines += [ '<hr>' ]
-        lines += [ '<br>' ] * 10
-        lines += [ '</body>', '</html>' ]
-        return lines
-    def html_albums(self,add_artist=False):
+    def html(self,add_artist=False):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
         lines += common_html(False)
@@ -113,11 +93,6 @@ class CRD_artist():
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
         return lines
-    def html(self,add_artist=False):
-        if len(self.albums) == 1 and self.albums[0].title == 'Misc':
-            return self.html_songs(add_artist)
-        else:
-            return self.html_albums(add_artist)
     def html_index(self):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
