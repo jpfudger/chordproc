@@ -13,6 +13,12 @@ Dm  000000
 {{{ tuning: DADFAD    [open Dm]
 Dm  000000
 }}}
+{{{ tuning: CGCGCD    [open C]
+C   000000
+}}}
+{{{ tuning: CGCGCE    [open C9]
+C9  000000
+}}}
 {{{ tuning: EAC#EAE   [open A]
 A   000000
 }}}

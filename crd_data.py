@@ -448,13 +448,15 @@ class CRD_chord():
             self.bass = None
             return False
 
-        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain', 'ocaine!', 'um', 'o' ]:
+        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain', 'ocaine!', 'um', 'o', 'abe', 'ig', 'XP' ]:
             # Come  (Pissing in a River)
             # Ba    (Looking at Tomorrow)
             # Bip   (Looking at Tomorrow)
             # Doo   (Til I Die)
             # Again (Crumb Begging Baghead)
             # Cocaine, Dum, Do
+            # Babe, Dig
+            # EXP (Robyn Hitchcock)
             # print("Rejecting: " + self.string)
             return False
 
@@ -530,6 +532,7 @@ class CRD_tuning():
                      [ 'DADGBE',  'drop D' ],
                      [ 'CADGBE',  'drop C' ],
                      [ 'CGCGCE',  'open C' ],
+                     [ 'CGCGCD',  'open C9' ],
                      [ 'CGDGBE',  'drop C/g' ],
                      [ 'DADGBD',  'double drop D' ],
                      [ 'EADGBE',  'standard' ],
@@ -548,7 +551,8 @@ class CRD_tuning():
                     if m[0].lower() in self.input_string.lower():
                         self.tuning = m[0]
                         self._name = m[1]
-                    elif m[1].lower() in self.input_string.lower():
+                    elif re.search( r"\b%s\b" % m[1].lower(), self.input_string.lower() ):
+                    #elif m[1].lower() in self.input_string.lower():
                         self.tuning = m[0]
                         self._name = m[1]
         if not self.tuning:
