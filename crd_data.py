@@ -613,11 +613,11 @@ class CRD_song():
             self.cover = line.strip()[1:-1].strip()
             newline = line.replace('<', '&lt;')
             newline = newline.replace('>', '&gt;')
-            return newline, "comment"
+            return newline, "cover"
 
         if line.lower().strip().startswith( 'capo' ):
             return line, "capo"
-        elif line.lower().strip().startswith( 'harp key:' ):
+        elif line.lower().strip().startswith( 'harp:' ):
             return line, "harp"
         elif self.tuning and line.lower().strip().startswith( 'tuning' ):
             link = "<a href=\"tunings.html#%s\">%s</a>" % ( self.tuning.offset(), line )
@@ -735,10 +735,10 @@ class CRD_song():
             if comtype == "harp":
                 # strip leading "Harp key:" and format key as chord
                 splits = comline.split()
-                hkey = splits[2]
+                hkey = splits[1]
                 chord = CRD_chord(hkey)
                 if chord.is_chord():
-                    splits[2] = "<div class=chord>%s</div>" % chord.format(transpose,prefer_sharp)
+                    splits[1] = "<div class=chord>%s</div>" % chord.format(transpose,prefer_sharp)
                     comline = " ".join(splits)
                     comtype = "comment"
             return leader + '<div class=%s>%s</div>' % ( comtype, re.sub( ' ', nbsp, comline ) )
