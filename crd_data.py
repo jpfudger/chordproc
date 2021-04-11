@@ -109,12 +109,9 @@ class CRD_artist():
             if cur_letter == None:
                 pass
             elif not song.title_sort[0] in ALPHABET:
-                lines.append( '<br>' ) # all non alpha characters in same section
+                pass # all non alpha characters in same section
             elif cur_letter != song.title_sort[0]:
                 lines.append('<br>')
-                lines.append('<br>')
-            else:
-                lines.append( '<br>' )
             cur_letter = song.title_sort[0]
             s_link = song.album.fname + '#' + song.link
             s_class = ' class=cover' if song.cover else ''
@@ -992,7 +989,7 @@ class CRD_song():
 
         if not VERSIONS_ARE_SONGS:
             for version in self.versions:
-                lines += [ "<br>" ]
+                #lines += [ "<br>" ]
                 lines += version.html(add_artist,transpose,prefer_sharp,explicit_ws)
                 #version.inherit_fingerings()
                 #lines += [ "<br> <hr> <h2>%s</h3>" % version.title ]
@@ -1410,15 +1407,13 @@ class CRD_data():
             if cur_letter == None:
                 pass
             elif not song.title_sort[0] in ALPHABET:
-                lines.append( '<br>' ) # all non alpha characters in same section
+                pass # all non alpha characters in same section
             elif cur_letter != song.title_sort[0]:
                 lines.append('</div>')
                 lines.append('<a name="%s">' % song.title_sort[0])
                 lines.append('<br><hr>')
                 lines.append('<h3>%s</h3>' % song.title_sort[0])
                 lines.append('<div class=songindex>')
-            else:
-                lines.append( '<br>' )
             cur_letter = song.title_sort[0]
             s_link = song.album.fname + '#' + song.link
             lines.append( '<a href=%s>%s</a> (%s, %s)' % ( s_link, song.title, song.artist.name, song.album.title ) )
