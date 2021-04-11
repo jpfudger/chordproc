@@ -415,7 +415,8 @@ class CRD_chord():
             self.bass = None
             return False
 
-        nochord_chars = [ 'l', 'k', 't', 'h', 'gg', 'y', 'ing' ]
+        nochord_chars = [ '-', 'o', 'r', 'l', 'k', 't', 'h', 'gg', 'y', 'ing' ]
+        # we can't ignore "x" because of barre designations: A(ix)
 
         # the following notes cannot occur consecutively (e.g. Free) 
         for note in [ 'c', 'e', 'f', 'g' ]:
