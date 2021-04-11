@@ -576,7 +576,7 @@ class CRD_song():
         self.index = index
         self.lines = []
         self.versions = []
-        self.version = False
+        self.version_of = None
         self.tuning = None
         self.album = None
         self.fingerings = {}
@@ -591,7 +591,8 @@ class CRD_song():
         self.fingerings[ chord.format() ] = fingering.lower()
     def add_version(self,name,path,lnum):
         version = CRD_song(name,self.artist,path,lnum,-1)
-        version.version = True
+        version.album = self.album
+        version.version_of = self
         self.versions.append(version)
         return version
     def get_fingering(self,crd_string,as_title=False):
@@ -962,19 +963,22 @@ class CRD_song():
     def html(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
         self.inherit_fingerings()
         lines = []
-        if not self.version:
+        title = self.title
+        if self.version_of:
+            title = "Version: " + title
+        else:
             lines += [ '<hr> <a name=%s></a>' % self.link ] 
         name = ''
         if add_artist:
             name = ' (%s)' % self.artist.name
-        lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, self.title + name) ]
+        lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, title + name) ]
 
         n_lines = len(self.lines)
         if not VERSIONS_ARE_SONGS:
             for version in self.versions:
                 n_lines += len(version.lines)
 
-        if not self.version:
+        if not self.version_of:
             if n_lines > 100 and self.longest_line() <= 65:
                 lines += [ '<div class=chords_3col>' ]
             elif n_lines > 50:
@@ -992,7 +996,7 @@ class CRD_song():
                 #lines += [ "<br> <hr> <h2>%s</h3>" % version.title ]
                 #lines += version.format_song_lines(transpose,prefer_sharp,explicit_ws)
 
-        if not self.version:
+        if not self.version_of:
             lines += [ '</div>' ]
             lines += [ '<br><br>' ]
         return lines
@@ -1179,6 +1183,7 @@ class CRD_data():
                     if not this_song:
                         print("No song for version: " + v_name)
                     this_version = this_song.add_version(v_name,path,lnum)
+                    newsongs.append(this_version)
                     level_version = level
                 else:
                     print("Unknown fold type in %s: %s" % (path, line.strip()))
@@ -1300,7 +1305,10 @@ class CRD_data():
             self.tunings = []
             for artist in self.artists:
                 for album in artist.albums:
+                    songs = album.songs[:]
                     for song in album.songs:
+                        songs += song.versions[:]
+                    for song in songs:
                         if song.tuning:
                             try:
                                 offsets = [ x.tuning.offset() for x in self.tunings ]
@@ -1372,7 +1380,11 @@ class CRD_data():
 
             for song in tartist.all_songs():
                 s_link = song.album.fname + '#' + song.link
-                body.append( '<li> <a href="%s">%s</a> (%s)' % ( s_link, song.title, song.artist.name ) )
+                s_title = song.title
+                if song.version_of:
+                    s_title = "%s (%s)" % ( song.version_of.title, song.title )
+                    s_link = song.album.fname + '#' + song.version_of.link
+                body.append( '<li> <a href="%s">%s</a> (%s)' % ( s_link, s_title, song.artist.name ) )
             body.append( '</ol>' )
             body.append( '<br>' )
 
