@@ -579,7 +579,6 @@ class CRD_song():
         self.version = False
         self.tuning = None
         self.album = None
-        self.comchar = '%'
         self.fingerings = {}
         self.link = ''.join( [x for x in title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', title)
@@ -605,13 +604,6 @@ class CRD_song():
             pass
         return fingering
     def is_comment_line(self,line):
-        if line.strip().startswith( self.comchar + ' '):
-            comline = line.replace( self.comchar + ' ', '', 1 )
-            return comline, "comment"
-        elif line.strip().startswith( self.comchar ):
-            comline = line.replace( self.comchar, '', 1 )
-            return comline, "comment"
-
         if line.strip().startswith('[') and line.strip().endswith(']'):
             m_ws = re.search('(^\s*)', line)
             return ( m_ws.group(1) + line.strip()[1:-1] ), "comment"
