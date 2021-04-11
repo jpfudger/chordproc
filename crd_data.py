@@ -754,9 +754,9 @@ class CRD_song():
                 # disables highlighting on tab lines
                 got_a_not_chord = True
                 formatted += word
-            elif ',' in word:
-                got_a_not_chord = True
-                formatted += word
+            #elif ',' in word:
+                #got_a_not_chord = True
+                #formatted += word
             elif word.replace('.','') == '':
                 formatted += word
             elif word.isspace():
@@ -770,7 +770,7 @@ class CRD_song():
             elif re.match( '\$\d+', word ):
                 # $1 $2 etc used for links between sections
                 formatted += word
-            elif word in [ '|', '-', '%', '*', '**', '***', '.', '|:', ':|', '[', ']', '||', '(', ')' ]:
+            elif word in [ '|', '-', '%', '*', '**', '***', '.', ',', '|:', ':|', '[', ']', '||', '(', ')', ':' ]:
                 # | and - are used for timing (and are also allowed as starter/ender delimieters)
                 # % is sometimes used for repetition.
                 formatted += word
