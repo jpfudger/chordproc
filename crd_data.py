@@ -16,7 +16,8 @@ import datetime
 #    tunings are listed by their offset notation.
 #
 
-DO_WORDLISTS = [] # [ "Bob Dylan" ]
+DO_WORDLISTS = [ ] # [ "Bob Dylan" ]
+DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
 VERSIONS_ARE_SONGS = False # whether versions are separate songs, or appended to main song
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -1288,10 +1289,12 @@ class CRD_data():
         #self.summarise_data()
     def build_song_data(self):
         for f in glob.glob(self.opts["root"] + '/*.crd'):
-            #if not 'neil_young.crd' in f: continue
-            #if not 'bob_dylan.crd' in f: continue
-            #if not 'bert_jansch.crd' in f: continue
-            self.process_chord_file(f)
+            if not DO_CRDFILES:
+                self.process_chord_file(f)
+            else:
+                for crdfile in DO_CRDFILES:
+                    if crdfile in f:
+                        self.process_chord_file(f)
         self.artists.sort(key=lambda x: x.name)
         if os.path.isfile('collections.html'):
             lines = []
@@ -1424,7 +1427,8 @@ class CRD_data():
             for l in lines:
                 f.write('\n' + l)
     def make_html(self):
-        self.make_song_index()
+        if not DO_CRDFILES:
+            self.make_song_index()
         artists_summary, artists_links = self.make_artists_index()
         tunings_summary = self.make_tuning_index()
 
@@ -1445,9 +1449,10 @@ class CRD_data():
         lines += [ '<hr>' ]
         lines += [ '</body>', '</html>' ]
 
-        with open(self.opts["html_root"] + 'index.html', 'w') as f:
-            for l in lines:
-                f.write('\n' + l)
+        if not DO_CRDFILES:
+            with open(self.opts["html_root"] + 'index.html', 'w') as f:
+                for l in lines:
+                    f.write('\n' + l)
     def lookup_chord(self,tuning,chord):
         fingerings = []
         for song in self.all_songs():
