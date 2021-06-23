@@ -470,6 +470,7 @@ class CRD_tuning():
         self._name = None
         self.names = names
         self.fingerings = {}
+        self.n_strings = 0
 
         if not self.name():
             # extract tuning candidate
@@ -480,6 +481,10 @@ class CRD_tuning():
                 self.tuning = m.group(1)
             else:
                 raise ValueError( "Failed to extract tuning from " + candidate.strip() )
+
+        tmp_strings = self.tuning.replace("#","")
+        tmp_strings = tmp_strings.replace("b","")
+        self.n_strings = len(tmp_strings)
     def get_fingering(self,crd_string,as_title=False):
         fingering = ''
         try:
@@ -526,7 +531,12 @@ class CRD_tuning():
         # also sets self.tuning if successful
         if not self._name:
             self._name = None
-            maps = [ [ 'DGDGBD',  'open G' ],
+            maps = [
+                     [ 'GDGBD', 'banjo standard' ],
+                     [ 'GDGCD', 'banjo sawmill' ],
+                     [ 'GCGCD', 'banjo double C' ],
+                     [ 'GCGCC', 'banjo triple C' ],
+                     [ 'DGDGBD',  'open G' ],
                      [ 'DGDGBbD', 'open Gm' ],
                      [ 'DADF#AD', 'open D' ],
                      [ 'DADFAD',  'open Dm' ],
@@ -549,11 +559,10 @@ class CRD_tuning():
                 self._name = 'standard'
             else:
                 for m in maps:
-                    if m[0].lower() in self.input_string.lower():
+                    if re.search( r"\b%s\b" % m[0].lower(), self.input_string.lower() ):
                         self.tuning = m[0]
                         self._name = m[1]
-                    elif re.search( r"\b%s\b" % m[1].lower(), self.input_string.lower() ):
-                    #elif m[1].lower() in self.input_string.lower():
+                    if re.search( r"\b%s\b" % m[1].lower(), self.input_string.lower() ):
                         self.tuning = m[0]
                         self._name = m[1]
         if not self.tuning:
@@ -565,7 +574,7 @@ class CRD_tuning():
         tuning = self.tuning
         offset = "[" + self.offset() + "]"
         name = self._name if self._name else ""
-        return tuning.ljust(12,"_") + offset.ljust(10,"_") + name.ljust(20,"_")
+        return tuning.ljust(12,"-") + offset.ljust(10,"-") + name.ljust(20,"-")
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
@@ -1322,7 +1331,7 @@ class CRD_data():
                                 pos = len(self.tunings)-1
                             self.tunings[pos].albums[0].songs.append(song)
             # sort by offset => similar tuning appear next to each other
-            self.tunings.sort(key=lambda x: x.tuning.offset())
+            self.tunings.sort(key=lambda x: (-x.albums[0].songs[0].tuning.n_strings, x.tuning.offset()) )
         return self.tunings
     def make_artists_index(self):
         n_artists = 0
@@ -1367,7 +1376,11 @@ class CRD_data():
 
         n_tunings = 0
         n_tunings_songs = 0
+        n_strings = 0
         for tartist in self.group_songs_by_tunings():
+            if n_strings > 0 and n_strings != tartist.albums[0].songs[0].tuning.n_strings:
+                lines.append('<br><br>')
+            n_strings = tartist.albums[0].songs[0].tuning.n_strings
             n_tunings += 1
             n_tunings_songs += len(tartist.all_songs())
             offset = tartist.tuning.offset()
