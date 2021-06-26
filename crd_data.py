@@ -534,7 +534,8 @@ class CRD_tuning():
             self._name = None
             if self.stock_tunings:
                 for t in self.stock_tunings:
-                    if re.search( r"\b%s\b" % t.tuning.lower(), self.input_string.lower() ):
+                    tuning_pattern = re.escape(t.tuning.lower())
+                    if re.search( r"\b%s\b" % tuning_pattern, self.input_string.lower() ):
                         self.tuning = t.tuning
                         if t.names:
                             self._name = t.names[0]
@@ -548,6 +549,8 @@ class CRD_tuning():
                                 break
 
         if not self.tuning:
+            # If this error gets thrown you may need to add the new tuning
+            # to the list in resources/stock_tunings.crd
             print("Error: no name for tuning: " + self.input_string)
         return self._name
     def standard(self):
@@ -1237,7 +1240,7 @@ class CRD_data():
                     if splits[0] == 'tuning:':
                         notes = splits[1]
                         names_str = " ".join(splits[2:])
-                        names = re.findall('\[([a-zA-Z0-9 ]+)\]', names_str )
+                        names = re.findall('\[([^]]+)\]', names_str )
                         if len(names) > 0:
                             current_tuning = CRD_tuning( notes, names )
                         else:
