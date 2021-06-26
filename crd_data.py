@@ -464,13 +464,14 @@ class CRD_chord():
         return True
 
 class CRD_tuning():
-    def __init__(self,input_string,names=[]):
+    def __init__(self,input_string,names=[],stock_tunings=None):
         self.input_string = input_string
         self.tuning = None
         self._name = None
         self.names = names
         self.fingerings = {}
         self.n_strings = 0
+        self.stock_tunings = stock_tunings
 
         if not self.name():
             # extract tuning candidate
@@ -531,40 +532,21 @@ class CRD_tuning():
         # also sets self.tuning if successful
         if not self._name:
             self._name = None
-            maps = [
-                     [ 'GDGBD', 'banjo standard' ],
-                     [ 'GDGCD', 'banjo sawmill' ],
-                     [ 'GCGCD', 'banjo double C' ],
-                     [ 'GCGCC', 'banjo triple C' ],
-                     [ 'DGDGBD',  'open G' ],
-                     [ 'DGDGBbD', 'open Gm' ],
-                     [ 'DADF#AD', 'open D' ],
-                     [ 'DADFAD',  'open Dm' ],
-                     [ 'DADGBE',  'drop D' ],
-                     [ 'CADGBE',  'drop C' ],
-                     [ 'CGCGCE',  'open C' ],
-                     [ 'CGCGCD',  'open C9' ],
-                     [ 'CGDGBE',  'drop C/g' ],
-                     [ 'DADGBD',  'double drop D' ],
-                     [ 'EADGBE',  'standard' ],
-                     [ 'EAC#EAE', 'open A' ],
-                     [ 'EBEG#BE', 'open E' ],
-                     [ 'EBEGBE', 'open Em' ],
-                     [ 'DADGAD', 'open Dsus4' ],
-                     [ 'CFCFCF', 'open F5' ],
-                     [ 'DADEAD', 'open Dsus2' ],
-                   ]
-            if 'standard' in self.input_string.lower():
-                self.tuning = 'EADGBE'
-                self._name = 'standard'
-            else:
-                for m in maps:
-                    if re.search( r"\b%s\b" % m[0].lower(), self.input_string.lower() ):
-                        self.tuning = m[0]
-                        self._name = m[1]
-                    if re.search( r"\b%s\b" % m[1].lower(), self.input_string.lower() ):
-                        self.tuning = m[0]
-                        self._name = m[1]
+            if self.stock_tunings:
+                for t in self.stock_tunings:
+                    if re.search( r"\b%s\b" % t.tuning.lower(), self.input_string.lower() ):
+                        self.tuning = t.tuning
+                        if t.names:
+                            self._name = t.names[0]
+                        break
+
+                    if not self._name:
+                        for name in t.names:
+                            if re.search( r"\b%s\b" % name.lower(), self.input_string.lower() ):
+                                self.tuning = t.tuning
+                                self._name = name
+                                break
+
         if not self.tuning:
             print("Error: no name for tuning: " + self.input_string)
         return self._name
@@ -941,7 +923,7 @@ class CRD_song():
         self.lines.append(line)
         if not self.tuning:
             if 'tuning:' in line.lower():
-                self.tuning = CRD_tuning(line)
+                self.tuning = CRD_tuning(line, [], self.artist.stock_tunings)
                 if self.tuning.standard():
                     self.tuning = None
     def longest_line(self):
@@ -1268,7 +1250,8 @@ class CRD_data():
                     current_tuning.fingerings[chord] = fingering
 
         # for t in tunings:
-        #     print( "==== %s" % t )
+        #     names = ", ".join(("\"%s\"" % n) for n in t.names)
+        #     print( "==== %s %s" % (t, names) )
         #     for key, value in t.fingerings.items():
         #         print( "     " + key.ljust(10) + value )
 

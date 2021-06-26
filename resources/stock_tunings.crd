@@ -4,23 +4,25 @@ G   000000
 {{{ tuning: DGDGBbD   [open Gm]
 Gm  000000
 }}}
-{{{ tuning: DADF#AD   [open D]
+{{{ tuning: DADF#AD   [open D] [vestapol]
 D   000000
 }}}
 {{{ tuning: DADFAD    [open Dm]
 Dm  000000
 }}}
-{{{ tuning: DADFAD    [open Dm]
-Dm  000000
-}}}
-{{{ tuning: CGCGCD    [open C]
+{{{ tuning: CGCGCD    [open C9]
 C   000000
 }}}
-{{{ tuning: CGCGCE    [open C9]
+{{{ tuning: CGCGCE    [open C]
 C9  000000
 }}}
 {{{ tuning: EAC#EAE   [open A]
 A   000000
+}}}
+{{{ tuning: DADGBD    [double drop D] [double dropped D]
+
+D       0xx230
+
 }}}
 {{{ tuning: DADGBE    [drop D] [dropped D]
 A       202220
@@ -40,6 +42,12 @@ G/b     x20033
 D/c     x30030
 D/b     x20030
 }}}
+{{{ tuning: CGDGBE    [drop C/g] [dropped C/g]
+G   x00033
+C   002010
+Am  x22210
+D   2xx232
+}}}
 {{{ tuning: CADGBE    [drop C]
 
 C       032010
@@ -53,17 +61,6 @@ Em/b    x22000
 Dm      xx0231    or 200231
 F       033211 or 003211
 Am      x22210
-
-}}}
-{{{ tuning: CGDGBE    [dropped C]
-G   x00033
-C   002010
-Am  x22210
-D   2xx232
-}}}
-{{{ tuning: DADGBD    [double drop D] [double dropped D]
-
-D       0xx230
 
 }}}
 {{{ tuning: EADGBE    [standard]
@@ -152,13 +149,47 @@ G#      466544
 G#m     466444
 
 }}}
+{{{ tuning: EBEG#BE   [open E]
+}}}
+{{{ tuning: EBEGBE    [open Em]
+}}}
+{{{ tuning: DADGAD    [open Dsus4]
+}}}
+{{{ tuning: CFCFCF    [open F5]
+}}}
+{{{ tuning: DADEAD    [open Dsus2]
+}}}
 
-{{{ tuning: GDGBE     [banjo standard]
+{{{ tuning: GDGBD     [banjo standard]
+G       0000
+D7      0210
+Em      2002
+C       2012
+Am      2212
+A       2222
+E       2102
+C(iii)  3333
+D(v)    5555
+D       4234
+F       3213
+G(iii)  5435
 }}}
 {{{ tuning: GCGCD     [banjo double C]
+C       0002
+F       0203
+G       2020
+G7      2023
+Am      0202
+C(iv)   0545
 }}}
 {{{ tuning: GCGCC     [banjo triple C]
+Cm  0003
+G   2022
 }}}
 {{{ tuning: GDGCD     [banjo sawmill] [banjo mountain modal]
+Gm      0020
+F       3203
+Bb      3323
+C       3003
 }}}
 
