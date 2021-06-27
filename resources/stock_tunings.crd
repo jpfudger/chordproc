@@ -6,7 +6,7 @@ G   000000
 A   000000
 }}}
 {{{ tuning: EBEAC#E   [open Add9]
-# Dropped D (= open Gadd9), two steps up
+# Drop D (= open Gadd9), two steps up
 }}}
 {{{ tuning: DGDGBbD   [open Gm]
 Gm  000000
@@ -17,18 +17,18 @@ D   000000
 {{{ tuning: DADFAD    [open Dm]
 Dm  000000
 }}}
-{{{ tuning: CGCGCD    [open C9]
+{{{ tuning: CGCGCD    [open Cadd9] [open C modal]
 C   000000
 }}}
 {{{ tuning: CGCGCE    [open C]
 C9  000000
 }}}
-{{{ tuning: DADGBD    [double drop D] [double dropped D] [open Gadd9]
+{{{ tuning: DADGBD    [double drop D] [open Gadd9]
 
 D       0xx230
 
 }}}
-{{{ tuning: DADGBE    [drop D] [dropped D]
+{{{ tuning: DADGBE    [drop D]
 A       202220
 A/e     202220
 C       x32010
@@ -46,7 +46,7 @@ G/b     x20033
 D/c     x30030
 D/b     x20030
 }}}
-{{{ tuning: CGDGBE    [drop C/g] [dropped C/g]
+{{{ tuning: CGDGBE    [drop C/g]
 G   x00033
 C   002010
 Am  x22210
@@ -154,6 +154,8 @@ G#m     466444
 
 }}}
 {{{ tuning: EBEG#BE   [open E]
+}}}
+{{{ tuning: CGCFAD    [metal drop C]
 }}}
 {{{ tuning: EBEGBE    [open Em]
 }}}
