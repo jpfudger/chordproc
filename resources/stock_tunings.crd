@@ -1,6 +1,13 @@
 {{{ tuning: DGDGBD    [open G]
 G   000000
 }}}
+{{{ tuning: EAEAC#E   [open A]
+# Open G, two steps up
+A   000000
+}}}
+{{{ tuning: EBEAC#E   [open Add9]
+# Dropped D (= open Gadd9), two steps up
+}}}
 {{{ tuning: DGDGBbD   [open Gm]
 Gm  000000
 }}}
@@ -16,10 +23,7 @@ C   000000
 {{{ tuning: CGCGCE    [open C]
 C9  000000
 }}}
-{{{ tuning: EAC#EAE   [open A]
-A   000000
-}}}
-{{{ tuning: DADGBD    [double drop D] [double dropped D]
+{{{ tuning: DADGBD    [double drop D] [double dropped D] [open Gadd9]
 
 D       0xx230
 
