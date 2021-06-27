@@ -539,6 +539,7 @@ class CRD_tuning():
                         self.tuning = t.tuning
                         if t.names:
                             self._name = t.names[0]
+                            self.names = t.names[:]
                         break
 
                     if not self._name:
@@ -546,6 +547,7 @@ class CRD_tuning():
                             if re.search( r"\b%s\b" % name.lower(), self.input_string.lower() ):
                                 self.tuning = t.tuning
                                 self._name = name
+                                self.names.append(name)
                                 break
 
         if not self.tuning:
