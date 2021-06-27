@@ -761,6 +761,8 @@ class CRD_song():
                 formatted += len(word) * nbsp
             elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
                 formatted += '<div class=comment>' + word + '</div>'
+            elif re.match( '\[?intro\]?', word.lower() ):
+                formatted += '<div class=comment>Intro</div>'
             elif re.match( '\$\d+', word ):
                 # $1 $2 etc used for links between sections
                 formatted += word
