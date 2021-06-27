@@ -610,9 +610,12 @@ class CRD_song():
             return line, "capo"
         elif line.lower().strip().startswith( 'harp:' ):
             return line, "harp"
-        elif self.tuning and line.lower().strip().startswith( 'tuning' ):
-            link = "<a href=\"tunings.html#%s\">%s</a>" % ( self.tuning.offset(), line )
-            return link, "tuning"
+        elif line.lower().strip().startswith( 'tuning' ):
+            if self.tuning:
+                link = "<a href=\"tunings.html#%s\">%s</a>" % ( self.tuning.offset(), line )
+                return link, "tuning"
+            else:
+                return line, "tuning" # highlight standard tunings, even without a link
 
         autocomment = False
         if autocomment:
