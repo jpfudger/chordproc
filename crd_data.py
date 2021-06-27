@@ -1380,12 +1380,13 @@ class CRD_data():
                     if name not in names:
                         names.append(name)
             names_string = "-".join('(' + name + ')' for name in names)
-            name = tartist.tuning.tuning.ljust(12,'-') + \
+            name_fw = tartist.tuning.tuning.ljust(12,'-') + \
                     ('[' + offset + ']').ljust(10,'-') + \
                     names_string.ljust(45,'-')
+            name = re.sub("-+", " ", name_fw)
         
             lines.append( '<li><a class=tuning href="#%s">%s</a> <div class=count>%d</div>' %
-                    ( offset, name, len(tartist.all_songs() ) ) )
+                    ( offset, name_fw, len(tartist.all_songs() ) ) )
 
             body.append( '<hr> <a name=%s></a>' % offset )
             body.append( '<h3>%s</h3>' % name )
