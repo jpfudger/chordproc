@@ -555,11 +555,6 @@ class CRD_tuning():
         return self._name
     def standard(self):
         return self._name and self._name.lower() == 'standard'
-    def summary(self):
-        tuning = self.tuning
-        offset = "[" + self.offset() + "]"
-        name = self._name if self._name else ""
-        return tuning.ljust(12,"-") + offset.ljust(10,"-") + name.ljust(20,"-")
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
@@ -1311,7 +1306,7 @@ class CRD_data():
                                 offsets = [ x.tuning.offset() for x in self.tunings ]
                                 pos = offsets.index(song.tuning.offset())
                             except ValueError:
-                                tuning_artist = CRD_artist(song.tuning.summary())
+                                tuning_artist = CRD_artist(song.tuning.tuning)
                                 tuning_artist.add_album('Misc')
                                 tuning_artist.tuning = song.tuning
                                 tuning_artist.fname = song.tuning.offset() + '.html'
@@ -1372,11 +1367,23 @@ class CRD_data():
             n_tunings += 1
             n_tunings_songs += len(tartist.all_songs())
             offset = tartist.tuning.offset()
+
+            # collect all possible names of this tuning
+            names = []
+            for song in tartist.all_songs():
+                for name in song.tuning.names:
+                    if name not in names:
+                        names.append(name)
+            names_string = "-".join('(' + name + ')' for name in names)
+            name = tartist.tuning.tuning.ljust(12,'-') + \
+                    ('[' + offset + ']').ljust(10,'-') + \
+                    names_string.ljust(45,'-')
+        
             lines.append( '<li><a class=tuning href="#%s">%s</a> <div class=count>%d</div>' %
-                    ( offset, tartist.name, len(tartist.all_songs() ) ) )
+                    ( offset, name, len(tartist.all_songs() ) ) )
 
             body.append( '<hr> <a name=%s></a>' % offset )
-            body.append( '<h3>%s</h3>' % tartist.name )
+            body.append( '<h3>%s</h3>' % name )
             body.append( '<ol>' )
 
             for song in tartist.all_songs():
