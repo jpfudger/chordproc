@@ -1,34 +1,34 @@
-{{{ tuning: DGDGBD    [open G]
+{{{ tuning: DGDGBD    [Open G]
 G   000000
 }}}
-{{{ tuning: EAEAC#E   [open A]
+{{{ tuning: EAEAC#E   [Open A]
 # Open G, two steps up
 A   000000
 }}}
-{{{ tuning: EBEAC#E   [open Add9]
+{{{ tuning: EBEAC#E   [Open Add9]
 # Drop D (= open Gadd9), two steps up
 }}}
-{{{ tuning: DGDGBbD   [open Gm]
+{{{ tuning: DGDGBbD   [Open Gm]
 Gm  000000
 }}}
-{{{ tuning: DADF#AD   [open D] [vestapol]
+{{{ tuning: DADF#AD   [Open D] [Vestapol]
 D   000000
 }}}
-{{{ tuning: DADFAD    [open Dm]
+{{{ tuning: DADFAD    [Open Dm]
 Dm  000000
 }}}
-{{{ tuning: CGCGCD    [open Cadd9] [open C modal]
+{{{ tuning: CGCGCD    [Open Cadd9] [Open C Modal]
 C   000000
 }}}
-{{{ tuning: CGCGCE    [open C]
+{{{ tuning: CGCGCE    [Open C]
 C9  000000
 }}}
-{{{ tuning: DADGBD    [double drop D] [open Gadd9]
+{{{ tuning: DADGBD    [Double Drop D] [Open Gadd9]
 
 D       0xx230
 
 }}}
-{{{ tuning: DADGBE    [drop D]
+{{{ tuning: DADGBE    [Drop D]
 A       202220
 A/e     202220
 C       x32010
@@ -46,13 +46,13 @@ G/b     x20033
 D/c     x30030
 D/b     x20030
 }}}
-{{{ tuning: CGDGBE    [drop C/g]
+{{{ tuning: CGDGBE    [Drop C/g]
 G   x00033
 C   002010
 Am  x22210
 D   2xx232
 }}}
-{{{ tuning: CADGBE    [drop C]
+{{{ tuning: CADGBE    [Drop C]
 
 C       032010
 Csus4   033010
@@ -67,7 +67,7 @@ F       033211 or 003211
 Am      x22210
 
 }}}
-{{{ tuning: EADGBE    [standard]
+{{{ tuning: EADGBE    [Standard]
 
 Cdim    x3454x
 C#dim   x4565x
@@ -153,20 +153,26 @@ G#      466544
 G#m     466444
 
 }}}
-{{{ tuning: EBEG#BE   [open E]
+{{{ tuning: EADGBD    [Lazy D]
 }}}
-{{{ tuning: CGCFAD    [metal drop C]
+{{{ tuning: EADF#BE   [Lute]
 }}}
-{{{ tuning: EBEGBE    [open Em]
+{{{ tuning: EBEG#BE   [Open E]
 }}}
-{{{ tuning: DADGAD    [open Dsus4]
+{{{ tuning: CGCFAD    [Metal Drop C]
 }}}
-{{{ tuning: CFCFCF    [open F5]
+{{{ tuning: EBEGBE    [Open Em]
 }}}
-{{{ tuning: DADEAD    [open Dsus2]
+{{{ tuning: DADGAD    [Open Dsus4]
+}}}
+{{{ tuning: CFCFCF    [Open F5]
+}}}
+{{{ tuning: DADEAD    [Open Dsus2]
+}}}
+{{{ tuning: CGDGCD    [Orkney] [Sawmill]
 }}}
 
-{{{ tuning: GDGBD     [banjo standard]
+{{{ tuning: GDGBD     [Banjo: Standard]
 G       0000
 D7      0210
 Em      2002
@@ -180,7 +186,7 @@ D       4234
 F       3213
 G(iii)  5435
 }}}
-{{{ tuning: GCGCD     [banjo double C]
+{{{ tuning: GCGCD     [Banjo: Double C]
 C       0002
 F       0203
 G       2020
@@ -188,11 +194,11 @@ G7      2023
 Am      0202
 C(iv)   0545
 }}}
-{{{ tuning: GCGCC     [banjo triple C]
+{{{ tuning: GCGCC     [Banjo: Triple C]
 Cm  0003
 G   2022
 }}}
-{{{ tuning: GDGCD     [banjo sawmill] [banjo mountain modal]
+{{{ tuning: GDGCD     [Banjo: Sawmill] [Banjo: Mountain Modal]
 Gm      0020
 F       3203
 Bb      3323
