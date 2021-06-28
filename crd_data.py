@@ -1319,7 +1319,7 @@ class CRD_data():
                                 pos = len(self.tunings)-1
                             self.tunings[pos].albums[0].songs.append(song)
             # sort by offset => similar tuning appear next to each other
-            self.tunings.sort(key=lambda x: (-x.albums[0].songs[0].tuning.n_strings, x.tuning.offset()) )
+            self.tunings.sort(key=lambda x: (-x.albums[0].songs[0].tuning.n_strings, -len(x.all_songs()) ))
         return self.tunings
     def make_artists_index(self):
         n_artists = 0
