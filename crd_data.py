@@ -1351,6 +1351,65 @@ class CRD_data():
                     f.write('\n' + l)
 
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links
+    def make_tuning_map(self):
+        raw_lines = [
+            '                                         EADGBE',
+            '                                           |',
+            '                  +-------------+----------------------+------------+',
+            '                  |             |                      |            |',
+            '                DADGBE        EADGBD                EADF#BE       CADGBE',
+            '                  |             |                                   |',
+            '                  +-------------+                                   |',
+            '                         |                                          |',
+            '                       DADGBD                                     CGDGBE',
+            '                         |                                          |',
+            '    +----------------------------------------+                      |',
+            '    |                                        |                      |',
+            '    |               +----------+         +---------+      +-------------------+',
+            '    |               |  GDGBD   | > > > > | DGDGBD  |      |       CGCGBE      |',
+            '    |               |    |     |         |   |     |      |         |         |',
+            '    |               |    |     |         |   |     |      |         |         |',
+            '    |               |  GDGBbD  | > > > > | DGDGBbD |      |       CGCGCE      |',
+            '    |               |    |     |         +---------+      |         |         |',
+            '+---------+  capo5  |    |     |          G-family        |         |         |',
+            '| DADGAD  | < < < < |  GDGCD   |                          |         |         |',
+            '|   |     |         |    |     |                          |   +-----------+   |',
+            '|   |     |         |    |     |                          |   |           |   |',
+            '| DADF#AD |         |  GCGCD   | > > > > > > > > > > > >  | CGCGCD     CGCFCE |',
+            '|   |     |         |    |     |                          |               |   |',
+            '|   |     |         |    |     |                          |               |   |',
+            '| DADFAD  |         |  GCGCC   |                          |            CGDFCE |',
+            '|   |     |         +----------+                          +-------------------+',
+            '|   |     |            Banjo                                     C-family',
+            '| DADEAD  |  ',
+            '+---------+',
+            ' D-family',
+            '' # empty line for better in-line spacing
+            ]
+
+        lines = []
+
+        for line in raw_lines:
+            tunings = re.findall('[ABCDEFG#b]{5,}', line)
+            for t in tunings:
+                offset = None
+                name = None
+                for tartist in self.group_songs_by_tunings():
+                    tt = tartist.albums[0].songs[0].tuning
+                    if tt.tuning.lower() == t.lower():
+                        offset = tartist.tuning.offset()
+                        if tt.names:
+                            name = tt.names[0]
+                        break
+                #print(t, offset, name)
+
+                if offset:
+                    link = "<a href=#%s title=\"%s\">%s</a>" % ( offset, name, t)
+                    line = re.sub( r"\b" + t + r"\b", link, line)
+
+            lines.append(line)
+
+        return lines
     def make_tuning_index(self):
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc</title>' ]
@@ -1382,7 +1441,7 @@ class CRD_data():
             names_string = "-".join('(' + name + ')' for name in names)
             name_fw = tartist.tuning.tuning.ljust(12,'-') + \
                     ('[' + offset + ']').ljust(10,'-') + \
-                    names_string.ljust(45,'-')
+                    names_string.ljust(40,'-')
             name = re.sub("-+", " ", name_fw)
         
             lines.append( '<li><a class=tuning href="#%s">%s</a> <div class=count>%d</div>' %
@@ -1403,8 +1462,12 @@ class CRD_data():
             body.append( '<br>' )
 
         lines += [ '</ul>', '<br>' ]
+        lines += [ "<div class=tuning_map>" ]
+        lines += self.make_tuning_map()
+        lines += [ "</div>" ]
+
         lines += body
-        lines += [ '<br>', '</body>', '</html>' ]
+        lines += [ '<br>' * 50, '</body>', '</html>' ]
 
         with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
             for l in lines:
