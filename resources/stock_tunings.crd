@@ -1,17 +1,22 @@
+{{{ tuning: AAAAAA    [Ostrich] [Unison]
+}}}
 {{{ tuning: DGDGBD    [Open G]
+# Note: GGDGBD (Open G Low) gets picked up as Open G (because one name is
+# included inside the other)its own. But that's actually more useful than
+# listing GGDGBD as an exotic tuning of its own.
 G   000000
 }}}
 {{{ tuning: EAEAC#E   [Open A]
 # Open G, two steps up
 A   000000
 }}}
-{{{ tuning: EBEAC#E   [Open Add9]
+{{{ --- tuning: EBEAC#E   [Open Add9]
 # Drop D (= open Gadd9), two steps up
 }}}
 {{{ tuning: DGDGBbD   [Open Gm]
 Gm  000000
 }}}
-{{{ tuning: DADF#AD   [Open D] [Vestapol]
+{{{ tuning: DADF#AD   [Open D]
 D   000000
 }}}
 {{{ tuning: DADFAD    [Open Dm]
@@ -160,6 +165,7 @@ G#m     466444
 {{{ tuning: EBEG#BE   [Open E]
 }}}
 {{{ tuning: CGCFAD    [Metal Drop C]
+# This is Drop D, down two steps.
 }}}
 {{{ tuning: EBEGBE    [Open Em]
 }}}
@@ -170,6 +176,19 @@ G#m     466444
 {{{ tuning: DADEAD    [Open Dsus2]
 }}}
 {{{ tuning: CGDGCD    [Orkney] [Sawmill]
+}}}
+{{{ tuning: CGCFCE    [Open Cadd4] [Nick Drake]
+}}}
+{{{ tuning: CGCGBE    [Open Cmaj7]
+}}}
+{{{ tuning: BEBEBE    [Open E5]
+}}}
+{{{ tuning: EEEEBE    [Bruce Palmer Modal]
+# Named after the Buffalo Springfield bass player, inspired by sitar tuning.
+}}}
+{{{ tuning: EBDGAD    [Open Em11]
+}}}
+{{{ --- tuning: CGDFCE    [Open C13] --- Coyote
 }}}
 
 {{{ tuning: GDGBD     [Banjo: Standard]
@@ -198,7 +217,7 @@ C(iv)   0545
 Cm  0003
 G   2022
 }}}
-{{{ tuning: GDGCD     [Banjo: Sawmill] [Banjo: Mountain Modal]
+{{{ tuning: GDGCD     [Banjo: Sawmill] [Banjo: Mountain]
 Gm      0020
 F       3203
 Bb      3323
