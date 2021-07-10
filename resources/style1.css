@@ -21,9 +21,14 @@ hr {
     margin: 0;
     }
 */
+    
+@media print { 
+    hr { visibility: hidden; } /* don't print <hr>s, since there are page breaks */
+    }
 
 h3 { 
     margin-bottom: 0; 
+    page-break-before: always; /* for easier printing of individual songs */
     }
 
 span {
