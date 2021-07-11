@@ -279,9 +279,9 @@ class CRD_album():
         self.songs  = []
         self.words  = {}
         self.new_words = []
-        name = ( artist.name if artist else '' ) + '_' + title
+        name = ( artist.name if artist else '' ) + '_' + self.title
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
-        alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(title)
+        alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(self.title)
         self.fname = 'album_' + alphaname + '.html'
     def add_song(self,title,fpath,lnum):
         song_index = self.index + '.%d' % ( len(self.songs) + 1 )
@@ -583,9 +583,9 @@ class CRD_song():
         self.tuning = None
         self.album = None
         self.fingerings = {}
-        self.link = ''.join( [x for x in title if x.isalnum() ])
-        self.title_sort = re.sub( '\AThe\s+', '', title)
-        if title[0] in [ "'", '"', '(' ]:
+        self.link = ''.join( [x for x in self.title if x.isalnum() ])
+        self.title_sort = re.sub( '\AThe\s+', '', self.title)
+        if self.title[0] in [ "'", '"', '(' ]:
             self.title_sort = self.title[1:]
         self.gui_item = None
         self.cover = None
