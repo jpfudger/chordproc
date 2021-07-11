@@ -123,19 +123,23 @@ class CRD_artist():
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
         lines += [ r'\usepackage[a4paper,margin=1cm]{geometry}' ]
+        lines += [ r'\usepackage{dejavu}' ]
+        lines += [ r'\renewcommand{\familydefault}{\sfdefault}' ]
+        lines += [ r'\usepackage{listings}' ]
+        lines += [ r'\lstset{basicstyle=\footnotesize\ttfamily}' ]
         lines += [ r'\begin{document}' ]
         lines += [ r'\pagenumbering{gobble}' ]
 
         for album in self.albums:
             for song in album.songs:
                 lines.append( r'\newpage' )
-                lines += [ r'\begin{verbatim}' ]
+                lines += [ r'\begin{lstlisting}' ]
                 lines += [ song.title ]
                 lines += [ '=' * len(song.title) ]
                 lines += [ '' ]
                 for line in song.lines:
                     lines.append(line)
-                lines += [ r'\end{verbatim}' ]
+                lines += [ r'\end{lstlisting}' ]
 
         lines += [ r'\end{document}' ]
 
@@ -143,6 +147,10 @@ class CRD_artist():
             os.makedirs('tex')
 
         name = self.fname.replace(".html", "")
+
+        # with open('tex/' + name + ".tex", "w") as f:
+        #     for line in lines:
+        #         f.write(line + "\n")
 
         p = subprocess.Popen(['pdflatex','-output-directory=tex', '-jobname='+name], shell=False,
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
@@ -259,6 +267,7 @@ def set_title_and_date(title):
 
     # if date: print(date)
     title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
+
     return title, date
 
 class CRD_album():
@@ -313,18 +322,21 @@ class CRD_album():
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
         lines += [ r'\usepackage[a4paper,margin=2cm]{geometry}' ]
+        lines += [ r'\usepackage{lstlisting}' ]
+        lines += [ r'\usepackage{dejavu}' ]
+        lines += [ r'\usepackage[T1]{fontenc}' ]
         lines += [ r'\begin{document}' ]
         lines += [ r'\pagenumbering{gobble}' ]
 
         for song in self.songs:
             lines.append( r'\newpage' )
-            lines += [ r'\begin{verbatim}' ]
+            lines += [ r'\begin{lstlisting}' ]
             lines += [ song.title ]
             lines += [ '=' * len(song.title) ]
             lines += [ '' ]
             for line in song.lines:
                 lines.append(line)
-            lines += [ r'\end{verbatim}' ]
+            lines += [ r'\end{lstlisting}' ]
 
         lines += [ r'\end{document}' ]
 
