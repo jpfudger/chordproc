@@ -86,6 +86,7 @@ class CRD_artist():
         #lines += [ '<ol>' ]
         for album in self.albums:
             #lines.append( '<li>' )
+            if album.gap_before: lines.append("<br>")
             n_songs = len(album.songs)
             lines.append( '<a href=%s>%s</a> <div class=count>%d</div>' 
                                 % ( album.fname, album.title, n_songs ) )
@@ -279,6 +280,7 @@ class CRD_album():
         self.songs  = []
         self.words  = {}
         self.new_words = []
+        self.gap_before = False
         name = ( artist.name if artist else '' ) + '_' + self.title
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
         alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(self.title)
@@ -307,6 +309,7 @@ class CRD_album():
                     songs_body += version.html()[:]
         for song in self.songs:
             s_class = ' class=cover' if song.cover else ''
+            if song.gap_before: lines.append("<br><br>")
             lines.append( '<li><a href=#%s%s>%s</a>' % ( song.link, s_class, song.title ) )
             if VERSIONS_ARE_SONGS and song.versions:
                 lines.append('<ul>')
@@ -583,6 +586,7 @@ class CRD_song():
         self.tuning = None
         self.album = None
         self.fingerings = {}
+        self.gap_before = False
         self.link = ''.join( [x for x in self.title if x.isalnum() ])
         self.title_sort = re.sub( '\AThe\s+', '', self.title)
         if self.title[0] in [ "'", '"', '(' ]:
@@ -1150,6 +1154,10 @@ class CRD_data():
         comment_level = 0
         newsongs = []
         lnum = 0
+        prev_album_close_line = 0
+        prev_song_close_line = 0
+        inherited_song_gap = False
+
         for line in lines:
             lnum += 1
             mopen = re.match('^\s*\{\{\{\s+(.*)',line)
@@ -1163,6 +1171,9 @@ class CRD_data():
                     pass
                 elif len(title) >= 3 and title[0:3] == '---':
                     comment_level = level
+                    if this_album:
+                        if prev_song_close_line > 0 and prev_song_close_line != lnum - 1:
+                            inherited_song_gap = True
                 elif len(title) > 6 and title[0:6] == 'artist':
                     a_name = re.match( '.*artist:\s+(.*)', line ).group(1)
                     this_artist = self.get_artist(a_name)
@@ -1173,6 +1184,8 @@ class CRD_data():
                         this_artist = self.get_artist('Misc')
                     this_album = this_artist.add_album(a_name)
                     level_album = level
+                    if prev_album_close_line > 0 and prev_album_close_line != lnum - 1:
+                        this_album.gap_before = True
                 elif len(title) > 4 and title[0:4] == 'song':
                     s_name = re.match( '.*song:\s+(.*)', line ).group(1)
                     if not this_artist:
@@ -1182,6 +1195,11 @@ class CRD_data():
                     this_song = this_album.add_song(s_name,path,lnum)
                     newsongs.append(this_song)
                     level_song = level
+                    if prev_song_close_line > 0 and prev_song_close_line != lnum - 1:
+                        this_song.gap_before = True
+                    if inherited_song_gap:
+                        this_song.gap_before = True
+                        inherited_song_gap = False
                 elif len(title) > 9 and title[0:7] == 'version':
                     v_name = re.match( '.*version:\s+(.*)', line ).group(1)
                     if not this_artist:
@@ -1198,14 +1216,24 @@ class CRD_data():
             elif mclose:
                 if this_song and level_song == level:
                     this_song = None
+                    prev_song_close_line = lnum
                 if this_album and level_album == level:
                     this_album  = None
+                    prev_album_close_line = lnum
+                    prev_song_close_line = 0
+                    inherited_song_gap = False
                 if this_artist and level_artist == level:
                     this_artist = None
+                    prev_album_close_line = 0
+                    prev_song_close_line = 0
                 if this_version and level_version == level:
                     this_version = None
                 if comment_level > 0 and comment_level == level:
                     comment_level = 0
+                    if this_album:
+                        prev_song_close_line = lnum
+                    else:
+                        prev_album_close_line = lnum
                 level -= 1
             elif this_version:
                 this_version.add_line(line.rstrip())
