@@ -6,11 +6,11 @@
 # listing GGDGBD as an exotic tuning of its own.
 G   000000
 }}}
-{{{ tuning: EAEAC#E   [Open A]
-# Open G, two steps up
-A   000000
+{{{ tuning: EAC#EAE   [Open A]
+# Sometimes "Open A" is used to EAEAC#E, which is Open G two steps up.
 }}}
 {{{ --- tuning: EBEAC#E   [Open Add9]
+# Referred to in the "Robert Johnson: New Transcriptions" book.
 # Drop D (= open Gadd9), two steps up
 }}}
 {{{ tuning: DGDGBbD   [Open Gm]
@@ -32,6 +32,9 @@ C9  000000
 
 D       0xx230
 
+}}}
+{{{ tuning: DADDAD    [Dulcimer D Modal]
+# Calling it simply "Dulcimer" means it is matched to the Joni tuning EADAAE.
 }}}
 {{{ tuning: DADGBE    [Drop D]
 A       202220
@@ -192,35 +195,35 @@ G#m     466444
 }}}
 
 {{{ tuning: GDGBD     [Banjo: Standard]
-G       0000
-D7      0210
-Em      2002
-C       2012
-Am      2212
-A       2222
-E       2102
-C(iii)  3333
-D(v)    5555
-D       4234
-F       3213
-G(iii)  5435
+G       x0000
+D7      x0210
+Em      x2002
+C       x2012
+Am      x2212
+A       x2222
+E       x2102
+C(iii)  x3333
+D(v)    x5555
+D       x4234
+F       x3213
+G(iii)  x5435
 }}}
 {{{ tuning: GCGCD     [Banjo: Double C]
-C       0002
-F       0203
-G       2020
-G7      2023
-Am      0202
-C(iv)   0545
+C       x0002
+F       x0203
+G       x2020
+G7      x2023
+Am      x0202
+C(iv)   x0545
 }}}
 {{{ tuning: GCGCC     [Banjo: Triple C]
-Cm  0003
-G   2022
+Cm  x0003
+G   x2022
 }}}
 {{{ tuning: GDGCD     [Banjo: Sawmill] [Banjo: Mountain]
-Gm      0020
-F       3203
-Bb      3323
-C       3003
+Gm      x0020
+F       x3203
+Bb      x3323
+C       x3003
 }}}
 

@@ -960,6 +960,9 @@ class CRD_song():
                 if t.name() == self.tuning.name():
                     stock_tuning = t
                     break
+                elif t.tuning == self.tuning.tuning:
+                    stock_tuning = t
+                    break
             elif t.name() == 'standard':
                 stock_tuning = t
                 break
@@ -1422,6 +1425,9 @@ class CRD_data():
             '|   |     |         +----------+                          +-------------------+',
             '|   |     |            Banjo                                     C-family',
             '| DADEAD  |  ',
+            '|   |     |  ',
+            '|   |     |  ',
+            '| DADDAD  |  ',
             '+---------+',
             ' D-family',
             '' # empty line for better in-line spacing
