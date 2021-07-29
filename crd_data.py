@@ -48,9 +48,10 @@ class CRD_artist():
             self.stock_tunings = data.stock_tunings
 
         alphaname = ''.join( [y for y in self.name if y.isalnum()] )
-        self.fname = 'artist_' + alphaname + '.html'
-        self.index_fname = 'artist_' + alphaname + '_index.html'
-        self.words_fname = 'artist_' + alphaname + '_words.html'
+        # alphaname = alphaname.lower()
+        self.fname = alphaname + '.html'
+        self.index_fname = alphaname + '_songs.html'
+        self.words_fname = alphaname + '_words.html'
         self.tuning = None
         self.words = {}
     def add_album(self,title):
@@ -284,7 +285,8 @@ class CRD_album():
         name = ( artist.name if artist else '' ) + '_' + self.title
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
         alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(self.title)
-        self.fname = 'album_' + alphaname + '.html'
+        # alphaname = alphaname.lower()
+        self.fname = alphaname + '.html'
     def add_song(self,title,fpath,lnum):
         song_index = self.index + '.%d' % ( len(self.songs) + 1 )
         apath = os.path.abspath(fpath)
@@ -676,6 +678,7 @@ class CRD_song():
                         fingering = None
                 else:
                     chord = CRD_chord(word)
+            #return None, None # This allows chords to be identified in the fingering lines
             return line, "fingering"
 
         return None, None
@@ -756,6 +759,7 @@ class CRD_song():
         # this splits the line at start/end of whitespace regions,
         # so that contiguous whitespace counts as a word
         formatted = leader
+        finger_regex = '([0-9xXA-G]{6,})' 
         got_a_not_chord = False
         for word in splits:
             if word == '':
@@ -779,6 +783,8 @@ class CRD_song():
                 formatted += '<div class=comment>' + word + '</div>'
             elif re.match( '\[?intro\]?', word.lower() ):
                 formatted += '<div class=comment>Intro</div>'
+            elif re.match( finger_regex, word ):
+                formatted += '<div class=comment>' + word + '</div>'
             elif re.match( '\$\d+', word ):
                 # $1 $2 etc used for links between sections
                 formatted += word
@@ -1160,6 +1166,7 @@ class CRD_data():
         prev_album_close_line = 0
         prev_song_close_line = 0
         inherited_song_gap = False
+        inherited_album_gap = False
 
         for line in lines:
             lnum += 1
@@ -1177,6 +1184,9 @@ class CRD_data():
                     if this_album:
                         if prev_song_close_line > 0 and prev_song_close_line != lnum - 1:
                             inherited_song_gap = True
+                    elif this_artist:
+                        if prev_album_close_line > 0 and prev_album_close_line != lnum - 1:
+                            inherited_album_gap = True
                 elif len(title) > 6 and title[0:6] == 'artist':
                     a_name = re.match( '.*artist:\s+(.*)', line ).group(1)
                     this_artist = self.get_artist(a_name)
@@ -1189,6 +1199,9 @@ class CRD_data():
                     level_album = level
                     if prev_album_close_line > 0 and prev_album_close_line != lnum - 1:
                         this_album.gap_before = True
+                    if inherited_album_gap:
+                        this_album.gap_before = True
+                        inherited_album_gap = False
                 elif len(title) > 4 and title[0:4] == 'song':
                     s_name = re.match( '.*song:\s+(.*)', line ).group(1)
                     if not this_artist:
@@ -1229,6 +1242,7 @@ class CRD_data():
                     this_artist = None
                     prev_album_close_line = 0
                     prev_song_close_line = 0
+                    inherited_album_gap = False
                 if this_version and level_version == level:
                     this_version = None
                 if comment_level > 0 and comment_level == level:
@@ -1552,7 +1566,7 @@ class CRD_data():
             s_link = song.album.fname + '#' + song.link
             lines.append( '<a href=%s>%s</a> (%s, %s)' % ( s_link, song.title, song.artist.name, song.album.title ) )
         lines += [ '</div>', '</body>', '</html>' ]
-        with open(self.opts["html_root"] + 'allsongs.html', 'w') as f:
+        with open(self.opts["html_root"] + 'songs.html', 'w') as f:
             for l in lines:
                 f.write('\n' + l)
     def make_html(self):
@@ -1568,7 +1582,7 @@ class CRD_data():
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2><div title="%s">ChordProc</div></h2>' % timestamp ]
         lines += [ '<hr>' ]
-        lines += [ '<a href=allsongs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary ]
+        lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary ]
         lines += [ '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary ]
         lines += [ '<hr>' ]
 
