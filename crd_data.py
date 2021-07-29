@@ -48,7 +48,7 @@ class CRD_artist():
             self.stock_tunings = data.stock_tunings
 
         alphaname = ''.join( [y for y in self.name if y.isalnum()] )
-        # alphaname = alphaname.lower()
+        alphaname = alphaname.lower()
         self.fname = alphaname + '.html'
         self.index_fname = alphaname + '_songs.html'
         self.words_fname = alphaname + '_words.html'
@@ -285,7 +285,7 @@ class CRD_album():
         name = ( artist.name if artist else '' ) + '_' + self.title
         alpha = lambda x: ''.join( [y for y in x if y.isalnum()] )
         alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(self.title)
-        # alphaname = alphaname.lower()
+        alphaname = alphaname.lower()
         self.fname = alphaname + '.html'
     def add_song(self,title,fpath,lnum):
         song_index = self.index + '.%d' % ( len(self.songs) + 1 )
@@ -1383,12 +1383,19 @@ class CRD_data():
         n_albums = 0
         n_songs = 0
         links = []
+        misc_links = []
         for artist in self.artists:
             n_artists += 1
             n_albums += len(artist.albums)
             n_songs += len(artist.all_songs())
-            links.append( '<a href="%s">%s</a> <div class=count>%d/%d</div><br>' % 
-               ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) )
+            link = '<a href="%s">%s</a> <div class=count>%d/%d</div><br>' % \
+               ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) 
+
+            if artist.name.startswith("Misc"):
+                misc_links.append(link)
+            else:
+                links.append(link)
+
             for album in artist.albums:
                 album_path = self.opts["html_root"] + album.fname
                 with open(album_path, 'w') as f:
@@ -1407,7 +1414,7 @@ class CRD_data():
                 for l in artist.html_index():
                     f.write('\n' + l)
 
-        return "%d/%d/%d" % (n_songs, n_albums, n_artists), links
+        return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
     def make_tuning_map(self):
         raw_lines = [
             '                                         EADGBE',
@@ -1572,7 +1579,7 @@ class CRD_data():
     def make_html(self):
         if not DO_CRDFILES:
             self.make_song_index()
-        artists_summary, artists_links = self.make_artists_index()
+        artists_summary, artists_links, misc_links = self.make_artists_index()
         tunings_summary = self.make_tuning_index()
 
         lines  = [ '<html>', '<body>', '<head>' ]
@@ -1590,6 +1597,13 @@ class CRD_data():
         lines += artists_links
         lines += [ '</div>' ] 
         lines += [ '<hr>' ]
+
+        if misc_links:
+            lines += [ '<div>' ] # class=artistlist>' ]
+            lines += misc_links
+            lines += [ '</div>' ] 
+            lines += [ '<hr>' ]
+
         lines += [ '</body>', '</html>' ]
 
         if not DO_CRDFILES:
