@@ -1300,9 +1300,8 @@ class CRD_data():
                         notes = splits[1]
                         names_str = " ".join(splits[2:])
                         names = re.findall('\[([^]]+)\]', names_str )
-                        if len(names) > 0:
-                            current_tuning = CRD_tuning( notes, names )
-                        else:
+                        current_tuning = CRD_tuning( notes, names )
+                        if len(names) == 0:
                             print("Tuning %s has no name" % notes)
             elif current_tuning:
                 splits = line.strip().split()
