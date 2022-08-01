@@ -1427,14 +1427,14 @@ class CRD_data():
             '                       DADGBD                                     CGDGBE',
             '                         |                                          |',
             '    +----------------------------------------+                      |',
-            '    |                                        |                      |',
-            '    |               +----------+         +---------+      +-------------------+',
-            '    |               |  GDGBD   | > > > > | DGDGBD  |      |       CGCGBE      |',
+            '    |                                        |            +-------------------+',
+            '    |               +----------+         +---------+      |       CGCGBE      |',
+            '    |               |  GDGBD   | > > > > | DGDGBD  |      |         |         |',
             '    |               |    |     |         |   |     |      |         |         |',
-            '    |               |    |     |         |   |     |      |         |         |',
-            '    |               |  GDGBbD  | > > > > | DGDGBbD |      |       CGCGCE      |',
+            '    |               |    |     |         |   |     |      |       CGCGGE      |',
+            '    |               |  GDGBbD  | > > > > | DGDGBbD |      |         |         |',
             '    |               |    |     |         +---------+      |         |         |',
-            '+---------+  capo5  |    |     |          G-family        |         |         |',
+            '+---------+  capo5  |    |     |          G-family        |       CGCGCE      |',
             '| DADGAD  | < < < < |  GDGCD   |                          |         |         |',
             '|   |     |         |    |     |                          |   +-----------+   |',
             '|   |     |         |    |     |                          |   |           |   |',
@@ -1590,6 +1590,7 @@ class CRD_data():
         lines += [ '<hr>' ]
         lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary ]
         lines += [ '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary ]
+        lines += [ '<a href=theory.html>Chords and Scales</a>' ]
         lines += [ '<hr>' ]
 
         lines += [ '<div class=artistlist>' ]
