@@ -751,9 +751,29 @@ class CRD_song():
                 hkey = splits[1]
                 chord = CRD_chord(hkey)
                 if chord.is_chord():
-                    splits[1] = "<div class=chord>%s</div>" % chord.format(transpose,prefer_sharp)
+                    formatted = chord.format(transpose,prefer_sharp)
+                    splits[1] = "<div class=chord>%s</div>" % formatted
                     comline = " ".join(splits)
                     comtype = "comment"
+            elif comtype == "capo":
+                # format capo position and sounding key
+                splits = comline.split()
+                capo_position = splits[1]
+
+                chord = None
+                m = re.search("sounding key:?\s*([A-G#b]+)", comline)
+                if m:
+                    sounding_key = m.group(1)
+                    #print("Sounding key: " + sounding_key)
+                    chord = CRD_chord(sounding_key)
+
+                if capo_position:
+                    comline = "Capo: <div class=capo>%s</div> " % capo_position
+                    comtype = "comment"
+                    if chord and chord.is_chord():
+                        formatted = chord.format(transpose, prefer_sharp)
+                        comline += "(sounding key: <div class=chord>%s</div>)" % formatted 
+
             return leader + '<div class=%s>%s</div>' % ( comtype, re.sub( ' ', nbsp, comline ) )
         splits = re.split( r'(\s+)', line)
         # this splits the line at start/end of whitespace regions,
