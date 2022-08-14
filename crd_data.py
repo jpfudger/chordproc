@@ -18,7 +18,6 @@ import datetime
 
 DO_WORDLISTS = [ ] # [ "Bob Dylan" ]
 DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
-VERSIONS_ARE = "DIVS" # "COMBINED" # "SONGS" "DIVS"
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def common_html(want_chord_controls=True):
@@ -305,22 +304,11 @@ class CRD_album():
         lines += [ '<hr>', '<ol>' ]
         songs_body = []
         for song in self.songs:
-            if VERSIONS_ARE == "COMBINED":
-                songs_body += song.html()[:] # must do this first, to set song.cover
-            elif VERSIONS_ARE == "DIVS":
-                songs_body += song.html_div_versions()[:]
-            elif VERSIONS_ARE == "SONGS":
-                for version in song.versions:
-                    songs_body += version.html()[:]
+            songs_body += song.html()[:]
         for song in self.songs:
             s_class = ' class=cover' if song.cover else ''
             if song.gap_before: lines.append("<br><br>")
             lines.append( '<li><a href=#%s%s>%s</a>' % ( song.link, s_class, song.title ) )
-            if VERSIONS_ARE == "SONGS" and song.versions:
-                lines.append('<ul>')
-                for version in song.versions:
-                    lines.append( '<li><a href=#%s>%s</a>' % ( version.link, version.title ) )
-                lines.append('</ul>')
         lines += [ '</ol>' ]
         lines += songs_body
         lines += [ '<hr>' ]
@@ -1017,46 +1005,6 @@ class CRD_song():
                 self.is_comment_line(line)
     def html(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
         self.inherit_fingerings()
-        lines = []
-        title = self.title
-        if self.version_of:
-            title = "Version: " + title
-        else:
-            lines += [ '<hr> <a name=%s></a>' % self.link ] 
-        name = ''
-        if add_artist:
-            name = ' (%s)' % self.artist.name
-        lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, title + name) ]
-
-        n_lines = len(self.lines)
-        if not VERSIONS_ARE == "SONGS":
-            for version in self.versions:
-                n_lines += len(version.lines)
-
-        if not self.version_of:
-            if n_lines > 100 and self.longest_line() <= 65:
-                lines += [ '<div class=chords_3col>' ]
-            elif n_lines > 50:
-                lines += [ '<div class=chords_2col>' ]
-            else:
-                lines += [ '<div class=chords_1col>' ]
-
-        lines += self.format_song_lines(transpose,prefer_sharp,explicit_ws)
-
-        if not VERSIONS_ARE == "SONGS":
-            for version in self.versions:
-                #lines += [ "<br>" ]
-                lines += version.html(add_artist,transpose,prefer_sharp,explicit_ws)
-                #version.inherit_fingerings()
-                #lines += [ "<br> <hr> <h2>%s</h3>" % version.title ]
-                #lines += version.format_song_lines(transpose,prefer_sharp,explicit_ws)
-
-        if not self.version_of:
-            lines += [ '</div>' ]
-            lines += [ '<br><br>' ]
-        return lines
-    def html_div_versions(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
-        self.inherit_fingerings()
         style = ' style="display:none"'
         qindex = "'%s'" % self.index
 
@@ -1117,7 +1065,7 @@ class CRD_song():
         for version in self.versions:
             #version.inherit_fingerings()
             version.index = self.index
-            lines += version.html_div_versions(add_artist,transpose,prefer_sharp,explicit_ws)
+            lines += version.html(add_artist,transpose,prefer_sharp,explicit_ws)
 
         return lines
     def latex(self):
