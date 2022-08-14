@@ -28,6 +28,8 @@ C   000000
 {{{ tuning: CGCGCE    [Open C]
 C9  000000
 }}}
+{{{ tuning: CGCGGE    [Open C5]
+}}}
 {{{ tuning: DADGBD    [Double Drop D] [Open Gadd9]
 
 D       0xx230
@@ -35,6 +37,10 @@ D       0xx230
 }}}
 {{{ tuning: DADDAD    [Dulcimer D Modal]
 # Calling it simply "Dulcimer" means it is matched to the Joni tuning EADAAE.
+}}}
+{{{ tuning: DGDGBE
+#    [Drop D/g] [Open G6]
+# Only used for Richard Thompson: Easy There, Steady Now?
 }}}
 {{{ tuning: DADGBE    [Drop D]
 A       202220
@@ -189,7 +195,7 @@ G#m     466444
 {{{ tuning: EEEEBE    [Bruce Palmer Modal]
 # Named after the Buffalo Springfield bass player, inspired by sitar tuning.
 }}}
-{{{ tuning: EBDGAD    [Open Em11]
+{{{ tuning: EBDGAD    [Open Em11] [David Crosby]
 }}}
 {{{ --- tuning: CGDFCE    [Open C13] --- Coyote
 }}}
@@ -208,6 +214,12 @@ D       x4234
 F       x3213
 G(iii)  x5435
 }}}
+{{{ tuning: GDGBbD    [Banjo: Open Gm]
+Gm      x0000
+G       x0010
+}}}
+{{{ tuning: GCGBD     [Banjo: Drop C]
+}}}
 {{{ tuning: GCGCD     [Banjo: Double C]
 C       x0002
 F       x0203
@@ -215,6 +227,8 @@ G       x2020
 G7      x2023
 Am      x0202
 C(iv)   x0545
+}}}
+{{{ tuning: GCGCE     [Banjo: Open C]
 }}}
 {{{ tuning: GCGCC     [Banjo: Triple C]
 Cm  x0003
@@ -225,5 +239,7 @@ Gm      x0020
 F       x3203
 Bb      x3323
 C       x3003
+}}}
+{{{ tuning: FDGCD     [Banjo: Cumberland Gap]
 }}}
 
