@@ -570,10 +570,10 @@ class CRD_tuning():
                                 self.names.append(name)
                                 break
 
-        if not self.tuning:
+        #if not self.tuning:
             # If this error gets thrown you may need to add the new tuning
             # to the list in resources/stock_tunings.crd
-            print("Error: no name for tuning: " + self.input_string)
+            #print("Error: no name for tuning: " + self.input_string)
         return self._name
     def standard(self):
         return self._name and self._name.lower() == 'standard'
