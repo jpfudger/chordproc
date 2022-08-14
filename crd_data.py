@@ -18,7 +18,7 @@ import datetime
 
 DO_WORDLISTS = [ ] # [ "Bob Dylan" ]
 DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
-VERSIONS_ARE_SONGS = False # whether versions are separate songs, or appended to main song
+VERSIONS_ARE = "DIVS" # "COMBINED" # "SONGS" "DIVS"
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def common_html(want_chord_controls=True):
@@ -305,15 +305,18 @@ class CRD_album():
         lines += [ '<hr>', '<ol>' ]
         songs_body = []
         for song in self.songs:
-            songs_body += song.html()[:] # must do this first, to set song.cover
-            if VERSIONS_ARE_SONGS:
+            if VERSIONS_ARE == "COMBINED":
+                songs_body += song.html()[:] # must do this first, to set song.cover
+            elif VERSIONS_ARE == "DIVS":
+                songs_body += song.html_div_versions()[:]
+            elif VERSIONS_ARE == "SONGS":
                 for version in song.versions:
                     songs_body += version.html()[:]
         for song in self.songs:
             s_class = ' class=cover' if song.cover else ''
             if song.gap_before: lines.append("<br><br>")
             lines.append( '<li><a href=#%s%s>%s</a>' % ( song.link, s_class, song.title ) )
-            if VERSIONS_ARE_SONGS and song.versions:
+            if VERSIONS_ARE == "SONGS" and song.versions:
                 lines.append('<ul>')
                 for version in song.versions:
                     lines.append( '<li><a href=#%s>%s</a>' % ( version.link, version.title ) )
@@ -773,6 +776,8 @@ class CRD_song():
                     if chord and chord.is_chord():
                         formatted = chord.format(transpose, prefer_sharp)
                         comline += "(sounding key: <div class=chord>%s</div>)" % formatted 
+            elif comtype == "cover":
+                return ""
 
             return leader + '<div class=%s>%s</div>' % ( comtype, re.sub( ' ', nbsp, comline ) )
         splits = re.split( r'(\s+)', line)
@@ -883,6 +888,15 @@ class CRD_song():
             formatted_with_spans.append(line)
 
         formatted_with_spans.append("</span>") # close last one
+
+        n_empty_leaders = 0
+        for line in formatted_with_spans:
+            if re.search( "^\s*$", line): 
+                n_empty_leaders += 1
+            else:
+                break
+
+        formatted_with_spans = formatted_with_spans[n_empty_leaders:]
 
         return formatted_with_spans
     def ignore_word(self,word):
@@ -1015,7 +1029,7 @@ class CRD_song():
         lines += [ '<h3><div title="%s">%s</div></h3>' % (self.index, title + name) ]
 
         n_lines = len(self.lines)
-        if not VERSIONS_ARE_SONGS:
+        if not VERSIONS_ARE == "SONGS":
             for version in self.versions:
                 n_lines += len(version.lines)
 
@@ -1029,7 +1043,7 @@ class CRD_song():
 
         lines += self.format_song_lines(transpose,prefer_sharp,explicit_ws)
 
-        if not VERSIONS_ARE_SONGS:
+        if not VERSIONS_ARE == "SONGS":
             for version in self.versions:
                 #lines += [ "<br>" ]
                 lines += version.html(add_artist,transpose,prefer_sharp,explicit_ws)
@@ -1040,6 +1054,71 @@ class CRD_song():
         if not self.version_of:
             lines += [ '</div>' ]
             lines += [ '<br><br>' ]
+        return lines
+    def html_div_versions(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
+        self.inherit_fingerings()
+        style = ' style="display:none"'
+        qindex = "'%s'" % self.index
+
+        # do this first, so that self.cover is set
+        formatted_song_lines = self.format_song_lines(transpose,prefer_sharp,explicit_ws)
+
+        lines = []
+
+        if not self.version_of:
+            if self.versions:
+                versions = [ '<select id="%s.select" onchange="update_song_version(%s);">' % ( self.index, qindex ) ]
+                versions.append( '<option value=0>Version: Default</option>' )
+                for i, version in enumerate(self.versions):
+                    versions.append( '<option value=%d>Version: %s</option>' % (i+1, version.title))
+                versions.append('</select>')
+
+            style = ' style="display:block"'
+            lines += [ '<hr> <a name=%s></a>' % self.link ] 
+            name = (' (%s)' % self.artist.name) if add_artist else ''
+            lines += [ '<div class=title id=%s>%s</div>' % (self.index, self.title + name) ]
+
+            # Buttons for versions and transposing:
+
+            # button_trans_1 = '<input type="button" title="Transpose down" value="&flat;" ' \
+            #                  'onclick="transpose_song(%s,-1);">' % qindex
+            # button_trans_2 = '<input type="button" title=Transpose up"" value="&sharp;" ' \
+            #                  'onclick="transpose_song(%s,+1);">' % qindex
+            # button_cycle_1 = '<input type="button" title="Cycle versions" value="&lt;" ' \
+            #                  'onclick="cycle_versions(%s,-1);">' % qindex
+            # button_cycle_2 = '<input type="button" title="Cycle versions" value="&gt;" ' \
+            #                  'onclick="cycle_versions(%s,+1);">' % qindex
+
+            # lines += [ button_trans_1, button_trans_2 ]
+            # if self.versions:
+            #     lines += [ button_cycle_1, button_cycle_2 ]
+
+            if self.cover:
+                lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % self.cover ]
+
+            # lines += [ button_trans_1, button_trans_2 ]
+            if self.versions:
+                lines += versions
+
+            lines += [ "<br>" ]
+
+        n_lines = len(self.lines)
+
+        if n_lines > 100 and self.longest_line() <= 65:
+            lines += [ '<div id=%s class="chords_3col version"%s>' % (self.index, style) ]
+        elif n_lines > 50:
+            lines += [ '<div id=%s class="chords_2col version"%s>' % (self.index, style) ]
+        else:
+            lines += [ '<div id=%s class="chords_1col version"%s>' % (self.index, style) ]
+
+        lines += formatted_song_lines
+        lines += [ '</div>' ]
+
+        for version in self.versions:
+            #version.inherit_fingerings()
+            version.index = self.index
+            lines += version.html_div_versions(add_artist,transpose,prefer_sharp,explicit_ws)
+
         return lines
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
@@ -1250,6 +1329,12 @@ class CRD_data():
                 else:
                     print("Unknown fold type in %s: %s" % (path, line.strip()))
             elif mclose:
+                if comment_level > 0 and comment_level == level:
+                    comment_level = 0
+                    if this_album:
+                        prev_song_close_line = lnum
+                    else:
+                        prev_album_close_line = lnum
                 if this_song and level_song == level:
                     this_song = None
                     prev_song_close_line = lnum
@@ -1265,12 +1350,6 @@ class CRD_data():
                     inherited_album_gap = False
                 if this_version and level_version == level:
                     this_version = None
-                if comment_level > 0 and comment_level == level:
-                    comment_level = 0
-                    if this_album:
-                        prev_song_close_line = lnum
-                    else:
-                        prev_album_close_line = lnum
                 level -= 1
             elif this_version:
                 this_version.add_line(line.rstrip())
