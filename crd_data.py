@@ -1074,7 +1074,7 @@ class CRD_song():
                 versions.append('</select>')
 
             style = ' style="display:block"'
-            lines += [ '<hr> <a name=%s></a>' % self.link ] 
+            lines += [ '<hr class=padded> <a name=%s></a>' % self.link ] 
             name = (' (%s)' % self.artist.name) if add_artist else ''
             lines += [ '<div class=title id=%s>%s</div>' % (self.index, self.title + name) ]
 
