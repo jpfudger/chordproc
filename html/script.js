@@ -1,4 +1,6 @@
+// vim: foldmethod=marker
 
+//{{{ function: cycle_styles()
 function cycle_styles() {
     var ss = document.getElementById("style");
     //window.alert(ss.href);
@@ -22,7 +24,10 @@ function cycle_styles() {
     //     document.getElementById("style").disabled = false;
     //     }
     }
+//}}}
 
+//{{{ collection: chords
+//{{{ function: hide_chords()
 function hide_chords() {
     // var songs = document.querySelectorAll('.chords_1col,.chords_2col,.chords_3col');
     // for ( var i=0; i<songs.length; i++) {
@@ -43,7 +48,8 @@ function hide_chords() {
             } 
         } 
     }
-
+//}}}
+//{{{ function: get_notes()
 function get_notes(which,prefer_sharp=false) {
     notes = [ 'A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab' ];
     if ( prefer_sharp || which.match(/#/) ) {
@@ -51,7 +57,8 @@ function get_notes(which,prefer_sharp=false) {
         }
     return notes.concat(notes);
     }
-
+//}}}
+//{{{ function: get_root()
 function get_root(chord) {
     var notes = ["A#","Ab","A","Bb","B","C#","C","D#","Db","D","Eb","E","F#","F","G#","Gb","G","A#"];
     for ( var i=0; i<notes.length; i++ ) {
@@ -61,13 +68,15 @@ function get_root(chord) {
         }
     return null;
     }
-
+//}}}
+//{{{ function: get_bass()
 function get_bass(chord) {
     var array = chord.match( RegExp( "/([a-zb#]+)$", "i" ) );
     if ( array ) return array[1];
     return null;
     }
-
+//}}}
+//{{{ function: increment_note()
 function increment_note(note,up=true) {
     var notes = get_notes(note);
     var index = 0;
@@ -88,8 +97,9 @@ function increment_note(note,up=true) {
         }
     return notes[index];
     }
-
-function divUp(d) {
+//}}}
+//{{{ function: chordDivUp()
+function chordDivUp(d) {
     var root = get_root(d.innerHTML);
     var bass = get_bass(d.innerHTML);
     if ( root ) {
@@ -102,8 +112,9 @@ function divUp(d) {
         }
 
     }
-
-function divDown(d) {
+//}}}
+//{{{ function: chordDivDown()
+function chordDivDown(d) {
     var root = get_root(d.innerHTML);
     var bass = get_bass(d.innerHTML);
     if ( root ) {
@@ -115,22 +126,204 @@ function divDown(d) {
         d.innerHTML = d.innerHTML.replace( RegExp("/" + bass, "i"),  "/" + new_bass );
         }
     }
-
+//}}}
+//{{{ function: cycleChords()
 function cycleChords(up=true) {
     var divs = document.getElementsByClassName('chord');
     for ( var i=0; i<divs.length; i++) {
         if ( up ) {
-            divUp(divs[i]);
+            chordDivUp(divs[i]);
             }
         else {
-            divDown(divs[i]);
+            chordDivDown(divs[i]);
             }
         } 
     }
+//}}}
+//}}}
+//{{{ collection: capos
+//{{{ function: numeral_to_decimal()
+function numeral_to_decimal(numeral) {
+    var mult = 1;
+    if ( numeral.startsWith("-") ) {
+        mult = -1;
+        numeral = numeral.slice(1);
+        }
+    var numerals = ["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV"];
+    var decimal = 0;
+    for ( var i=0; i<numerals.length; i++ ) {
+        if ( numeral == numerals[i] ) {
+            decimal = i;
+            break;
+            }
+        }
+    return mult * decimal
+    }
+//}}}
+//{{{ function: decimal_to_numeral()
+function decimal_to_numeral(decimal) {
+    var mult = "";
+    if ( decimal < 0 ) {
+        mult = "-";
+        decimal *= -1;
+        }
+    var numerals = ["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV"];
+    return mult + numerals[decimal]
+    }
+//}}}
+//{{{ function: get_position()
+function get_position(d) {
+    var array = d.innerHTML.match( RegExp( "(-?[0XIV]+)", "i" ) );
+    position_numeral = array[1];
+    position_decimal = numeral_to_decimal(position_numeral);
+    return position_decimal
+    }
+//}}}
+//{{{ function: capoDivUp()
+function capoDivUp(d) {
+    var new_position = get_position(d) + 1;
+    new_position = new_position % 12;
+    d.innerHTML = decimal_to_numeral(new_position);
+    }
+//}}}
+//{{{ function: capoDivDown()
+function capoDivDown(d) {
+    var new_position = get_position(d) - 1;
+    new_position = new_position % 12;
+    d.innerHTML = decimal_to_numeral(new_position);
+    }
+//}}}
+//{{{ function: cycleCapos()
+function cycleCapos(up=true) {
+    var divs = document.getElementsByClassName('capo');
+    for ( var i=0; i<divs.length; i++) {
+        if ( up ) {
+            capoDivUp(divs[i]);
+            }
+        else {
+            capoDivDown(divs[i]);
+            }
+        } 
+    }
+//}}}
+//}}}
 
-function transpose_up()   { cycleChords(true);  }
-function transpose_down() { cycleChords(false); }
+function transpose_up() {
+    cycleChords(true);  
+    cycleCapos(false);  
+    }
+
+function transpose_down() {
+    cycleChords(false); 
+    cycleCapos(true);  
+    }
+
+//{{{ function: get_versions_of_song
+function get_versions_of_song(song_index) 
+    {
+    var versions = [];
+    var divs = document.getElementsByTagName("div");
+
+    for ( var i=0; i<divs.length; i++ )
+        {
+        if ( divs[i].classList.contains("version") && divs[i].id == song_index )
+            {
+            versions.push(divs[i]);
+            }
+        }
+
+    return versions;
+    }
+//}}}
+//{{{ function: cycle_versions
+function cycle_versions(song_index,direction) 
+    {
+    var versions = get_versions_of_song(song_index);
+    var current = -1;
+
+    // set current index and hide it:
+    for ( var i=0; i<versions.length; i++ )
+        {
+        if ( versions[i].style.display == "block" ) { current = i; }
+        versions[i].style.display = "none"; // "block"
+        }
+
+    // set current to next or previous:
+    if ( direction > 0 )
+        {
+        if ( current == versions.length-1 ) { current = 0 }
+        else { current += 1 }
+        }
+    else
+        {
+        if ( current == 0 ) { current = versions.length-1 }
+        else { current -= 1 }
+        }
+
+    // show new current:
+    versions[current].style.display = "block";
+    }
+//}}}
+//{{{ function: set_version_of_song
+function set_version_of_song(song_index,version_index) 
+    {
+    var versions = get_versions_of_song(song_index);
+
+    for ( var i=0; i<versions.length; i++ )
+        {
+        if ( i == version_index )
+            {
+            versions[i].style.display = "block";
+            }
+        else
+            {
+            versions[i].style.display = "none";
+            }
+        }
+    }
+//}}}
+
+//{{{ function: get_chords_of_song
+function get_chords_of_song(song_index)
+    {
+    var chords = [];
+    var divs = document.getElementsByTagName("div");
+
+    for ( var i=0; i<divs.length; i++ )
+        {
+        if ( divs[i].classList.contains("chord") && 
+             divs[i].parentNode.parentNode.id == song_index )
+            {
+            chords.push(divs[i]);
+            }
+        }
+
+    return chords;
+    }
+//}}}
+//{{{ function: transpose_song
+function transpose_song(song_index, direction)
+    {
+    var chords = get_chords_of_song(song_index);
+
+    for ( var i=0; i<chords.length; i++ )
+        {
+        if (direction > 0) { chordDivUp(chords[i]); }
+        else               { chordDivDown(chords[i]); }
+        }
+
+    }
+//}}}
+
+//{{{ function: update_song_version
+function update_song_version(song_index)
+    {
+    var select = document.getElementById( song_index + ".select")
+    var value = select.options[select.selectedIndex].value;
+    set_version_of_song(song_index, value);
+    }
+//}}}
 
 shortcut.add("j",function() { transpose_down() });
-shortcut.add("k",function() { transpose_up() });
+shortcut.add("k",function() { transpose_up()   });
 
