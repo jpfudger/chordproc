@@ -1,0 +1,382 @@
+<html>
+<body>
+<head>
+<title>Chordproc: Chords and Scales</title>
+<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="style1.css" id="style">
+<script src="script.js"></script>
+<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>
+<a onclick="transpose_up();" title="Transpose Up"><div id=t_l></div></a>
+<a onclick="transpose_down();" title="Transpose Down"><div id=b_l></div></a>
+<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>
+</head>
+<hr>
+<h3>Chord Names</h3>
+<!--<h3>Chord Dictionary</h3> -->
+<div class=chords_2col>
+<span>--------------------------------------------------------------------------------
+ Symbol   | Name              | Scale degrees             | Notes in <div class=chord>C</div>
+--------------------------------------------------------------------------------
+ 5        | Power chord       | 1, 5                      | <div class=chord>C</div> <div class=chord>G</div>
+--------------------------------------------------------------------------------
+          | Major             | 1, 3, 5                   | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>
+ m        | Minor             | 1, m3, 5                  | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>
+ sus2     | Suspended 2nd     | 1, 2, 5                   | <div class=chord>C</div> <div class=chord>D</div>  <div class=chord>G</div>
+ sus4     | Suspended 4th     | 1, 4, 5                   | <div class=chord>C</div> <div class=chord>F</div>  <div class=chord>G</div>
+--------------------------------------------------------------------------------
+ dim, o   | Diminished        | 1, m3, b5                 | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>Gb</div>
+ b5       | Flat 5            | 1, 3, b5                  | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>Gb</div>
+ aug, +   | Augmented         | 1, 3, #5                  | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G#</div>
+--------------------------------------------------------------------------------
+ 6        | Added 6th         | 1, 3, 5, 6                | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>A</div>
+--------------------------------------------------------------------------------
+ 7        | Dominant 7th      | 1, 3, 5, m7               | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div>
+ m7       | Minor 7th         | 1, m3, 5, m7              | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div>
+ maj7, &Delta;  | Major 7th         | 1, 3, 5, 7                | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>B</div>
+ 7b5      | Dominant 7 Flat 5 | 1, 3, b5, m7              | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>Gb</div> <div class=chord>Bb</div>
+ m7b5, &oslash;  | Half Diminished   | 1, m3, b5, m7             | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>Gb</div> <div class=chord>Bb</div>
+ m(maj7)  | Minor Major 7th   | 1, m3, 5, 7               | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>B</div>
+ dim7, o7 | Diminished 7th    | 1, m3, b5, bb7            | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>Gb</div> <div class=chord>A</div>
+--------------------------------------------------------------------------------
+ 7#9      | Hendrix chord     | 1, 3, 5, m7, #9           | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D#</div>
+ 9        | Dominant 9th      | 1, 3, 5, m7, 9            | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div>
+ m9       | Minor 9th         | 1, m3, 5, m7, 9           | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div>
+ maj9     | Major 9th         | 1, 3, 5, 7, 9             | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>B</div>  <div class=chord>D</div>
+--------------------------------------------------------------------------------
+ 11       | Dominant 11th     | 1, 3, 5, m7, 9, 11        | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div>
+ m11      | Minor 11th        | 1, m3, 5, m7, 9, 11       | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div>
+--------------------------------------------------------------------------------
+ 13       | Dominant 13th     | 1, 3, 5, m7, 9, 11, 13    | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div> <div class=chord>A</div>
+ m13      | Minor 13th        | 1, m3, 5, m7, 9, 11, 13   | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div> <div class=chord>A</div>
+--------------------------------------------------------------------------------
+</span>
+
+<span>More Stacked 3rds
+=================
+</span>
+<span>9th  == 2nd on top
+11th == 4th on top
+13th == 6th on top
+
+<span>You may see +/- instead of #/b (e.g. 7b5 = 7-5, or 7#9 = 7+9).
+</span>
+<span>Diminished Chords
+=================
+
+Diminished 7th chords are constructed of four stacked minor thirds (1,m3,b5,bb7).
+The bb7 in the dim7 chord is equivalent to the 6th degree of the scale.
+The inversions of these chords overlap, so there are only 3 unique dim7 chords:
+</span>
+<span>    <div class=chord>Cdim7</div>  = <div class=chord>D#dim7</div> = <div class=chord>F#dim7</div> = <div class=chord>Adim7</div>  = <div class=fingering>xx1212</div>
+    <div class=chord>C#dim7</div> = <div class=chord>Edim7</div>  = <div class=chord>Gdim7</div>  = <div class=chord>A#dim7</div> = <div class=fingering>xx2323</div>
+    <div class=chord>Ddim7</div>  = <div class=chord>Fdim7</div>  = <div class=chord>G#dim7</div> = <div class=chord>Bdim7</div>  = <div class=fingering>xx3434</div>
+
+You may hear the m7b5 chord (&oslash;) referred to as "half diminished" (i.e. missing the bb7).
+</span>
+<span>Augmented Chords
+================
+
+Augmented 5th chords are constructed of three stacked major thirds (1,3,#5).
+The inversions of these chords overlap, so there are only 4 unique augmented chords:
+
+<span>    <div class=chord>C+</div>   =  <div class=chord>E+</div>  =  <div class=chord>G#+</div>
+    <div class=chord>C#+</div>  =  <div class=chord>F+</div>  =  <div class=chord>A+</div>
+    <div class=chord>D+</div>   =  <div class=chord>F#+</div> =  <div class=chord>A#+</div>
+    <div class=chord>D#+</div>  =  <div class=chord>B+</div>  =  <div class=chord>G+</div>
+</span>
+</div>
+<br>
+<!--
+<h2>Scales</h2>
+<ol>
+<li><a href=#CMajorIonian>C Major (Ionian)</a>
+<li><a href=#CNaturalMinorAeolian>C Natural Minor (Aeolian)</a>
+<li><a href=#CDorian>C Dorian</a>
+<li><a href=#CPhrygian>C Phrygian</a>
+<li><a href=#CLydian>C Lydian</a>
+<li><a href=#CMixolydian>C Mixolydian</a>
+<li><a href=#CLocrian>C Locrian</a>
+<li><a href=#CHarmonicMinor>C Harmonic Minor</a>
+<li><a href=#CMelodicMinor>C Melodic Minor</a>
+<li><a href=#CLydianb7>C Lydian b7</a>
+<li><a href=#CWholeTone>C Whole Tone</a>
+<li><a href=#CDiminishedWholeHalf>C Diminished (Whole-Half)</a>
+<li><a href=#CPentatonicMajor>C Pentatonic (Major)</a>
+<li><a href=#CPentatonicMinor>C Pentatonic (Minor)</a>
+<li><a href=#CBluesScalem3b5>C Blues Scale (m3, b5)</a>
+</ol>
+-->
+
+<hr> <a name=Harmonica></a>
+<h3>Diatonic Harmonica Positions</h3>
+<div class=chords_2col>
+<span>                                                     +----+
+                                                     | <div class=chord>Bb</div> |
+                                           +--------------+
+                                           | <div class=chord>Eb</div> | <div class=chord>F#</div> | <div class=chord>B</div>  |
+        +-------------------------------------------------+
+        | <div class=chord>C</div>  | <div class=chord>E</div>  | <div class=chord>G</div>  | <div class=chord>C</div>  | <div class=chord>E</div>  | <div class=chord>G</div>  | <div class=chord>C</div>  | <div class=chord>E</div>  | <div class=chord>G</div>  | <div class=chord>C</div>  |
+blow &uarr;  +-------------------------------------------------+
+        | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 |
+draw &darr;  +-------------------------------------------------+
+        | <div class=chord>D</div>  | <div class=chord>G</div>  | <div class=chord>B</div>  | <div class=chord>D</div>  | <div class=chord>F</div>  | <div class=chord>A</div>  | <div class=chord>B</div>  | <div class=chord>D</div>  | <div class=chord>F</div>  | <div class=chord>A</div>  |
+        +-------------------------------------------------+
+        | <div class=chord>Db</div> | <div class=chord>F#</div> | <div class=chord>Bb</div> | <div class=chord>Db</div> |    | <div class=chord>Ab</div> |
+        +-------------------+    +----+
+             | <div class=chord>F</div>  | <div class=chord>A</div>  |
+             +---------+
+                  | <div class=chord>Ab</div> |
+                  +----+
+</span>
+
+
+1st position (straight harp) starts on 1 blow and is the same key as the harmonica (<div class=chord>C</div>).
+
+2nd position (cross harp) starts on 2 draw and is a perfect fifth up from the key of the harmonica (<div class=chord>G</div>).
+
+3rd position (slant harp) starts on 1 draw and is one tone up from the key of the harmonica (<div class=chord>Dm</div>).
+
+</div>
+
+<br>
+<hr> <a name=CMajorIonian></a>
+<h3>C Ionian Scale (Major)</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, W, h, W, W, W] = [1 2 3 4 5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>B</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-7--|-8*-|----|----|            |-10-|----|----|----|----|        |-12-|----|----|----|             |-1--|----|-3--|----|----|        |-5--|----|----|----|----|</div>
+<div class=tabline>|----|-8--|----|-10-|            |-10-|----|-12-|-13*|----|        |-12-|-13*|----|-15-|             |----|----|-3--|----|-5--|        |-5--|-6--|----|-8--|----|</div>
+<div class=tabline>|-7--|----|-9--|-10-|            |-10-|----|-12-|----|----|        |-12-|----|-14-|----|             |----|-2--|----|-4--|-5*-|        |-5*-|----|-7--|----|----|</div>
+<div class=tabline>|-7--|----|-9--|-10*|            |-10*|----|-12-|----|-14-|        |-12-|----|-14-|-15-|             |----|-2--|-3--|----|-5--|        |-5--|----|-7--|----|-9--|</div>
+<div class=tabline>|-7--|-8--|----|-10-|            |-10-|----|-12-|----|-14-|        |-12-|----|-14-|-15*|             |----|-2--|-3*-|----|-5--|        |-5--|----|-7--|-8--|----|</div>
+<div class=tabline>|----|-8*-|----|-10-|            |-10-|----|-12-|-13-|----|        |-12-|-13-|----|-15-|             |----|----|-3--|----|-5--|        |-5--|----|-7--|-8*-|----|</div>
+</div>
+
+<br>
+<hr> <a name=CNaturalMinorAeolian></a>
+<h3>C Aeolian Scale (Natural Minor)</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, h, W, W, h, W] = [1 2 b3 4 5 b6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Ab</div>, <div class=chord>Bb</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|             |-1--|----|----|----|----|        |-3--|----|----|----|             |-6--|----|----|----|----|</div>
+<div class=tabline>|----|-9--|----|-11-|----|       |----|----|-13*|-15-|             |-1*-|----|-3--|-4--|----|        |-3--|-4--|----|-6--|             |----|----|-8--|-9--|----|</div>
+<div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|-13-|-15-|             |-1--|----|-3--|----|----|        |-3--|----|-5*-|----|             |----|-7--|-8--|----|-10-|</div>
+<div class=tabline>|-8--|----|-10*|----|-12-|       |----|-12-|-13-|-15-|             |-1--|----|-3--|----|-5--|        |-3--|----|-5--|-6--|             |-6--|----|-8--|----|-10*|</div>
+<div class=tabline>|-8--|----|-10-|-11-|----|       |-11-|----|-13-|-15*|             |-1--|----|-3*-|----|-5--|        |-3*-|----|-5--|-6--|             |-6--|----|-8--|----|-10-|</div>
+<div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|-15-|             |-1--|----|-3--|-4--|----|        |-3--|-4--|----|-6--|             |-6--|----|-8*-|----|-10-|</div>
+</div>
+
+<br>
+<hr> <a name=CDorian></a>
+<h3>C Dorian Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, h, W, W, W, h] = [1 2 b3 4 5 6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>Bb</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|----|        |-1--|----|----|----|----|        |-3--|----|----|----|----|        |-5--|-6--|----|----|</div>
+<div class=tabline>|-8--|----|-10-|-11-|----|       |----|----|-13*|----|-15-|        |----|----|-3--|-4--|----|        |-3--|-4--|----|-6--|----|        |----|-6--|----|-8--|</div>
+<div class=tabline>|-8--|----|-10-|----|----|       |----|-12-|----|-14-|-15-|        |----|-2--|-3--|----|-5*-|        |-3--|----|-5*-|----|----|        |-5*-|----|-7--|-8--|</div>
+<div class=tabline>|-8--|----|-10*|----|-12-|       |----|-12-|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|----|-7--|        |-5--|----|-7--|-8--|</div>
+<div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|-13-|----|-15*|        |-1--|----|-3*-|----|-5--|        |-3*-|----|-5--|-6--|----|        |-5--|-6--|----|-8--|</div>
+<div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|-6--|----|        |----|-6--|----|-8*-|</div>
+</div>
+
+<br>
+<hr> <a name=CPhrygian></a>
+<h3>C Phrygian Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, h, W, W, W, h, W] = [1 b2 b3 4 5 b6 b7] = [<div class=chord>C</div>, <div class=chord>Db</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Ab</div>, <div class=chord>Bb</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-8*-|----|----|----|            |-11-|----|----|----|----|        |-1--|----|----|----|----|        |-3--|----|----|----|             |-6--|----|----|----|----|</div>
+<div class=tabline>|-8--|-9--|----|-11-|            |----|----|-13*|-14-|----|        |-1*-|-2--|----|-4--|----|        |----|-4--|-6--|----|             |-6--|----|-8--|-9--|----|</div>
+<div class=tabline>|-8--|----|-10-|----|            |----|-12-|-13-|----|-15-|        |-1--|----|-3--|----|----|        |-3--|----|-5*-|-6--|             |-6--|----|-8--|----|----|</div>
+<div class=tabline>|-8--|----|-10*|-11-|            |-11-|----|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|-5--|-6--|----|             |-6--|----|-8--|----|-10*|</div>
+<div class=tabline>|-8--|----|-10-|-11-|            |-11-|----|-13-|----|-15*|        |-1--|----|-3*-|-4--|----|        |-3*-|-4--|-6--|----|             |-6--|----|-8--|----|-10-|</div>
+<div class=tabline>|-8*-|-9--|----|-11-|            |-11-|----|-13-|----|-15-|        |-1--|----|-3--|-4--|----|        |-3--|-4--|-6--|----|             |-6--|----|-8*-|-9--|----|</div>
+</div>
+
+<br>
+<hr> <a name=CLydian></a>
+<h3>C Lydian Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, W, W, h, W, W] = [1 2 3 #4 5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F#</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>B</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-7--|-8*-|----|----|            |-8*-|----|-10-|----|----|        |-12-|----|----|----|----|        |-2--|-3--|----|----|             |-5--|----|----|----|----|</div>
+<div class=tabline>|-7--|-8--|----|-10-|            |----|----|-10-|----|-12-|        |-12-|-13*|----|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8--|----|</div>
+<div class=tabline>|-7--|----|-9--|----|            |----|-9--|----|-11-|-12-|        |-12-|----|-14-|----|----|        |-2--|----|-4--|-5*-|             |-5*-|----|-7--|----|----|</div>
+<div class=tabline>|-7--|----|-9--|-10*|            |----|-9--|-10*|----|-12-|        |-12-|----|-14-|----|-16-|        |-2--|----|-4--|-5--|             |-5--|----|-7--|----|-9--|</div>
+<div class=tabline>|-7--|----|-9--|-10-|            |----|-9--|-10-|----|-12-|        |-12-|----|-14-|-15*|----|        |-2--|-3*-|----|-5--|             |-5--|----|-7--|----|-9--|</div>
+<div class=tabline>|----|-8*-|----|-10-|            |----|----|-10-|----|-12-|        |-12-|----|-14-|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8*-|----|</div>
+</div>
+
+<br>
+<hr> <a name=CMixolydian></a>
+<h3>C Mixolydian Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, W, h, W, W, h] = [1 2 3 4 5 6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>Bb</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-6--|----|-8*-|----|----|       |-10-|----|----|----|----|        |-12-|----|----|----|             |-3--|----|----|----|----|        |-5--|----|----|----|</div>
+<div class=tabline>|----|----|-8--|----|-10-|       |-10-|-11-|----|-13*|----|        |----|-13*|----|-15-|             |-3--|----|-5--|-6--|----|        |-5--|-6--|----|-8--|</div>
+<div class=tabline>|----|-7--|----|-9--|-10-|       |-10-|----|-12-|----|----|        |-12-|----|-14-|-15-|             |-3--|----|-5*-|----|----|        |-5*-|----|-7--|----|</div>
+<div class=tabline>|----|-7--|-8--|----|-10*|       |-10*|----|-12-|----|-14-|        |-12-|----|-14-|-15-|             |-3--|----|-5--|----|-7--|        |-5--|----|-7--|-8--|</div>
+<div class=tabline>|----|-7--|-8--|----|-10-|       |-10-|----|-12-|----|-14-|        |-12-|-13-|----|-15*|             |-3*-|----|-5--|----|-7--|        |-5--|----|-7--|-8--|</div>
+<div class=tabline>|----|----|-8*-|----|-10-|       |-10-|----|-12-|----|-14-|        |-12-|-13-|----|-15-|             |-3--|----|-5--|-6--|----|        |-5--|-6--|----|-8*-|</div>
+</div>
+
+<br>
+<hr> <a name=CLocrian></a>
+<h3>C Locrian Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, h, W, W, h, W, W] = [1 b2 b3 4 b5 b6 b7] = [<div class=chord>C</div>, <div class=chord>Db</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>Gb</div>, <div class=chord>Ab</div>, <div class=chord>Bb</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-8*-|----|----|----|            |-11-|----|----|----|----|        |-1--|----|----|----|             |-2--|----|----|----|----|        |-6--|----|----|----|----|</div>
+<div class=tabline>|----|-9--|----|-11-|            |-11-|----|-13*|-14-|----|        |-1*-|-2--|----|-4--|             |----|----|-4--|----|-6--|        |----|-7--|-9--|----|----|</div>
+<div class=tabline>|-8--|----|-10-|-11-|            |-11-|----|-13-|----|----|        |-1--|----|-3--|----|             |----|-3--|----|-5*-|-6--|        |-6--|----|-8--|----|-10-|</div>
+<div class=tabline>|-8--|----|-10*|-11-|            |-11-|----|-13-|----|-15-|        |-1--|----|-3--|-4--|             |----|-3--|-4--|----|-6--|        |-6--|----|-8--|----|-10*|</div>
+<div class=tabline>|-8--|-9--|----|-11-|            |-11-|----|-13-|----|-15*|        |-1--|----|-3*-|-4--|             |----|-3*-|-4--|----|-6--|        |-6--|----|-8--|-9--|----|</div>
+<div class=tabline>|-8*-|-9--|----|-11-|            |-11-|----|-13-|-14-|----|        |-1--|-2--|----|-4--|             |-2--|----|-4--|----|-6--|        |-6--|----|-8*-|-9--|----|</div>
+</div>
+
+<br>
+<hr> <a name=CHarmonicMinor></a>
+<h3>C Harmonic Minor Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, h, W, W, h, m3] = [1 2 b3 4 5 b6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Ab</div>, <div class=chord>B</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|----|        |-1--|----|----|----|----|        |-3--|----|----|----|----|        |----|-7--|----|----|----|</div>
+<div class=tabline>|----|-9--|----|----|-12-|       |----|-12-|-13*|----|-15-|        |-1*-|----|-3--|-4--|----|        |-3--|-4--|----|-6--|----|        |----|----|-8--|-9--|----|</div>
+<div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|-13-|----|----|        |-1--|----|----|-4--|----|        |-3--|----|-5*-|----|----|        |----|-7--|-8--|----|-10-|</div>
+<div class=tabline>|----|-9--|-10*|----|-12-|       |----|-12-|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|-6--|----|        |-6--|----|----|-9--|-10*|</div>
+<div class=tabline>|-8--|----|-10-|-11-|----|       |-11-|----|----|-14-|-15*|        |----|-2--|-3*-|----|-5--|        |-3*-|----|-5--|-6--|----|        |-6--|----|-8--|----|-10-|</div>
+<div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|----|-15-|        |-1--|----|-3--|-4--|----|        |-3--|-4--|----|----|-7--|        |-7--|----|-8*-|----|-10-|</div>
+</div>
+
+<br>
+<hr> <a name=CMelodicMinor></a>
+<h3>C Melodic Minor Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, h, W, W, W, W] = [1 2 b3 4 5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>B</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|----|        |-1--|----|----|----|----|        |-3--|----|----|----|----|        |----|-7--|----|----|----|</div>
+<div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|-13*|----|-15-|        |----|----|-3--|-4--|----|        |----|-4--|----|-6--|----|        |----|----|-8--|----|-10-|</div>
+<div class=tabline>|-8--|----|-10-|----|----|       |----|-12-|----|-14-|----|        |----|-2--|----|-4--|-5*-|        |----|-4--|-5*-|----|-7--|        |----|-7--|-8--|----|-10-|</div>
+<div class=tabline>|----|-9--|-10*|----|-12-|       |----|-12-|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|----|-7--|        |----|-7--|----|-9--|-10*|</div>
+<div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|----|-14-|-15*|        |----|-2--|-3*-|----|-5--|        |-3*-|----|-5--|-6--|----|        |-6--|----|-8--|----|-10-|</div>
+<div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|----|-7--|        |----|-7--|-8*-|----|-10-|</div>
+</div>
+
+<br>
+<hr> <a name=CLydianb7></a>
+<h3>C Lydian b7 Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, W, W, h, W, h] = [1 2 3 #4 5 6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F#</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>Bb</div>]
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-6--|----|-8*-|----|----|       |-8*-|----|-10-|----|----|        |-12-|----|----|----|----|        |-2--|-3--|----|----|             |-5--|----|----|----|----|</div>
+<div class=tabline>|----|-7--|-8--|----|-10-|       |----|----|-10-|----|-12-|        |-12-|-13*|----|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8--|----|</div>
+<div class=tabline>|----|-7--|----|-9--|----|       |----|-9--|----|-11-|-12-|        |-12-|----|-14-|----|----|        |-2--|----|-4--|-5*-|             |-5*-|----|-7--|----|----|</div>
+<div class=tabline>|----|-7--|-8--|----|-10*|       |----|-9--|-10*|----|-12-|        |-12-|----|-14-|----|-16-|        |-2--|----|-4--|-5--|             |-5--|----|-7--|----|-9--|</div>
+<div class=tabline>|----|-7--|----|-9--|-10-|       |----|-9--|-10-|----|-12-|        |-12-|----|-14-|-15*|----|        |-2--|-3*-|----|-5--|             |-5--|----|-7--|----|-9--|</div>
+<div class=tabline>|----|----|-8*-|----|-10-|       |----|----|-10-|----|-12-|        |-12-|----|-14-|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8*-|----|</div>
+</div>
+
+<br>
+<hr> <a name=CWholeTone></a>
+<h3>C Whole Tone Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, W, W, W, W] = [1 2 3 #4 #5 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F#</div>, <div class=chord>G#</div>, <div class=chord>A#</div>]
+
+<!--<div class=tabline>Type 1                           Type 2</div> -->
+<div class=tabline>|----|-8--|----|----|----|       |-2--|----|----|----|----|</div>
+<div class=tabline>|----|----|-9--|----|-11-|       |----|-3--|----|-5--|----|</div>
+<div class=tabline>|-7--|----|-9--|----|-11-|       |----|-3--|----|-5*-|----|</div>
+<div class=tabline>|----|-8--|----|-10*|----|       |-2--|----|-4--|----|-6--|</div>
+<div class=tabline>|-7--|----|-9--|----|-11-|       |----|-3*-|----|-5--|----|</div>
+<div class=tabline>|----|-8*-|----|-10-|----|       |-2--|----|-4--|----|-6--|</div>
+</div>
+
+<br>
+<hr> <a name=CDiminishedWholeHalf></a>
+<h3>C Diminished Scale (Whole-Half)</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, h, W, h, W, h, W] = [1 2 b3 4 b5 #5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>Gb</div>, <div class=chord>F</div>, <div class=chord>G#</div>, <div class=chord>A</div>, <div class=chord>B</div>]
+
+<!--<div class=tabline>Type 1                           Type 2</div> -->
+<div class=tabline>|-7--|-8*-|----|----|----|       |-2--|----|-4--|----|----|----|</div>
+<div class=tabline>|-7--|----|-9--|-10-|----|       |----|-3--|-4--|----|-6--|----|</div>
+<div class=tabline>|-7--|-8--|----|-10-|----|       |-2--|----|-4--|-5*-|----|----|</div>
+<div class=tabline>|-7--|-9--|----|-10*|----|       |----|-3--|-4--|----|-6--|----|</div>
+<div class=tabline>|----|-8--|-9--|----|-11-|       |----|-3*-|----|-5--|-6--|----|</div>
+<div class=tabline>|----|-8*-|----|-10-|-11-|       |----|----|-4--|-5--|----|-7--|</div>
+</div>
+
+<br>
+<hr> <a name=CPentatonicMajor></a>
+<h3>C Major Pentatonic Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, W, W, m3, W] = [1 2 3 5 6] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>G</div>, <div class=chord>A</div>]
+
+This is a major scale without the 4th and 7th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>F</div> and the <div class=chord>B</div>.
+
+<!--<div class=tabline>Type 1                           Type 2                                Type 3                            Type 4                        Type 5</div> -->
+<div class=tabline>|----|-8*-|----|----|            |----|-10-|----|----|----|            |-12-|----|----|----|             |----|-3--|----|              |-5--|----|----|----|</div>
+<div class=tabline>|----|-8--|----|-10-|            |----|-10-|----|----|-13*|            |----|-13*|----|-15-|             |----|-3--|-5--|              |-5--|----|----|-8--|</div>
+<div class=tabline>|-7--|----|-9--|----|            |-9--|----|----|-12-|----|            |-12-|----|-14-|----|             |-2--|----|-5*-|              |-5*-|----|-7--|----|</div>
+<div class=tabline>|-7--|----|----|-10*|            |----|-10*|----|-12-|----|            |-12-|----|-14-|----|             |-2--|----|-5--|              |-5--|----|-7--|----|</div>
+<div class=tabline>|-7--|----|----|-10-|            |----|-10-|----|-12-|----|            |-12-|----|----|-15*|             |----|-3*-|-5--|              |-5--|----|-7--|----|</div>
+<div class=tabline>|----|-8*-|----|-10-|            |----|-10-|----|-12-|----|            |-12-|----|----|-15-|             |----|-3--|-5--|              |-5--|----|----|-8*-|</div>
+</div>
+
+<br>
+<hr> <a name=CPentatonicMinor></a>
+<h3>C Minor Pentatonic Scale</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, m3, W, W, m3] = [1 b3 4 5 b7] = [<div class=chord>C</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Bb</div>]
+
+This is a natural minor scale without the 2nd and 6th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>D</div> and the <div class=chord>A</div>.
+Note that standard tuning (E-A-D-G-B-E) forms an Em pentatonic scale.
+
+<!--<div class=tabline>Type 1                           Type 2                                Type 3                            Type 4                        Type 5</div> -->
+<div class=tabline>|-8--|----|----|----|            |----|-11-|----|----|                 |----|-1--|----|----|----|        |-3--|----|----|----|         |----|-6--|----|----|</div>
+<div class=tabline>|-8--|----|----|-11-|            |----|-11-|----|-13-|                 |----|-1*-|----|----|-4--|        |----|-4--|----|-6--|         |----|-6--|----|-8--|</div>
+<div class=tabline>|-8--|----|-10-|----|            |-10-|----|-12-|----|                 |-0--|----|----|-3--|----|        |-3--|----|-5*-|----|         |-5*-|----|----|-8--|</div>
+<div class=tabline>|-8--|----|-10*|----|            |-10*|----|----|-13-|                 |----|-1--|----|-3--|----|        |-3--|----|-5--|----|         |-5--|----|----|-8--|</div>
+<div class=tabline>|-8--|----|-10-|----|            |-10-|----|----|-13-|                 |----|-1--|----|-3*-|----|        |-3*-|----|----|-6--|         |----|-6--|----|-8--|</div>
+<div class=tabline>|-8*-|----|----|-11-|            |----|-11-|----|-13-|                 |----|-1--|----|-3--|----|        |-3--|----|----|-6--|         |----|-6--|----|-8*-|</div>
+</div>
+
+<br>
+<hr> <a name=CBluesScalem3b5></a>
+<h3>C Blues Scale (m3, b5)</h3>
+<div class=chords_1col>
+[<div class=chord>C</div>, m3, h, h, h, h, m3] = [1 b3 4 b5 5 b7] = [<div class=chord>C</div>, <div class=chord>Eb</div>, <div class=chord>E</div>, <div class=chord>F</div>, <div class=chord>Gb</div>, <div class=chord>G</div>, <div class=chord>Bb</div>]
+
+This is a minor pentatonic scale with an added b5.
+
+<!--<div class=tabline>Type 1                           Type 2                                Type 3                            Type 4                        Type 5</div> -->
+<div class=tabline>|----|-8--|----|----|----|       |----|-11-|----|----|----|            |-11-|-12-|-13-|----|----|        |-2--|-3--|----|----|----|    |----|-6--|----|----|----|</div>
+<div class=tabline>|----|-8--|----|----|-11-|       |----|-11-|----|-13*|----|            |-11-|-13*|----|----|----|        |----|----|-4--|-5--|-6--|    |-5--|-6--|-7--|-8--|----|</div>
+<div class=tabline>|----|-8--|-9--|-10-|-11-|       |-10-|-11-|-12-|----|----|            |-11-|-12-|----|----|----|        |----|-3--|----|-5*-|----|    |-5*-|----|----|-8--|----|</div>
+<div class=tabline>|----|-8--|----|-10-|----|       |-10*|----|----|-13-|-14-|            |----|----|-13-|-14-|-15-|        |-2--|-3--|-4--|-5--|----|    |-5--|----|----|-8--|----|</div>
+<div class=tabline>|-7--|-8--|-9--|-10-|----|       |-10-|----|----|-13-|----|            |----|----|-13-|----|-15*|        |----|-3*-|----|----|-6--|    |----|-6--|-7--|-8--|-9--|</div>
+<div class=tabline>|----|-8*-|----|----|-11-|       |----|-11-|-12-|-13-|-14-|            |----|----|-13-|-14-|-15-|        |-3--|----|----|----|-6--|    |----|-6--|----|-8*-|----|</div>
+</div>
+<br>
+<hr>
+
+<br>
+<br>
+<br>
+<br>
+
+
+</body>
+</html>
