@@ -15,7 +15,7 @@ html,body {
     background: white;
     }
 
-hr {
+.padded {
     margin-top: 20px;
     margin-bottom: 20px;
     }
