@@ -15,21 +15,25 @@ html,body {
     background: transparent;
     }
 
-/*
 hr {
-    max-width: 50%;
-    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
     }
-*/
+
+select {
+    float: right;
+    }
+
+@media print { 
+    hr { visibility: hidden; } /* don't print <hr>s... we use page breaks */
+    select { visibility: hidden; }
+    button { visibility: hidden; }
+    }
 
 span {
     overflow: hidden;
     break-inside: avoid-column;
     display: block;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-right: 0;
-    margin-left: 0;
     }
 
 a:link, a:visited, a:active {
@@ -52,6 +56,15 @@ a:hover, a.cover:hover {
 a.tuning {
     font-family: monospace;
     }
+
+.title {
+    margin-bottom: 0; 
+    page-break-before: always; /* for easier printing of individual songs */
+    font-size: 23px;
+    font-weight: bold;
+    display: inline;
+    }
+
 
 #t_l {
     top: 0;
@@ -115,14 +128,91 @@ a.tuning {
 
 .artistlist {
     color: grey;
-    column-count: 4;
+    column-count: 1;
     }
 
 .songindex {
     color: grey;
     padding-left: 20px;
     padding-right: 20px;
-    column-count: 2;
+    column-count: 1;
+    white-space: pre-line;
+    }
+
+.chords_1col {
+    white-space: pre;
+    font-family: monospace;
+    color: grey;
+    padding-left: 50px;
+    }
+
+.chords_2col {
+    white-space: pre;
+    font-family: monospace;
+    color: grey;
+    padding-left: 50px;
+    column-count: 1;
+    }
+
+.chords_3col {
+    white-space: pre;
+    font-family: monospace;
+    color: grey;
+    padding-left: 50px;
+    column-count: 1;
+    }
+
+.tuning_map {
+    display: block;
+    top: 10%;
+    right: 10%;
+    position: static;
+    white-space: pre;
+    font-family: monospace;
+    }
+
+
+@media only screen and (min-width: 1281px) {
+    /* Only allow 4 columns on large screens (desktops) */
+
+    .artistlist {
+        color: black;
+        column-count: 4;
+        }
+
+    .songindex {
+        color: grey;
+        padding-left: 20px;
+        padding-right: 20px;
+        column-count: 2;
+        white-space: pre-line;
+        }
+
+    .chords_2col {
+        white-space: pre;
+        font-family: monospace;
+        color: grey;
+        padding-left: 50px;
+        column-count: 2;
+        }
+
+    .chords_3col {
+        white-space: pre;
+        font-family: monospace;
+        color: grey;
+        padding-left: 50px;
+        column-count: 3;
+        }
+
+    .tuning_map {
+        display: block;
+        top: 10%;
+        right: 10%;
+        position: absolute;
+        white-space: pre;
+        font-family: monospace;
+        }
+
     }
 
 .chord {
@@ -139,6 +229,7 @@ a.tuning {
 .capo {
     display: inline;
     color: red;
+    font-weight: bold;
     }
 
 .tuning {
@@ -156,33 +247,15 @@ a.tuning {
     color: #6495ED;  /* cornflowerblue */
     }
 
-.chords_1col {
-    white-space: pre;
-    font-family: monospace;
-    color: grey;
-    padding-left: 50px;
-    }
-
-.chords_2col {
-    white-space: pre;
-    font-family: monospace;
-    color: grey;
-    padding-left: 50px;
-    column-count: 2;
-    }
-
-.chords_3col {
-    white-space: pre;
-    font-family: monospace;
-    color: grey;
-    padding-left: 50px;
-    column-count: 3;
-    }
-
 .count {
     display: inline-block;
     font-family: monospace;
     min-width: 75;
+    }
+
+.cover {
+    display: inline;
+    color: green;
     }
 
 img.cover {
