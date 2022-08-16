@@ -52,6 +52,10 @@ a.tuning {
     font-family: monospace;
     }
 
+h3 {
+    page-break-before: always; /* for easier printing of individual songs */
+    }
+
 #t_l {
     top: 0;
     left: 0;
