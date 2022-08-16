@@ -52,15 +52,6 @@ a.tuning {
     font-family: monospace;
     }
 
-.title {
-    margin-bottom: 0; 
-    page-break-before: always; /* for easier printing of individual songs */
-    font-size: 23px;
-    font-weight: bold;
-    display: inline;
-    }
-
-
 #t_l {
     top: 0;
     left: 0;
