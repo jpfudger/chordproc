@@ -15,11 +15,6 @@ html,body {
     background: transparent;
     }
 
-.padded {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    }
-
 select {
     float: right;
     }
