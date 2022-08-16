@@ -1015,14 +1015,20 @@ class CRD_song():
 
         if not self.version_of:
             if self.versions:
+                default = "Default"
+                if self.album and self.album.date:
+                    default = str(self.album.date.year) + " " + self.album.title
+                elif self.date:
+                    default = str(self.date.year) + " Default"
+
                 versions = [ '<select id="%s.select" onchange="update_song_version(%s);">' % ( self.index, qindex ) ]
-                versions.append( '<option value=0>Version: Default</option>' )
+                versions.append( '<option value=0>%s</option>' % default )
                 for i, version in enumerate(self.versions):
-                    versions.append( '<option value=%d>Version: %s</option>' % (i+1, version.title))
+                    versions.append( '<option value=%d>%s</option>' % (i+1, version.title))
                 versions.append('</select>')
 
             style = ' style="display:block"'
-            lines += [ '<hr class=padded> <a name=%s></a>' % self.link ] 
+            lines += [ '<hr> <a name=%s></a>' % self.link ] 
             name = (' (%s)' % self.artist.name) if add_artist else ''
             lines += [ '<div class=title id=%s>%s</div>' % (self.index, self.title + name) ]
 
@@ -1048,8 +1054,6 @@ class CRD_song():
             if self.versions:
                 lines += versions
 
-            lines += [ "<br>" ]
-
         n_lines = len(self.lines)
 
         if n_lines > 100 and self.longest_line() <= 65:
@@ -1067,6 +1071,8 @@ class CRD_song():
             version.index = self.index
             lines += version.html(add_artist,transpose,prefer_sharp,explicit_ws)
 
+        if not self.version_of:
+            lines += [ "<br>" ]
         return lines
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
