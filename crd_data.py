@@ -731,9 +731,7 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
-    def markup_chord_line(self,line,transpose=0,prefer_sharp=False,explicit_ws=False):
-        leader = '<br>' if explicit_ws else ''
-        nbsp = '&nbsp;' if explicit_ws else ' '
+    def markup_chord_line(self,line,transpose=0,prefer_sharp=False):
         comline, comtype = self.is_comment_line(line)
         if comline:
             if comtype == "harp":
@@ -767,11 +765,11 @@ class CRD_song():
             elif comtype == "cover":
                 return ""
 
-            return leader + '<div class=%s>%s</div>' % ( comtype, re.sub( ' ', nbsp, comline ) )
+            return '<div class=%s>%s</div>' % ( comtype, comline )
         splits = re.split( r'(\s+)', line)
         # this splits the line at start/end of whitespace regions,
         # so that contiguous whitespace counts as a word
-        formatted = leader
+        formatted = ''
         finger_regex = '([0-9xXA-G]{6,})' 
         got_a_not_chord = False
         for word in splits:
@@ -787,11 +785,11 @@ class CRD_song():
             elif word.replace('.','') == '':
                 formatted += word
             elif word.isspace():
-                formatted += re.sub( ' ', nbsp, word )
+                formatted += word
             elif word == 'etc' or word == 'etc.':
                 formatted += '...'
             elif word.lower() in [ 'n.c.', 'nc', 'n.c', 'n/c' ]:
-                formatted += len(word) * nbsp
+                formatted += len(word) * ' '
             elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
                 formatted += '<div class=comment>' + word + '</div>'
             elif re.match( '\[?intro\]?', word.lower() ):
@@ -822,17 +820,16 @@ class CRD_song():
                     got_a_not_chord = True
                     formatted += starter + word + ender
         if got_a_not_chord:
-            line = re.sub( ' ', nbsp, line )
             line = re.sub( '<', '&lt;', line )
             line = re.sub( '>', '&gt;', line )
-            return leader + line
+            return line
         return formatted
-    def format_song_lines(self,transpose=0,prefer_sharp=False,explicit_ws=False):
+    def format_song_lines(self,transpose=0,prefer_sharp=False):
         formatted = []
         n_tab_lines = 0
         for ii,line in enumerate(self.lines):
             lastline = ii == len(self.lines)-1
-            newline = self.markup_chord_line(line,transpose,prefer_sharp,explicit_ws)
+            newline = self.markup_chord_line(line,transpose,prefer_sharp)
 
             formatted.append(newline)
 
@@ -1003,13 +1000,13 @@ class CRD_song():
         for line in self.lines:
             if re.search('[x0-9A-G]{6}', line):
                 self.is_comment_line(line)
-    def html(self,add_artist=False,transpose=0,prefer_sharp=False,explicit_ws=False):
+    def html(self,add_artist=False,transpose=0,prefer_sharp=False):
         self.inherit_fingerings()
         style = ' style="display:none"'
         qindex = "'%s'" % self.index
 
         # do this first, so that self.cover is set
-        formatted_song_lines = self.format_song_lines(transpose,prefer_sharp,explicit_ws)
+        formatted_song_lines = self.format_song_lines(transpose,prefer_sharp)
 
         lines = []
 
@@ -1069,7 +1066,7 @@ class CRD_song():
         for version in self.versions:
             #version.inherit_fingerings()
             version.index = self.index
-            lines += version.html(add_artist,transpose,prefer_sharp,explicit_ws)
+            lines += version.html(add_artist,transpose,prefer_sharp)
 
         if not self.version_of:
             lines += [ "<br>" ]
