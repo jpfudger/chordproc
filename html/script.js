@@ -324,6 +324,18 @@ function update_song_version(song_index)
     }
 //}}}
 
+//{{{ function: reset_select_boxes
+function reset_select_boxes()
+    {
+    var selects = document.getElementsByTagName("select");
+    for ( var i=0; i<selects.length; i++ )
+        {
+        selects[i].value = 0;
+        }
+    }
+//}}}
+
+document.addEventListener('DOMContentLoaded', reset_select_boxes, false);
 shortcut.add("j",function() { transpose_down() });
 shortcut.add("k",function() { transpose_up()   });
 
