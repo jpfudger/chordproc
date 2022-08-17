@@ -1,0 +1,245 @@
+{{{ tuning: AAAAAA    [Ostrich] [Unison]
+}}}
+{{{ tuning: DGDGBD    [Open G]
+# Note: GGDGBD (Open G Low) gets picked up as Open G (because one name is
+# included inside the other)its own. But that's actually more useful than
+# listing GGDGBD as an exotic tuning of its own.
+G   000000
+}}}
+{{{ tuning: EAC#EAE   [Open A]
+# Sometimes "Open A" is used to EAEAC#E, which is Open G two steps up.
+}}}
+{{{ --- tuning: EBEAC#E   [Open Add9]
+# Referred to in the "Robert Johnson: New Transcriptions" book.
+# Drop D (= open Gadd9), two steps up
+}}}
+{{{ tuning: DGDGBbD   [Open Gm]
+Gm  000000
+}}}
+{{{ tuning: DADF#AD   [Open D]
+D   000000
+}}}
+{{{ tuning: DADFAD    [Open Dm]
+Dm  000000
+}}}
+{{{ tuning: CGCGCD    [Open Cadd9] [Open C Modal]
+C   000000
+}}}
+{{{ tuning: CGCGCE    [Open C]
+C9  000000
+}}}
+{{{ tuning: CGCGGE    [Open C5]
+}}}
+{{{ tuning: DADGBD    [Double Drop D] [Open Gadd9]
+
+D       0xx230
+
+}}}
+{{{ tuning: DADDAD    [Dulcimer D Modal]
+# Calling it simply "Dulcimer" means it is matched to the Joni tuning EADAAE.
+}}}
+{{{ tuning: DGDGBE
+#    [Drop D/g] [Open G6]
+# Only used for Richard Thompson: Easy There, Steady Now?
+}}}
+{{{ tuning: DADGBE    [Drop D]
+A       202220
+A/e     202220
+C       x32010
+D       0xx232
+Dsus2   000230
+Dsus4   000233
+D7      000210
+D/c     030030
+E       222100
+Em      222000
+F#m     444222
+G       5xx003 
+G/d     020003
+G/b     x20033
+D/c     x30030
+D/b     x20030
+}}}
+{{{ tuning: CGDGBE    [Drop C/g]
+G   x00033
+C   002010
+Am  x22210
+D   2xx232
+}}}
+{{{ tuning: CADGBE    [Drop C]
+
+C       032010
+Csus4   033010
+G7      220001
+G7sus4  330001
+G7sus2  300001
+G       220003
+E       x22100
+Em/b    x22000
+Dm      xx0231    or 200231
+F       033211 or 003211
+Am      x22210
+
+}}}
+{{{ tuning: EADGBE    [Standard]
+
+Cdim    x3454x
+C#dim   x4565x
+Ddim    x5676x
+D#dim   x6787x
+Edim    x7898x
+Fdim    x89A9x / 1231xx
+F#dim   x9ABAx / 2342xx
+Gdim    xABCBx / 3453xx
+G#dim   4564Xx
+Adim    5675Xx
+A#dim   6786Xx
+Bdim    x2343x
+
+Cdim7   xxABAB
+Ddim7   xx0101
+Edim7   xx2323
+Fdim7   xx3434 / 123131
+Gdim7   xx5656 / 345353
+Adim7   xx7878 / 567575
+Bdim7   xx9A9A / 789797
+
+
+
+A       x02220
+A/e     002220
+Asus4   x02230
+Asus2   x02200
+Am      x02210
+Am6     x02212
+Am7     x02010
+
+Bb      113331
+Bbm     113321
+
+B       224442
+B7      x21200
+Bm      224432
+Bm7     224232
+
+C       x32010
+Cmaj7   x32000
+C/g     332010
+C/e     032010
+Csus4   x33010
+Csus2   x30010
+C6      x32210
+C7      x32310
+
+Db      553335
+
+D       xx0232
+D6      xx0202
+D7      xx0212
+Dsus4   xx0233
+Dsus2   xx0230
+Dm      xx0231
+Dm6     xx0201
+Dm7     xx0211
+Dmaj7   xx0222
+D11     xx0010
+
+Eb      66504x
+Ebm     668876
+
+E       022100
+Em      022000
+
+F       133211
+Fm      133111
+Fmaj7   x33210
+
+F#      244322
+F#m     244222
+
+G       320003
+G7      320001
+G6      320000
+Gsus4   3x2013
+Gmaj9   3x0202
+
+G#      466544
+G#m     466444
+
+}}}
+{{{ tuning: EADGBD    [Lazy D]
+}}}
+{{{ tuning: EADF#BE   [Lute]
+}}}
+{{{ tuning: EBEG#BE   [Open E]
+}}}
+{{{ tuning: CGCFAD    [Metal Drop C]
+# This is Drop D, down two steps.
+}}}
+{{{ tuning: EBEGBE    [Open Em]
+}}}
+{{{ tuning: DADGAD    [Open Dsus4]
+}}}
+{{{ tuning: CFCFCF    [Open F5]
+}}}
+{{{ tuning: DADEAD    [Open Dsus2]
+}}}
+{{{ tuning: CGDGCD    [Orkney] [Sawmill]
+}}}
+{{{ tuning: CGCFCE    [Open Cadd4] [Nick Drake]
+}}}
+{{{ tuning: CGCGBE    [Open Cmaj7]
+}}}
+{{{ tuning: BEBEBE    [Open E5]
+}}}
+{{{ tuning: EEEEBE    [Bruce Palmer Modal]
+# Named after the Buffalo Springfield bass player, inspired by sitar tuning.
+}}}
+{{{ tuning: EBDGAD    [Open Em11] [David Crosby]
+}}}
+{{{ --- tuning: CGDFCE    [Open C13] --- Coyote
+}}}
+
+{{{ tuning: GDGBD     [Banjo: Standard]
+G       x0000
+D7      x0210
+Em      x2002
+C       x2012
+Am      x2212
+A       x2222
+E       x2102
+C(iii)  x3333
+D(v)    x5555
+D       x4234
+F       x3213
+G(iii)  x5435
+}}}
+{{{ tuning: GDGBbD    [Banjo: Open Gm]
+Gm      x0000
+G       x0010
+}}}
+{{{ tuning: GCGBD     [Banjo: Drop C]
+}}}
+{{{ tuning: GCGCD     [Banjo: Double C]
+C       x0002
+F       x0203
+G       x2020
+G7      x2023
+Am      x0202
+C(iv)   x0545
+}}}
+{{{ tuning: GCGCE     [Banjo: Open C]
+}}}
+{{{ tuning: GCGCC     [Banjo: Triple C]
+Cm  x0003
+G   x2022
+}}}
+{{{ tuning: GDGCD     [Banjo: Sawmill] [Banjo: Mountain]
+Gm      x0020
+F       x3203
+Bb      x3323
+C       x3003
+}}}
+{{{ tuning: FDGCD     [Banjo: Cumberland Gap]
+}}}
+
