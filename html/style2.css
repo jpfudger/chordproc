@@ -53,6 +53,7 @@ a.tuning {
     }
 
 h3 {
+    margin-bottom: 0;
     page-break-before: always; /* for easier printing of individual songs */
     }
 

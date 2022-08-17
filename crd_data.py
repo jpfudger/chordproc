@@ -1027,7 +1027,7 @@ class CRD_song():
             style = ' style="display:block"'
             lines += [ '<hr> <a name=%s></a>' % self.link ] 
             name = (' (%s)' % self.artist.name) if add_artist else ''
-            lines += [ '<h3 id=%s style="display:inline-block;">%s</h3>' % (self.index, self.title + name) ]
+            lines += [ '<h3 id=%s>%s</h3>' % (self.index, self.title + name) ]
 
             # Buttons for versions and transposing:
 
