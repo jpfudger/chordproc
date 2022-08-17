@@ -86,26 +86,6 @@ The inversions of these chords overlap, so there are only 4 unique augmented cho
 </span>
 </div>
 <br>
-<!--
-<h2>Scales</h2>
-<ol>
-<li><a href=#CMajorIonian>C Major (Ionian)</a>
-<li><a href=#CNaturalMinorAeolian>C Natural Minor (Aeolian)</a>
-<li><a href=#CDorian>C Dorian</a>
-<li><a href=#CPhrygian>C Phrygian</a>
-<li><a href=#CLydian>C Lydian</a>
-<li><a href=#CMixolydian>C Mixolydian</a>
-<li><a href=#CLocrian>C Locrian</a>
-<li><a href=#CHarmonicMinor>C Harmonic Minor</a>
-<li><a href=#CMelodicMinor>C Melodic Minor</a>
-<li><a href=#CLydianb7>C Lydian b7</a>
-<li><a href=#CWholeTone>C Whole Tone</a>
-<li><a href=#CDiminishedWholeHalf>C Diminished (Whole-Half)</a>
-<li><a href=#CPentatonicMajor>C Pentatonic (Major)</a>
-<li><a href=#CPentatonicMinor>C Pentatonic (Minor)</a>
-<li><a href=#CBluesScalem3b5>C Blues Scale (m3, b5)</a>
-</ol>
--->
 
 <hr> <a name=Harmonica></a>
 <h3>Diatonic Harmonica Positions</h3>
@@ -138,10 +118,31 @@ draw &darr;  +-------------------------------------------------+
 
 </div>
 
+
 <br>
-<hr> <a name=CMajorIonian></a>
-<h3>C Ionian Scale (Major)</h3>
-<div class=chords_1col>
+<hr>
+<h3 id="theory.scales">Scales</h3>
+<select id="theory.scales.select" onchange="update_song_version('theory.scales');">
+    <option value=0>C Ionian Scale (Major)</option>
+    <option value=1>C Aeolian Scale (Natural Minor)</option>
+    <option value=2>C Dorian Scale</option>
+    <option value=3>C Phrygian Scale</option>
+    <option value=4>C Lydian Scale</option>
+    <option value=5>C Mixolydian Scale</option>
+    <option value=6>C Locrian Scale</option>
+    <option value=7>C Harmonic Minor Scale</option>
+    <option value=8>C Melodic Minor Scale</option>
+    <option value=9>C Lydian b7 Scale</option>
+    <option value=10>C Whole Tone Scale</option>
+    <option value=11>C Diminished Scale (Whole-Half)</option>
+    <option value=13>C Major Pentatonic Scale</option>
+    <option value=13>C Minor Pentatonic Scale</option>
+    <option value=14>C Blues Scale (m3, b5)</option>
+</select>
+
+<div id=theory.scales class="chords_1col version" style=display:block>
+<b>C Ionian Scale (Major)</b>
+<br>
 [<div class=chord>C</div>, W, W, h, W, W, W] = [1 2 3 4 5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>B</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -153,10 +154,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|-8*-|----|-10-|            |-10-|----|-12-|-13-|----|        |-12-|-13-|----|-15-|             |----|----|-3--|----|-5--|        |-5--|----|-7--|-8*-|----|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Aeolian Scale (Natural Minor)</b>
 <br>
-<hr> <a name=CNaturalMinorAeolian></a>
-<h3>C Aeolian Scale (Natural Minor)</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, h, W, W, h, W] = [1 2 b3 4 5 b6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Ab</div>, <div class=chord>Bb</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -168,10 +168,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|-15-|             |-1--|----|-3--|-4--|----|        |-3--|-4--|----|-6--|             |-6--|----|-8*-|----|-10-|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Dorian Scale</b>
 <br>
-<hr> <a name=CDorian></a>
-<h3>C Dorian Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, h, W, W, W, h] = [1 2 b3 4 5 6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>Bb</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -183,10 +182,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|-6--|----|        |----|-6--|----|-8*-|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Phrygian Scale</b>
 <br>
-<hr> <a name=CPhrygian></a>
-<h3>C Phrygian Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, h, W, W, W, h, W] = [1 b2 b3 4 5 b6 b7] = [<div class=chord>C</div>, <div class=chord>Db</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Ab</div>, <div class=chord>Bb</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -198,10 +196,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|-8*-|-9--|----|-11-|            |-11-|----|-13-|----|-15-|        |-1--|----|-3--|-4--|----|        |-3--|-4--|-6--|----|             |-6--|----|-8*-|-9--|----|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Lydian Scale</b>
 <br>
-<hr> <a name=CLydian></a>
-<h3>C Lydian Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, W, W, h, W, W] = [1 2 3 #4 5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F#</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>B</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -213,10 +210,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|-8*-|----|-10-|            |----|----|-10-|----|-12-|        |-12-|----|-14-|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8*-|----|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Mixolydian Scale</b>
 <br>
-<hr> <a name=CMixolydian></a>
-<h3>C Mixolydian Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, W, h, W, W, h] = [1 2 3 4 5 6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>Bb</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -228,10 +224,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|----|-8*-|----|-10-|       |-10-|----|-12-|----|-14-|        |-12-|-13-|----|-15-|             |-3--|----|-5--|-6--|----|        |-5--|-6--|----|-8*-|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Locrian Scale</b>
 <br>
-<hr> <a name=CLocrian></a>
-<h3>C Locrian Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, h, W, W, h, W, W] = [1 b2 b3 4 b5 b6 b7] = [<div class=chord>C</div>, <div class=chord>Db</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>Gb</div>, <div class=chord>Ab</div>, <div class=chord>Bb</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -243,10 +238,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|-8*-|-9--|----|-11-|            |-11-|----|-13-|-14-|----|        |-1--|-2--|----|-4--|             |-2--|----|-4--|----|-6--|        |-6--|----|-8*-|-9--|----|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Harmonic Minor Scale</b>
 <br>
-<hr> <a name=CHarmonicMinor></a>
-<h3>C Harmonic Minor Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, h, W, W, h, m3] = [1 2 b3 4 5 b6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Ab</div>, <div class=chord>B</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -258,10 +252,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|----|-15-|        |-1--|----|-3--|-4--|----|        |-3--|-4--|----|----|-7--|        |-7--|----|-8*-|----|-10-|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Melodic Minor Scale</b>
 <br>
-<hr> <a name=CMelodicMinor></a>
-<h3>C Melodic Minor Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, h, W, W, W, W] = [1 2 b3 4 5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>B</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -273,10 +266,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|----|-7--|        |----|-7--|-8*-|----|-10-|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Lydian b7 Scale</b>
 <br>
-<hr> <a name=CLydianb7></a>
-<h3>C Lydian b7 Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, W, W, h, W, h] = [1 2 3 #4 5 6 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F#</div>, <div class=chord>G</div>, <div class=chord>A</div>, <div class=chord>Bb</div>]
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
@@ -288,10 +280,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|----|-8*-|----|-10-|       |----|----|-10-|----|-12-|        |-12-|----|-14-|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8*-|----|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Whole Tone Scale</b>
 <br>
-<hr> <a name=CWholeTone></a>
-<h3>C Whole Tone Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, W, W, W, W] = [1 2 3 #4 #5 b7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>F#</div>, <div class=chord>G#</div>, <div class=chord>A#</div>]
 
 <!--<div class=tabline>Type 1                           Type 2</div> -->
@@ -303,10 +294,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|-8*-|----|-10-|----|       |-2--|----|-4--|----|-6--|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Diminished Scale (Whole-Half)</b>
 <br>
-<hr> <a name=CDiminishedWholeHalf></a>
-<h3>C Diminished Scale (Whole-Half)</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, h, W, h, W, h, W] = [1 2 b3 4 b5 #5 6 7] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>Gb</div>, <div class=chord>F</div>, <div class=chord>G#</div>, <div class=chord>A</div>, <div class=chord>B</div>]
 
 <!--<div class=tabline>Type 1                           Type 2</div> -->
@@ -318,10 +308,9 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|-8*-|----|-10-|-11-|       |----|----|-4--|-5--|----|-7--|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Major Pentatonic Scale</b>
 <br>
-<hr> <a name=CPentatonicMajor></a>
-<h3>C Major Pentatonic Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, W, W, m3, W] = [1 2 3 5 6] = [<div class=chord>C</div>, <div class=chord>D</div>, <div class=chord>E</div>, <div class=chord>G</div>, <div class=chord>A</div>]
 
 This is a major scale without the 4th and 7th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>F</div> and the <div class=chord>B</div>.
@@ -335,10 +324,9 @@ This is a major scale without the 4th and 7th scale degrees. In <div class=chord
 <div class=tabline>|----|-8*-|----|-10-|            |----|-10-|----|-12-|----|            |-12-|----|----|-15-|             |----|-3--|-5--|              |-5--|----|----|-8*-|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Minor Pentatonic Scale</b>
 <br>
-<hr> <a name=CPentatonicMinor></a>
-<h3>C Minor Pentatonic Scale</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, m3, W, W, m3] = [1 b3 4 5 b7] = [<div class=chord>C</div>, <div class=chord>Eb</div>, <div class=chord>F</div>, <div class=chord>G</div>, <div class=chord>Bb</div>]
 
 This is a natural minor scale without the 2nd and 6th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>D</div> and the <div class=chord>A</div>.
@@ -353,10 +341,9 @@ Note that standard tuning (E-A-D-G-B-E) forms an Em pentatonic scale.
 <div class=tabline>|-8*-|----|----|-11-|            |----|-11-|----|-13-|                 |----|-1--|----|-3--|----|        |-3--|----|----|-6--|         |----|-6--|----|-8*-|</div>
 </div>
 
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b>C Blues Scale (m3, b5)</b>
 <br>
-<hr> <a name=CBluesScalem3b5></a>
-<h3>C Blues Scale (m3, b5)</h3>
-<div class=chords_1col>
 [<div class=chord>C</div>, m3, h, h, h, h, m3] = [1 b3 4 b5 5 b7] = [<div class=chord>C</div>, <div class=chord>Eb</div>, <div class=chord>E</div>, <div class=chord>F</div>, <div class=chord>Gb</div>, <div class=chord>G</div>, <div class=chord>Bb</div>]
 
 This is a minor pentatonic scale with an added b5.
