@@ -380,7 +380,7 @@ class CRD_chord():
             notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
         return notes + notes
     def format(self,transpose=0,prefer_sharp=False):
-        newchord = self.string
+        formatted = self.string
         transpose = transpose % 12
 
         if self.is_chord():
@@ -394,7 +394,7 @@ class CRD_chord():
                     lowernotes = [ n.lower() for n in notes ]
                     rootindex = lowernotes.index(self.root.lower())
                 newroot = notes[rootindex + transpose]
-                newchord = newroot + newchord[len(self.root):]
+                formatted = newroot + formatted[len(self.root):]
 
             if self.bass:
                 try:
@@ -408,11 +408,11 @@ class CRD_chord():
                 newbass = notes[bassindex + transpose]
 
                 if not self.root:
-                    newchord = '/' + newbass.lower()
+                    formatted = '/' + newbass.lower()
                 else:
-                    newchord = newchord[:-len(self.bass)-1] + '/' + newbass.lower()
+                    formatted = formatted[:-len(self.bass)-1] + '/' + newbass.lower()
 
-        return newchord       
+        return formatted       
     def is_chord(self):
         if self.root == None and self.bass == None:
             return False
@@ -810,12 +810,12 @@ class CRD_song():
                 word, starter, ender = self.strip_delimeters(word)
                 chord = CRD_chord(word)
                 if chord.is_chord():
-                    crd = chord.format(transpose,prefer_sharp)
-                    fingering = self.get_fingering(crd,True)
+                    formatted_crd = chord.format(transpose,prefer_sharp)
+                    fingering = self.get_fingering(formatted_crd,True)
                     # if fingering == "" and self.tuning:
-                    #     print( "[%s] No fingering for %s" % ( self.tuning.name(), crd ) )
+                    #     print( "[%s] No fingering for %s" % ( self.tuning.name(), formatted_crd ) )
                     formatted += starter + '<div class=chord%s>%s</div>%s' % \
-                                                ( fingering, crd, ender )
+                                                ( fingering, formatted_crd, ender )
                 else:
                     got_a_not_chord = True
                     formatted += starter + word + ender
@@ -1390,7 +1390,9 @@ class CRD_data():
                 self.artists, self.tunings, self.collections = pickle.load(f)
         #self.summarise_data()
     def build_song_data(self):
-        for f in glob.glob(self.opts["root"] + '/*.crd'):
+        files = glob.glob(self.opts["root"] + '/*.crd')
+        files.sort()
+        for f in files:
             if not DO_CRDFILES:
                 self.process_chord_file(f)
             else:
