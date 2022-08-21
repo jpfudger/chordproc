@@ -100,7 +100,6 @@ function increment_note(note,up=true) {
 //}}}
 //{{{ function: cycleChordDiv()
 function cycleChordDiv(d, up) {
-    var orig_length = d.innerHTML.length;
     var root = get_root(d.innerHTML);
     var bass = get_bass(d.innerHTML);
     if ( root ) {
@@ -112,20 +111,6 @@ function cycleChordDiv(d, up) {
         d.innerHTML = d.innerHTML.replace( RegExp("/" + bass + " *", "i"), "/" + new_bass );
         }
 
-    }
-//}}}
-//{{{ function: chordDivDown()
-function chordDivDown(d) {
-    var root = get_root(d.innerHTML);
-    var bass = get_bass(d.innerHTML);
-    if ( root ) {
-        var new_root = increment_note(root,false);
-        d.innerHTML = d.innerHTML.replace( RegExp("^" + root), new_root );
-        }
-    if ( bass ) {
-        var new_bass = increment_note(bass,false).toLowerCase();
-        d.innerHTML = d.innerHTML.replace( RegExp("/" + bass, "i"),  "/" + new_bass );
-        }
     }
 //}}}
 //{{{ function: cycleChords()
@@ -175,16 +160,13 @@ function get_position(d) {
     return position_decimal
     }
 //}}}
-//{{{ function: capoDivUp()
-function capoDivUp(d) {
-    var new_position = get_position(d) + 1;
-    new_position = new_position % 12;
-    d.innerHTML = decimal_to_numeral(new_position);
-    }
-//}}}
-//{{{ function: capoDivDown()
-function capoDivDown(d) {
-    var new_position = get_position(d) - 1;
+//{{{ function: cycleCapoDiv()
+function cycleCapoDiv(d, up) {
+    var new_position = get_position(d);
+
+    if ( up ) { new_position += 1; }
+    else      { new_position -= 1; }
+
     new_position = new_position % 12;
     d.innerHTML = decimal_to_numeral(new_position);
     }
@@ -192,13 +174,9 @@ function capoDivDown(d) {
 //{{{ function: cycleCapos()
 function cycleCapos(up=true) {
     var divs = document.getElementsByClassName('capo');
-    for ( var i=0; i<divs.length; i++) {
-        if ( up ) {
-            capoDivUp(divs[i]);
-            }
-        else {
-            capoDivDown(divs[i]);
-            }
+    for ( var i=0; i<divs.length; i++) 
+        {
+        cycleCapoDiv(divs[i], up);
         } 
     }
 //}}}
