@@ -208,15 +208,18 @@ function cycleCapos(up=true) {
 //}}}
 //}}}
 
+//{{{ function: transpose_up
 function transpose_up() {
     cycleChords(true);  
     cycleCapos(false);  
     }
-
+//}}}
+//{{{ function: transpose_down
 function transpose_down() {
     cycleChords(false); 
     cycleCapos(true);  
     }
+//}}}
 
 //{{{ function: get_versions_of_song
 function get_versions_of_song(song_index) 
@@ -334,8 +337,34 @@ function reset_select_boxes()
         }
     }
 //}}}
+//{{{ function: show_all_versions
+function show_all_versions()
+    {
+    var versions = [];
+    var divs = document.getElementsByTagName("div");
+
+    for ( var i=0; i<divs.length; i++ )
+        {
+        if ( divs[i].classList.contains("version") )
+            {
+            divs[i].style.display = "block";
+            }
+        }
+
+    return versions;
+    }
+//}}}
+
+//{{{ function: assign_shortcuts
+function assign_shortcuts()
+    {
+    shortcut.add("a",function() { show_all_versions() });
+    shortcut.add("j",function() { transpose_down() });
+    shortcut.add("k",function() { transpose_up()   });
+    }
+//}}}
 
 document.addEventListener('DOMContentLoaded', reset_select_boxes, false);
-shortcut.add("j",function() { transpose_down() });
-shortcut.add("k",function() { transpose_up()   });
+window.onload = assign_shortcuts;
+document.write('<script src="shortcut.js"></script>')
 
