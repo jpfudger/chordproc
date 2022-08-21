@@ -98,17 +98,18 @@ function increment_note(note,up=true) {
     return notes[index];
     }
 //}}}
-//{{{ function: chordDivUp()
-function chordDivUp(d) {
+//{{{ function: cycleChordDiv()
+function cycleChordDiv(d, up) {
+    var orig_length = d.innerHTML.length;
     var root = get_root(d.innerHTML);
     var bass = get_bass(d.innerHTML);
     if ( root ) {
-        var new_root = increment_note(root,true);
-        d.innerHTML = d.innerHTML.replace( RegExp("^" + root), new_root );
+        var new_root = increment_note(root, up);
+        d.innerHTML = d.innerHTML.replace( RegExp("^" + root + " *"), new_root );
         }
     if ( bass ) {
-        var new_bass = increment_note(bass,true).toLowerCase();
-        d.innerHTML = d.innerHTML.replace( RegExp("/" + bass, "i"), "/" + new_bass );
+        var new_bass = increment_note(bass, up).toLowerCase();
+        d.innerHTML = d.innerHTML.replace( RegExp("/" + bass + " *", "i"), "/" + new_bass );
         }
 
     }
@@ -131,13 +132,8 @@ function chordDivDown(d) {
 function cycleChords(up=true) {
     var divs = document.getElementsByClassName('chord');
     for ( var i=0; i<divs.length; i++) {
-        if ( up ) {
-            chordDivUp(divs[i]);
-            }
-        else {
-            chordDivDown(divs[i]);
-            }
-        } 
+        cycleChordDiv(divs[i], up);
+        }
     }
 //}}}
 //}}}
@@ -305,14 +301,13 @@ function get_chords_of_song(song_index)
     }
 //}}}
 //{{{ function: transpose_song
-function transpose_song(song_index, direction)
+function transpose_song(song_index, up)
     {
     var chords = get_chords_of_song(song_index);
 
     for ( var i=0; i<chords.length; i++ )
         {
-        if (direction > 0) { chordDivUp(chords[i]); }
-        else               { chordDivDown(chords[i]); }
+        cycleChordDiv(chords[i], up);
         }
 
     }

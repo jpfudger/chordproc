@@ -1032,13 +1032,13 @@ class CRD_song():
             # Buttons for versions and transposing:
 
             # button_trans_1 = '<input type="button" title="Transpose down" value="&flat;" ' \
-            #                  'onclick="transpose_song(%s,-1);">' % qindex
+            #                  'onclick="transpose_song(%s,false);">' % qindex
             # button_trans_2 = '<input type="button" title=Transpose up"" value="&sharp;" ' \
-            #                  'onclick="transpose_song(%s,+1);">' % qindex
+            #                  'onclick="transpose_song(%s,true);">' % qindex
             # button_cycle_1 = '<input type="button" title="Cycle versions" value="&lt;" ' \
-            #                  'onclick="cycle_versions(%s,-1);">' % qindex
+            #                  'onclick="cycle_versions(%s,false);">' % qindex
             # button_cycle_2 = '<input type="button" title="Cycle versions" value="&gt;" ' \
-            #                  'onclick="cycle_versions(%s,+1);">' % qindex
+            #                  'onclick="cycle_versions(%s,true);">' % qindex
 
             # lines += [ button_trans_1, button_trans_2 ]
             # if self.versions:
