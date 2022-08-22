@@ -1,33 +1,27 @@
 // vim: foldmethod=marker
 
-//{{{ function: cycle_styles()
+//{{{ function: cycle_styles
 function cycle_styles() {
     var ss = document.getElementById("style");
     //window.alert(ss.href);
 
-    if ( ss.href.endsWith("style1.css") )
-        ss.setAttribute('href', ss.href.replace("style1.css", "style2.css"));
-    else if ( ss.href.endsWith("style2.css") )
-        ss.setAttribute('href', ss.href.replace("style2.css", "style3.css"));
-    else if ( ss.href.endsWith("style3.css") )
-        ss.setAttribute('href', ss.href.replace("style3.css", "style4.css"));
-    else if ( ss.href.endsWith("style4.css") )
-        ss.setAttribute('href', ss.href.replace("style4.css", "style1.css"));
+    var styles = [ "style1.css", "style2.css", "style3.css", "style4.css" ];
+    styles.push(styles[0]); // for cyclicity
 
+    for ( var i=0; i<styles.length; i++) 
+        {
+        if ( ss.href.endsWith(styles[i]) )
+            {
+            ss.setAttribute('href', ss.href.replace(styles[i], styles[i+1]));
+            break;
+            }
+        }
 
-    // if ( document.getElementById("style_alt").disabled ) {
-    //     document.getElementById("style_alt").disabled  = false;
-    //     document.getElementById("style").disabled = true;
-    //     }
-    // else {
-    //     document.getElementById("style_alt").disabled  = true;
-    //     document.getElementById("style").disabled = false;
-    //     }
     }
 //}}}
 
 //{{{ collection: chords
-//{{{ function: hide_chords()
+//{{{ function: hide_chords
 function hide_chords() {
     // var songs = document.querySelectorAll('.chords_1col,.chords_2col,.chords_3col');
     // for ( var i=0; i<songs.length; i++) {
@@ -49,7 +43,7 @@ function hide_chords() {
         } 
     }
 //}}}
-//{{{ function: get_notes()
+//{{{ function: get_notes
 function get_notes(which,prefer_sharp=false) {
     notes = [ 'A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab' ];
     if ( prefer_sharp || which.match(/#/) ) {
@@ -58,7 +52,7 @@ function get_notes(which,prefer_sharp=false) {
     return notes.concat(notes);
     }
 //}}}
-//{{{ function: get_root()
+//{{{ function: get_root
 function get_root(chord) {
     var notes = ["A#","Ab","A","Bb","B","C#","C","D#","Db","D","Eb","E","F#","F","G#","Gb","G","A#"];
     for ( var i=0; i<notes.length; i++ ) {
@@ -69,14 +63,14 @@ function get_root(chord) {
     return null;
     }
 //}}}
-//{{{ function: get_bass()
+//{{{ function: get_bass
 function get_bass(chord) {
     var array = chord.match( RegExp( "/([a-zb#]+)$", "i" ) );
     if ( array ) return array[1];
     return null;
     }
 //}}}
-//{{{ function: increment_note()
+//{{{ function: increment_note
 function increment_note(note,up=true) {
     var notes = get_notes(note);
     var index = 0;
@@ -98,8 +92,9 @@ function increment_note(note,up=true) {
     return notes[index];
     }
 //}}}
-//{{{ function: cycleChordDiv()
-function cycleChordDiv(d, up) {
+//{{{ function: cycle_chord_div
+function cycle_chord_div(d, up) {
+    // var orig_length = d.innerHTML.length;
     var root = get_root(d.innerHTML);
     var bass = get_bass(d.innerHTML);
     if ( root ) {
@@ -111,19 +106,24 @@ function cycleChordDiv(d, up) {
         d.innerHTML = d.innerHTML.replace( RegExp("/" + bass + " *", "i"), "/" + new_bass );
         }
 
+    // while ( d.innerHTML.length < orig_length )
+    //     {
+    //     d.innerHTML = d.innerHTML + " ";
+    //     }
+
     }
 //}}}
-//{{{ function: cycleChords()
-function cycleChords(up=true) {
+//{{{ function: transpose_all_chords
+function transpose_all_chords(up=true) {
     var divs = document.getElementsByClassName('chord');
     for ( var i=0; i<divs.length; i++) {
-        cycleChordDiv(divs[i], up);
+        cycle_chord_div(divs[i], up);
         }
     }
 //}}}
 //}}}
 //{{{ collection: capos
-//{{{ function: numeral_to_decimal()
+//{{{ function: numeral_to_decimal
 function numeral_to_decimal(numeral) {
     var mult = 1;
     if ( numeral.startsWith("-") ) {
@@ -141,7 +141,7 @@ function numeral_to_decimal(numeral) {
     return mult * decimal
     }
 //}}}
-//{{{ function: decimal_to_numeral()
+//{{{ function: decimal_to_numeral
 function decimal_to_numeral(decimal) {
     var mult = "";
     if ( decimal < 0 ) {
@@ -152,7 +152,7 @@ function decimal_to_numeral(decimal) {
     return mult + numerals[decimal]
     }
 //}}}
-//{{{ function: get_position()
+//{{{ function: get_position
 function get_position(d) {
     var array = d.innerHTML.match( RegExp( "(-?[0XIV]+)", "i" ) );
     position_numeral = array[1];
@@ -160,8 +160,8 @@ function get_position(d) {
     return position_decimal
     }
 //}}}
-//{{{ function: cycleCapoDiv()
-function cycleCapoDiv(d, up) {
+//{{{ function: cycle_capo_div
+function cycle_capo_div(d, up) {
     var new_position = get_position(d);
 
     if ( up ) { new_position += 1; }
@@ -171,28 +171,15 @@ function cycleCapoDiv(d, up) {
     d.innerHTML = decimal_to_numeral(new_position);
     }
 //}}}
-//{{{ function: cycleCapos()
-function cycleCapos(up=true) {
+//{{{ function: transpose_all_capos
+function transpose_all_capos(up=true) {
     var divs = document.getElementsByClassName('capo');
     for ( var i=0; i<divs.length; i++) 
         {
-        cycleCapoDiv(divs[i], up);
+        cycle_capo_div(divs[i], up);
         } 
     }
 //}}}
-//}}}
-
-//{{{ function: transpose_up
-function transpose_up() {
-    cycleChords(true);  
-    cycleCapos(false);  
-    }
-//}}}
-//{{{ function: transpose_down
-function transpose_down() {
-    cycleChords(false); 
-    cycleCapos(true);  
-    }
 //}}}
 
 //{{{ function: get_versions_of_song
@@ -241,75 +228,6 @@ function cycle_versions(song_index,direction)
     versions[current].style.display = "block";
     }
 //}}}
-//{{{ function: set_version_of_song
-function set_version_of_song(song_index,version_index) 
-    {
-    var versions = get_versions_of_song(song_index);
-
-    for ( var i=0; i<versions.length; i++ )
-        {
-        if ( i == version_index )
-            {
-            versions[i].style.display = "block";
-            }
-        else
-            {
-            versions[i].style.display = "none";
-            }
-        }
-    }
-//}}}
-
-//{{{ function: get_chords_of_song
-function get_chords_of_song(song_index)
-    {
-    var chords = [];
-    var divs = document.getElementsByTagName("div");
-
-    for ( var i=0; i<divs.length; i++ )
-        {
-        if ( divs[i].classList.contains("chord") && 
-             divs[i].parentNode.parentNode.id == song_index )
-            {
-            chords.push(divs[i]);
-            }
-        }
-
-    return chords;
-    }
-//}}}
-//{{{ function: transpose_song
-function transpose_song(song_index, up)
-    {
-    var chords = get_chords_of_song(song_index);
-
-    for ( var i=0; i<chords.length; i++ )
-        {
-        cycleChordDiv(chords[i], up);
-        }
-
-    }
-//}}}
-
-//{{{ function: update_song_version
-function update_song_version(song_index)
-    {
-    var select = document.getElementById( song_index + ".select")
-    var value = select.options[select.selectedIndex].value;
-    set_version_of_song(song_index, value);
-    }
-//}}}
-
-//{{{ function: reset_select_boxes
-function reset_select_boxes()
-    {
-    var selects = document.getElementsByTagName("select");
-    for ( var i=0; i<selects.length; i++ )
-        {
-        selects[i].value = 0;
-        }
-    }
-//}}}
 //{{{ function: show_all_versions
 function show_all_versions()
     {
@@ -327,17 +245,95 @@ function show_all_versions()
     return versions;
     }
 //}}}
+//{{{ function: reset_version_selector
+function reset_version_selector()
+    {
+    var selects = document.getElementsByTagName("select");
+    for ( var i=0; i<selects.length; i++ )
+        {
+        selects[i].value = 0;
+        }
+    }
+//}}}
+
+//{{{ function: get_divs_of_song
+function get_divs_of_song(song_index, cls)
+    {
+    var divs = [];
+    var all_divs = document.getElementsByTagName("div");
+
+    for ( var i=0; i<all_divs.length; i++ )
+        {
+        if ( all_divs[i].classList.contains(cls) && 
+             all_divs[i].parentNode.parentNode.id == song_index )
+            {
+            divs.push(all_divs[i]);
+            }
+        }
+
+    return divs;
+    }
+//}}}
+//{{{ function: transpose_song
+function transpose_song(song_index, up)
+    {
+    var chords = get_divs_of_song(song_index, "chord");
+    var capos = get_divs_of_song(song_index, "capo");
+
+    for ( var i=0; i<chords.length; i++ )
+        {
+        cycle_chord_div(chords[i], up);
+        }
+
+    for ( var i=0; i<capos.length; i++ )
+        {
+        cycle_capo_div(capos[i], up);
+        }
+
+    }
+//}}}
+//{{{ function: transpose_all_songs
+function transpose_all_songs(up) {
+    transpose_all_chords(up);  
+    transpose_all_capos(!up);  
+    }
+//}}}
+//{{{ function: transpose_topmost_song
+function transpose_topmost_song(up)
+    {
+    var divs = document.getElementsByTagName("div");
+    var y_offset = window.pageYOffset; // equal to document.body.scrollTop ?
+
+    for ( var i=0; i<divs.length; i++ )
+        {
+        if ( divs[i].classList.contains("version") &&
+             divs[i].style.display == "block" )
+            {
+            var rect = divs[i].getBoundingClientRect();
+
+            if ( divs[i].offsetTop >= y_offset )
+                {
+                var song_id = divs[i].id;
+                transpose_song(song_id, up);
+                break;
+                }
+            }
+        }
+
+    return;
+    }
+//}}}
 
 //{{{ function: assign_shortcuts
 function assign_shortcuts()
     {
     shortcut.add("a",function() { show_all_versions() });
-    shortcut.add("j",function() { transpose_down() });
-    shortcut.add("k",function() { transpose_up()   });
+    shortcut.add("j",function() { transpose_topmost_song(false) });
+    shortcut.add("k",function() { transpose_topmost_song(true)  });
     }
 //}}}
 
-document.addEventListener('DOMContentLoaded', reset_select_boxes, false);
+document.addEventListener('DOMContentLoaded', reset_version_selector, false);
 window.onload = assign_shortcuts;
-document.write('<script src="shortcut.js"></script>')
+document.write('<script src="shortcut.js"></script>');
 

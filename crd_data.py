@@ -29,8 +29,8 @@ def common_html(want_chord_controls=True):
     ]
     if want_chord_controls:
         lines += [
-        '<a onclick="transpose_up();" title="Transpose Up"><div id=t_l></div></a>',
-        '<a onclick="transpose_down();" title="Transpose Down"><div id=b_l></div></a>',
+        '<a onclick="transpose_topmost_song(true);" title="Transpose Up"><div id=t_l></div></a>',
+        '<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>',
         '<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>',
         ]
     return lines
