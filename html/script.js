@@ -290,7 +290,13 @@ function get_divs_of_song(song_index, cls)
     for ( var i=0; i<all_divs.length; i++ )
         {
         if ( all_divs[i].classList.contains(cls) && 
-             all_divs[i].parentNode.parentNode.id == song_index )
+             (
+             // chord is directly in the version div:
+             all_divs[i].parentNode.id == song_index
+             // chord is in a span div in the version div:
+          || all_divs[i].parentNode.parentNode.id == song_index
+             )
+            )
             {
             divs.push(all_divs[i]);
             }
