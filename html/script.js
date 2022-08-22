@@ -245,6 +245,31 @@ function show_all_versions()
     return versions;
     }
 //}}}
+//{{{ function: set_version_of_song
+function set_version_of_song(song_index,version_index) 
+    {
+    var versions = get_versions_of_song(song_index);
+    for ( var i=0; i<versions.length; i++ )
+        {
+        if ( i == version_index )
+            {
+            versions[i].style.display = "block";
+            }
+        else
+            {
+            versions[i].style.display = "none";
+            }
+        }
+    }
+//}}}
+//{{{ function: update_song_version
+function update_song_version(song_index)
+    {
+    var select = document.getElementById( song_index + ".select")
+    var value = select.options[select.selectedIndex].value;
+    set_version_of_song(song_index, value);
+    }
+//}}}
 //{{{ function: reset_version_selector
 function reset_version_selector()
     {
