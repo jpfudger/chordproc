@@ -65,7 +65,7 @@ function get_root(chord) {
 //}}}
 //{{{ function: get_bass
 function get_bass(chord) {
-    var array = chord.match( RegExp( "/([a-zb#]+)$", "i" ) );
+    var array = chord.match( RegExp( "/([a-zb#]+) *$", "i" ) );
     if ( array ) return array[1];
     return null;
     }
@@ -94,22 +94,24 @@ function increment_note(note,up=true) {
 //}}}
 //{{{ function: cycle_chord_div
 function cycle_chord_div(d, up) {
-    // var orig_length = d.innerHTML.length;
+    var orig_length = d.innerHTML.length;
     var root = get_root(d.innerHTML);
     var bass = get_bass(d.innerHTML);
     if ( root ) {
         var new_root = increment_note(root, up);
-        d.innerHTML = d.innerHTML.replace( RegExp("^" + root + " *"), new_root );
+        d.innerHTML = d.innerHTML.replace( RegExp("^" + root), new_root );
         }
     if ( bass ) {
         var new_bass = increment_note(bass, up).toLowerCase();
-        d.innerHTML = d.innerHTML.replace( RegExp("/" + bass + " *", "i"), "/" + new_bass );
+        d.innerHTML = d.innerHTML.replace( RegExp("/" + bass, "i"), "/" + new_bass );
         }
 
-    // while ( d.innerHTML.length < orig_length )
-    //     {
-    //     d.innerHTML = d.innerHTML + " ";
-    //     }
+    // pad to original length
+    d.innerHTML = d.innerHTML.replace( RegExp(" *$"), "");
+    while ( d.innerHTML.length < orig_length )
+        {
+        d.innerHTML = d.innerHTML + " ";
+        }
 
     }
 //}}}

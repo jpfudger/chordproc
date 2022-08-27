@@ -6,58 +6,57 @@
 <link rel="stylesheet" type="text/css" href="style1.css" id="style">
 <script src="script.js"></script>
 <a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>
-<a onclick="transpose_up();" title="Transpose Up"><div id=t_l></div></a>
-<a onclick="transpose_down();" title="Transpose Down"><div id=b_l></div></a>
+<a onclick="transpose_topmost_song(true);" title="Transpose Up"><div id=t_l></div></a>
+<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>
 <a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>
 </head>
 <hr>
 <h3>Chord Names</h3>
 <!--<h3>Chord Dictionary</h3> -->
-<div class=chords_2col>
+<div id=chord.names class="chords_2col version" style="display:block">
 <span>--------------------------------------------------------------------------------
  Symbol   | Name              | Scale degrees             | Notes in <div class=chord>C</div>
 --------------------------------------------------------------------------------
- 5        | Power chord       | 1, 5                      | <div class=chord>C</div> <div class=chord>G</div>
+ 5        | Power chord       | 1, 5                      | <div class=chord>C </div> <div class=chord>G </div>
 --------------------------------------------------------------------------------
-          | Major             | 1, 3, 5                   | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>
- m        | Minor             | 1, m3, 5                  | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>
- sus2     | Suspended 2nd     | 1, 2, 5                   | <div class=chord>C</div> <div class=chord>D</div>  <div class=chord>G</div>
- sus4     | Suspended 4th     | 1, 4, 5                   | <div class=chord>C</div> <div class=chord>F</div>  <div class=chord>G</div>
+          | Major             | 1, 3, 5                   | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>
+ m        | Minor             | 1, m3, 5                  | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>G </div>
+ sus2     | Suspended 2nd     | 1, 2, 5                   | <div class=chord>C </div> <div class=chord>D </div>  <div class=chord>G </div>
+ sus4     | Suspended 4th     | 1, 4, 5                   | <div class=chord>C </div> <div class=chord>F </div>  <div class=chord>G </div>
 --------------------------------------------------------------------------------
- dim, o   | Diminished        | 1, m3, b5                 | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>Gb</div>
- b5       | Flat 5            | 1, 3, b5                  | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>Gb</div>
- aug, +   | Augmented         | 1, 3, #5                  | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G#</div>
+ dim, o   | Diminished        | 1, m3, b5                 | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>Gb</div>
+ b5       | Flat 5            | 1, 3, b5                  | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>Gb</div>
+ aug, +   | Augmented         | 1, 3, #5                  | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G#</div>
 --------------------------------------------------------------------------------
- 6        | Added 6th         | 1, 3, 5, 6                | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>A</div>
+ 6        | Added 6th         | 1, 3, 5, 6                | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>A</div>
 --------------------------------------------------------------------------------
- 7        | Dominant 7th      | 1, 3, 5, m7               | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div>
- m7       | Minor 7th         | 1, m3, 5, m7              | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div>
- maj7, &Delta;  | Major 7th         | 1, 3, 5, 7                | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>B</div>
- 7b5      | Dominant 7 Flat 5 | 1, 3, b5, m7              | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>Gb</div> <div class=chord>Bb</div>
- m7b5, &oslash;  | Half Diminished   | 1, m3, b5, m7             | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>Gb</div> <div class=chord>Bb</div>
- m(maj7)  | Minor Major 7th   | 1, m3, 5, 7               | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>B</div>
- dim7, o7 | Diminished 7th    | 1, m3, b5, bb7            | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>Gb</div> <div class=chord>A</div>
+ 7        | Dominant 7th      | 1, 3, 5, m7               | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>Bb</div>
+ m7       | Minor 7th         | 1, m3, 5, m7              | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>G </div>  <div class=chord>Bb</div>
+ maj7, &Delta;  | Major 7th         | 1, 3, 5, 7                | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>B</div>
+ 7b5      | Dominant 7 Flat 5 | 1, 3, b5, m7              | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>Gb</div>  <div class=chord>Bb</div>
+ m7b5, &oslash;  | Half Diminished   | 1, m3, b5, m7             | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>Gb</div>  <div class=chord>Bb</div>
+ m(maj7)  | Minor Major 7th   | 1, m3, 5, 7               | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>G </div>  <div class=chord>B</div>
+ dim7, o7 | Diminished 7th    | 1, m3, b5, bb7            | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>Gb</div>  <div class=chord>A</div>
 --------------------------------------------------------------------------------
- 7#9      | Hendrix chord     | 1, 3, 5, m7, #9           | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D#</div>
- 9        | Dominant 9th      | 1, 3, 5, m7, 9            | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div>
- m9       | Minor 9th         | 1, m3, 5, m7, 9           | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div>
- maj9     | Major 9th         | 1, 3, 5, 7, 9             | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>B</div>  <div class=chord>D</div>
+ 7#9      | Hendrix chord     | 1, 3, 5, m7, #9           | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>Bb</div> <div class=chord>D#</div>
+ 9        | Dominant 9th      | 1, 3, 5, m7, 9            | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>Bb</div> <div class=chord>D</div>
+ m9       | Minor 9th         | 1, m3, 5, m7, 9           | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>G </div>  <div class=chord>Bb</div> <div class=chord>D</div>
+ maj9     | Major 9th         | 1, 3, 5, 7, 9             | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>B</div>  <div class=chord>D</div>
 --------------------------------------------------------------------------------
- 11       | Dominant 11th     | 1, 3, 5, m7, 9, 11        | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div>
- m11      | Minor 11th        | 1, m3, 5, m7, 9, 11       | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div>
+ 11       | Dominant 11th     | 1, 3, 5, m7, 9, 11        | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div>
+ m11      | Minor 11th        | 1, m3, 5, m7, 9, 11       | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>G </div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div>
 --------------------------------------------------------------------------------
- 13       | Dominant 13th     | 1, 3, 5, m7, 9, 11, 13    | <div class=chord>C</div> <div class=chord>E</div>  <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div> <div class=chord>A</div>
- m13      | Minor 13th        | 1, m3, 5, m7, 9, 11, 13   | <div class=chord>C</div> <div class=chord>Eb</div> <div class=chord>G</div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div> <div class=chord>A</div>
+ 13       | Dominant 13th     | 1, 3, 5, m7, 9, 11, 13    | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div> <div class=chord>A</div>
+ m13      | Minor 13th        | 1, m3, 5, m7, 9, 11, 13   | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>G </div>  <div class=chord>Bb</div> <div class=chord>D</div> <div class=chord>F</div> <div class=chord>A</div>
 --------------------------------------------------------------------------------
 </span>
-
 <span>More Stacked 3rds
 =================
 </span>
 <span>9th  == 2nd on top
 11th == 4th on top
 13th == 6th on top
-
+</span>
 <span>You may see +/- instead of #/b (e.g. 7b5 = 7-5, or 7#9 = 7+9).
 </span>
 <span>Diminished Chords
@@ -67,54 +66,94 @@ Diminished 7th chords are constructed of four stacked minor thirds (1,m3,b5,bb7)
 The bb7 in the dim7 chord is equivalent to the 6th degree of the scale.
 The inversions of these chords overlap, so there are only 3 unique dim7 chords:
 </span>
-<span>    <div class=chord>Cdim7</div>  = <div class=chord>D#dim7</div> = <div class=chord>F#dim7</div> = <div class=chord>Adim7</div>  = <div class=fingering>xx1212</div>
-    <div class=chord>C#dim7</div> = <div class=chord>Edim7</div>  = <div class=chord>Gdim7</div>  = <div class=chord>A#dim7</div> = <div class=fingering>xx2323</div>
-    <div class=chord>Ddim7</div>  = <div class=chord>Fdim7</div>  = <div class=chord>G#dim7</div> = <div class=chord>Bdim7</div>  = <div class=fingering>xx3434</div>
+<span>    <div class=chord>Cdim7 </div> = <div class=chord>D#dim7</div> = <div class=chord>F#dim7</div> = <div class=chord>Adim7 </div> = <div class=fingering>xx1212</div>
+    <div class=chord>C#dim7</div> = <div class=chord>Edim7 </div> = <div class=chord>Gdim7 </div> = <div class=chord>A#dim7</div> = <div class=fingering>xx2323</div>
+    <div class=chord>Ddim7 </div> = <div class=chord>Fdim7 </div> = <div class=chord>G#dim7</div> = <div class=chord>Bdim7 </div> = <div class=fingering>xx3434</div>
 
 You may hear the m7b5 chord (&oslash;) referred to as "half diminished" (i.e. missing the bb7).
 </span>
 <span>Augmented Chords
 ================
-
+</span>
+<span>
 Augmented 5th chords are constructed of three stacked major thirds (1,3,#5).
 The inversions of these chords overlap, so there are only 4 unique augmented chords:
-
-<span>    <div class=chord>C+</div>   =  <div class=chord>E+</div>  =  <div class=chord>G#+</div>
-    <div class=chord>C#+</div>  =  <div class=chord>F+</div>  =  <div class=chord>A+</div>
-    <div class=chord>D+</div>   =  <div class=chord>F#+</div> =  <div class=chord>A#+</div>
-    <div class=chord>D#+</div>  =  <div class=chord>B+</div>  =  <div class=chord>G+</div>
+</span>
+<span>    <div class=chord>C+ </div>  =  <div class=chord>E+ </div> =  <div class=chord>G#+</div>
+    <div class=chord>C#+</div>  =  <div class=chord>F+ </div> =  <div class=chord>A+ </div>
+    <div class=chord>D+ </div>  =  <div class=chord>F#+</div> =  <div class=chord>A#+</div>
+    <div class=chord>D#+</div>  =  <div class=chord>B+ </div> =  <div class=chord>G+ </div>
 </span>
 </div>
 <br>
 
 <hr> <a name=Harmonica></a>
 <h3>Diatonic Harmonica Positions</h3>
-<div class=chords_2col>
+<div id=harmonica class="chords_2col version" style="display:block">
 <span>                                                     +----+
                                                      | <div class=chord>Bb</div> |
                                            +--------------+
-                                           | <div class=chord>Eb</div> | <div class=chord>F#</div> | <div class=chord>B</div>  |
+                                           | <div class=chord>Eb</div> | <div class=chord>F#</div> | <div class=chord>B </div> |
         +-------------------------------------------------+
-        | <div class=chord>C</div>  | <div class=chord>E</div>  | <div class=chord>G</div>  | <div class=chord>C</div>  | <div class=chord>E</div>  | <div class=chord>G</div>  | <div class=chord>C</div>  | <div class=chord>E</div>  | <div class=chord>G</div>  | <div class=chord>C</div>  |
+        | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> |
 blow &uarr;  +-------------------------------------------------+
         | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 |
 draw &darr;  +-------------------------------------------------+
-        | <div class=chord>D</div>  | <div class=chord>G</div>  | <div class=chord>B</div>  | <div class=chord>D</div>  | <div class=chord>F</div>  | <div class=chord>A</div>  | <div class=chord>B</div>  | <div class=chord>D</div>  | <div class=chord>F</div>  | <div class=chord>A</div>  |
+        | <div class=chord>D </div> | <div class=chord>G </div> | <div class=chord>B </div> | <div class=chord>D </div> | <div class=chord>F </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>D </div> | <div class=chord>F </div> | <div class=chord>A </div> |
         +-------------------------------------------------+
         | <div class=chord>Db</div> | <div class=chord>F#</div> | <div class=chord>Bb</div> | <div class=chord>Db</div> |    | <div class=chord>Ab</div> |
         +-------------------+    +----+
-             | <div class=chord>F</div>  | <div class=chord>A</div>  |
+             | <div class=chord>F </div> | <div class=chord>A </div> |
              +---------+
                   | <div class=chord>Ab</div> |
                   +----+
 </span>
 
 
-1st position (straight harp) starts on 1 blow and is the same key as the harmonica (<div class=chord>C</div>).
+1st position (straight harp) starts on 1 blow and is the same key as the harmonica: <div class=chord>C </div>
 
-2nd position (cross harp) starts on 2 draw and is a perfect fifth up from the key of the harmonica (<div class=chord>G</div>).
+2nd position (cross harp) starts on 2 draw and is a perfect fifth up from the key of the harmonica: <div class=chord>G </div>
 
-3rd position (slant harp) starts on 1 draw and is one tone up from the key of the harmonica (<div class=chord>Dm</div>).
+3rd position (slant harp) starts on 1 draw and is one tone up from the key of the harmonica: <div class=chord>Dm </div>
+
+</div>
+
+
+<br>
+<hr>
+<h3>Circle of Fifths</h3>
+<div id=fifths class="chords_1col version" style="display:block">
+        Chord    Scale Degree     Relative Minor      
+I       <div class=chord>C </div>                     <div class=chord>Am </div>
+II      <div class=chord>G </div>                     <div class=chord>Em </div>
+III     <div class=chord>D </div>                     <div class=chord>Bm </div>
+IV      <div class=chord>A </div>                     <div class=chord>F#m</div>
+V       <div class=chord>E </div>                     <div class=chord>C#m</div>
+VI      <div class=chord>B </div>                     <div class=chord>G#m</div>
+VII     <div class=chord>Gb</div>                     <div class=chord>Ebm</div>
+VIII    <div class=chord>Db</div>                     <div class=chord>Bbm</div>
+IX      <div class=chord>Ab</div>                     <div class=chord>Fm </div>
+X       <div class=chord>Eb</div>                     <div class=chord>Cm </div>
+XI      <div class=chord>Bb</div>                     <div class=chord>Gm </div>
+XII     <div class=chord>F </div>                     <div class=chord>Dm </div>
+I       <div class=chord>C </div>                     <div class=chord>Am </div>
+</div>
+
+
+<br>
+<hr>
+<h3>Tonewheel Organ Settings</h3>
+<div id=organ class="chords_1col version" style="display:block">
+
+<span>
+        +-----------------------------------------------------+
+        | 16' | 5&frac12;' |  8' |  4' | 2&frac23;' |  2' | 1&frac35;' | 1&frac13;' |  1' |
+        +-----------------------------------------------------+
+        |  I  |  V  |  I  |  I  |  V  |  I  | III |  V  |  I  |
+        +-----------------------------------------------------+
+        |  <div class=chord>C </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |  <div class=chord>C </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |  <div class=chord>E </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |
+        +-----------------------------------------------------+
+</span>
 
 </div>
 
@@ -359,11 +398,13 @@ This is a minor pentatonic scale with an added b5.
 <br>
 <hr>
 
-<br>
-<br>
-<br>
-<br>
+<!-- leave enough space to scroll to and traspose the bottom section -->
 
+<br> <br> <br> <br> <br>
+<br> <br> <br> <br> <br>
+<br> <br> <br> <br> <br>
+<br> <br> <br> <br> <br>
+<br> <br> <br> <br> <br>
 
 </body>
 </html>

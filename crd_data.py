@@ -19,6 +19,7 @@ import datetime
 DO_WORDLISTS = [ ] # [ "Bob Dylan" ]
 DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+FIXED_WIDTH_CHORDS = True
 
 def common_html(want_chord_controls=True):
     lines = [
@@ -384,7 +385,11 @@ class CRD_chord():
         transpose = transpose % 12
 
         if self.is_chord():
+            max_width = len(formatted)
+
             if self.root:
+                if len(self.root) == 1: max_width += 1
+
                 try:
                     notes = self.__notes(self.root,prefer_sharp)
                     lowernotes = [ n.lower() for n in notes ]
@@ -397,6 +402,8 @@ class CRD_chord():
                 formatted = newroot + formatted[len(self.root):]
 
             if self.bass:
+                if len(self.bass) == 1: max_width += 1
+
                 try:
                     notes = self.__notes(self.bass,prefer_sharp)
                     lowernotes = [ n.lower() for n in notes ]
@@ -411,6 +418,10 @@ class CRD_chord():
                     formatted = '/' + newbass.lower()
                 else:
                     formatted = formatted[:-len(self.bass)-1] + '/' + newbass.lower()
+
+            if FIXED_WIDTH_CHORDS and len(formatted) < max_width:
+                # pad up to max width to allow room for transposed symbol
+                formatted += " " * (max_width - len(formatted))
 
         return formatted       
     def is_chord(self):
@@ -785,7 +796,22 @@ class CRD_song():
             elif word.replace('.','') == '':
                 formatted += word
             elif word.isspace():
-                formatted += word
+                if FIXED_WIDTH_CHORDS and formatted.endswith("</div>"):
+                    nodiv = formatted[:-6]
+                    trimmed = nodiv.rstrip()
+
+                    n_pad = len(nodiv) - len(trimmed)
+                    n_word = len(word)
+
+                    if n_word > n_pad:
+                        # replace padding with ws word inside div
+                        formatted = trimmed + word + "</div>"
+                    else:
+                        # remove padding to avoid symbols running together
+                        formatted = trimmed + "</div>" + word
+
+                else:
+                    formatted += word
             elif word == 'etc' or word == 'etc.':
                 formatted += '...'
             elif word.lower() in [ 'n.c.', 'nc', 'n.c', 'n/c' ]:
