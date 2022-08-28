@@ -17,7 +17,7 @@
 <span>+--------------------------------------------------------------------------------------+
 | Symbol   | Name              | Scale degrees             | Notes in <div class=chord>C </div>               |
 |--------------------------------------------------------------------------------------|
-| 5        | Power chord       | 1, 5                      | <div class=chord>C </div> <div class=chord>G </div>                     |
+| 5        | Power chord       | 1, 5                      | <div class=chord>C </div>     <div class=chord>G </div>                 |
 |--------------------------------------------------------------------------------------|
 |          | Major             | 1, 3, 5                   | <div class=chord>C </div> <div class=chord>E </div>  <div class=chord>G </div>                 |
 | m        | Minor             | 1, m3, 5                  | <div class=chord>C </div> <div class=chord>Eb</div>  <div class=chord>G </div>                 |
@@ -176,21 +176,21 @@ draw &darr;  +-------------------------------------------------+
 <hr>
 <h3 id="theory.scales">Scales</h3>
 <select id="theory.scales.select" onchange="update_song_version('theory.scales');">
-    <option value=0>Ionian Scale (Major)</option>
-    <option value=1>Aeolian Scale (Natural Minor)</option>
-    <option value=2>Dorian Scale</option>
-    <option value=3>Phrygian Scale</option>
-    <option value=4>Lydian Scale</option>
-    <option value=5>Mixolydian Scale</option>
-    <option value=6>Locrian Scale</option>
+    <option value=0>1: Ionian Scale (Major)</option>
+    <option value=1>2: Dorian Scale</option>
+    <option value=2>3: Phrygian Scale</option>
+    <option value=3>4: Lydian Scale</option>
+    <option value=4>5: Mixolydian Scale (Dominant)</option>
+    <option value=5>6: Aeolian Scale (Natural Minor)</option>
+    <option value=6>7: Locrian Scale</option>
+    <option disabled></option>
     <option value=7>Harmonic Minor Scale</option>
     <option value=8>Melodic Minor Scale</option>
-    <option value=9>Lydian b7 Scale</option>
-    <option value=10>Whole Tone Scale</option>
-    <option value=11>Diminished Scale (Whole-Half)</option>
-    <option value=12>Major Pentatonic Scale</option>
-    <option value=13>Minor Pentatonic Scale</option>
-    <option value=14>Minor Blues Scale (m3, b5)</option>
+    <option value=9>Whole Tone Scale</option>
+    <option value=10>Diminished Scale (Whole-Half)</option>
+    <option value=11>Major Pentatonic Scale</option>
+    <option value=12>Minor Pentatonic Scale</option>
+    <option value=13>Minor Blues Scale (m3, b5)</option>
 </select>
 
 <div id=theory.scales class="chords_1col version" style=display:block>
@@ -214,26 +214,6 @@ draw &darr;  +-------------------------------------------------+
 </div>
 
 <div id=theory.scales class="chords_1col version" style=display:none>
-<b><div class=chord>C</div> Aeolian Scale (Natural Minor)</b>
-<br>
-     +----------------------------------+
-     | W  | h  | W  | W  | h  | W  | W  |
-+---------------------------------------+
-| 1  | 2  | b3 | 4  | 5  | b6 | b7 | 8  |
-+---------------------------------------+
-| <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>Ab</div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
-+---------------------------------------+
-
-<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
-<div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|             |-1--|----|----|----|----|        |-3--|----|----|----|             |-6--|----|----|----|----|</div>
-<div class=tabline>|----|-9--|----|-11-|----|       |----|----|-13*|-15-|             |-1*-|----|-3--|-4--|----|        |-3--|-4--|----|-6--|             |----|----|-8--|-9--|----|</div>
-<div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|-13-|-15-|             |-1--|----|-3--|----|----|        |-3--|----|-5*-|----|             |----|-7--|-8--|----|-10-|</div>
-<div class=tabline>|-8--|----|-10*|----|-12-|       |----|-12-|-13-|-15-|             |-1--|----|-3--|----|-5--|        |-3--|----|-5--|-6--|             |-6--|----|-8--|----|-10*|</div>
-<div class=tabline>|-8--|----|-10-|-11-|----|       |-11-|----|-13-|-15*|             |-1--|----|-3*-|----|-5--|        |-3*-|----|-5--|-6--|             |-6--|----|-8--|----|-10-|</div>
-<div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|-15-|             |-1--|----|-3--|-4--|----|        |-3--|-4--|----|-6--|             |-6--|----|-8*-|----|-10-|</div>
-</div>
-
-<div id=theory.scales class="chords_1col version" style=display:none>
 <b><div class=chord>C</div> Dorian Scale</b>
 <br>
      +----------------------------------+
@@ -243,6 +223,8 @@ draw &darr;  +-------------------------------------------------+
 +---------------------------------------+
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
 +---------------------------------------+
+
+This is the Aeolian (natural minor) scale, but with the major sixth.
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
 <div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|----|        |-1--|----|----|----|----|        |-3--|----|----|----|----|        |-5--|-6--|----|----|</div>
@@ -284,6 +266,8 @@ draw &darr;  +-------------------------------------------------+
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>F#</div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>C </div> |
 +---------------------------------------+
 
+This is the major scale with raised fourth (forming a tritone above the tonic). 
+
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
 <div class=tabline>|-7--|-8*-|----|----|            |-8*-|----|-10-|----|----|        |-12-|----|----|----|----|        |-2--|-3--|----|----|             |-5--|----|----|----|----|</div>
 <div class=tabline>|-7--|-8--|----|-10-|            |----|----|-10-|----|-12-|        |-12-|-13*|----|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8--|----|</div>
@@ -294,15 +278,17 @@ draw &darr;  +-------------------------------------------------+
 </div>
 
 <div id=theory.scales class="chords_1col version" style=display:none>
-<b><div class=chord>C</div> Mixolydian Scale</b>
+<b><div class=chord>C</div> Mixolydian Scale (Dominant)</b>
 <br>
      +----------------------------------+
-     | W  | W  | h  | W  | W  | h  | h  |
+     | W  | W  | h  | W  | W  | h  | W  |
 +---------------------------------------+
 | 1  | 2  | 3  | 4  | 5  | 6  | b7 | 8  |
 +---------------------------------------+
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
 +---------------------------------------+
+
+This is the major scale with a flattened seventh. 
 
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
 <div class=tabline>|-6--|----|-8*-|----|----|       |-10-|----|----|----|----|        |-12-|----|----|----|             |-3--|----|----|----|----|        |-5--|----|----|----|</div>
@@ -311,6 +297,26 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|-7--|-8--|----|-10*|       |-10*|----|-12-|----|-14-|        |-12-|----|-14-|-15-|             |-3--|----|-5--|----|-7--|        |-5--|----|-7--|-8--|</div>
 <div class=tabline>|----|-7--|-8--|----|-10-|       |-10-|----|-12-|----|-14-|        |-12-|-13-|----|-15*|             |-3*-|----|-5--|----|-7--|        |-5--|----|-7--|-8--|</div>
 <div class=tabline>|----|----|-8*-|----|-10-|       |-10-|----|-12-|----|-14-|        |-12-|-13-|----|-15-|             |-3--|----|-5--|-6--|----|        |-5--|-6--|----|-8*-|</div>
+</div>
+
+<div id=theory.scales class="chords_1col version" style=display:none>
+<b><div class=chord>C</div> Aeolian Scale (Natural Minor)</b>
+<br>
+     +----------------------------------+
+     | W  | h  | W  | W  | h  | W  | W  |
++---------------------------------------+
+| 1  | 2  | b3 | 4  | 5  | b6 | b7 | 8  |
++---------------------------------------+
+| <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>Ab</div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
++---------------------------------------+
+
+<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
+<div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|             |-1--|----|----|----|----|        |-3--|----|----|----|             |-6--|----|----|----|----|</div>
+<div class=tabline>|----|-9--|----|-11-|----|       |----|----|-13*|-15-|             |-1*-|----|-3--|-4--|----|        |-3--|-4--|----|-6--|             |----|----|-8--|-9--|----|</div>
+<div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|-13-|-15-|             |-1--|----|-3--|----|----|        |-3--|----|-5*-|----|             |----|-7--|-8--|----|-10-|</div>
+<div class=tabline>|-8--|----|-10*|----|-12-|       |----|-12-|-13-|-15-|             |-1--|----|-3--|----|-5--|        |-3--|----|-5--|-6--|             |-6--|----|-8--|----|-10*|</div>
+<div class=tabline>|-8--|----|-10-|-11-|----|       |-11-|----|-13-|-15*|             |-1--|----|-3*-|----|-5--|        |-3*-|----|-5--|-6--|             |-6--|----|-8--|----|-10-|</div>
+<div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|-15-|             |-1--|----|-3--|-4--|----|        |-3--|-4--|----|-6--|             |-6--|----|-8*-|----|-10-|</div>
 </div>
 
 <div id=theory.scales class="chords_1col version" style=display:none>
@@ -344,6 +350,8 @@ draw &darr;  +-------------------------------------------------+
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>Ab</div> | <div class=chord>B </div> | <div class=chord>C </div> |
 +---------------------------------------+
 
+This is the Aeolian (natural minor) scale with a raised seventh.
+
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
 <div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|----|        |-1--|----|----|----|----|        |-3--|----|----|----|----|        |----|-7--|----|----|----|</div>
 <div class=tabline>|----|-9--|----|----|-12-|       |----|-12-|-13*|----|-15-|        |-1*-|----|-3--|-4--|----|        |-3--|-4--|----|-6--|----|        |----|----|-8--|-9--|----|</div>
@@ -364,6 +372,9 @@ draw &darr;  +-------------------------------------------------+
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>C </div> |
 +---------------------------------------+
 
+This is the Ionian (major) scale with a flattened third.
+Or, equivalently, the Aeolian (natural minor) scale with raised seventh sixth and seventh.
+
 <!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
 <div class=tabline>|-8*-|----|----|----|----|       |-11-|----|----|----|----|        |-1--|----|----|----|----|        |-3--|----|----|----|----|        |----|-7--|----|----|----|</div>
 <div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|-13*|----|-15-|        |----|----|-3--|-4--|----|        |----|-4--|----|-6--|----|        |----|----|-8--|----|-10-|</div>
@@ -371,26 +382,6 @@ draw &darr;  +-------------------------------------------------+
 <div class=tabline>|----|-9--|-10*|----|-12-|       |----|-12-|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|----|-7--|        |----|-7--|----|-9--|-10*|</div>
 <div class=tabline>|-8--|----|-10-|----|-12-|       |----|-12-|----|-14-|-15*|        |----|-2--|-3*-|----|-5--|        |-3*-|----|-5--|-6--|----|        |-6--|----|-8--|----|-10-|</div>
 <div class=tabline>|-8*-|----|-10-|-11-|----|       |-11-|----|-13-|----|-15-|        |-1--|----|-3--|----|-5--|        |-3--|----|-5--|----|-7--|        |----|-7--|-8*-|----|-10-|</div>
-</div>
-
-<div id=theory.scales class="chords_1col version" style=display:none>
-<b><div class=chord>C</div> Lydian b7 Scale</b>
-<br>
-     +----------------------------------+
-     | W  | W  | W  | h  | W  | h  | W  |
-+---------------------------------------+
-| 1  | 2  | 3  | #4 | 5  | 6  | b7 | 8  |
-+---------------------------------------+
-| <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>F#</div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
-+---------------------------------------+
-
-<!--<div class=tabline>Type 1                           Type 2                            Type 3                            Type 4                            Type 5</div> -->
-<div class=tabline>|-6--|----|-8*-|----|----|       |-8*-|----|-10-|----|----|        |-12-|----|----|----|----|        |-2--|-3--|----|----|             |-5--|----|----|----|----|</div>
-<div class=tabline>|----|-7--|-8--|----|-10-|       |----|----|-10-|----|-12-|        |-12-|-13*|----|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8--|----|</div>
-<div class=tabline>|----|-7--|----|-9--|----|       |----|-9--|----|-11-|-12-|        |-12-|----|-14-|----|----|        |-2--|----|-4--|-5*-|             |-5*-|----|-7--|----|----|</div>
-<div class=tabline>|----|-7--|-8--|----|-10*|       |----|-9--|-10*|----|-12-|        |-12-|----|-14-|----|-16-|        |-2--|----|-4--|-5--|             |-5--|----|-7--|----|-9--|</div>
-<div class=tabline>|----|-7--|----|-9--|-10-|       |----|-9--|-10-|----|-12-|        |-12-|----|-14-|-15*|----|        |-2--|-3*-|----|-5--|             |-5--|----|-7--|----|-9--|</div>
-<div class=tabline>|----|----|-8*-|----|-10-|       |----|----|-10-|----|-12-|        |-12-|----|-14-|-15-|----|        |----|-3--|----|-5--|             |-5--|----|-7--|-8*-|----|</div>
 </div>
 
 <div id=theory.scales class="chords_1col version" style=display:none>
@@ -444,7 +435,7 @@ draw &darr;  +-------------------------------------------------+
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>C </div> |
 +-----------------------------+
 
-This is a major scale without the 4th and 7th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>F</div> and the <div class=chord>B</div>.
+This is the Ionian (major) scale without the 4th and 7th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>F</div> and the <div class=chord>B</div>.
 
 <!--<div class=tabline>Type 1                           Type 2                                Type 3                            Type 4                        Type 5</div> -->
 <div class=tabline>|----|-8*-|----|----|            |----|-10-|----|----|----|            |-12-|----|----|----|             |----|-3--|----|              |-5--|----|----|----|</div>
@@ -466,8 +457,8 @@ This is a major scale without the 4th and 7th scale degrees. In <div class=chord
 | <div class=chord>C </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
 +-----------------------------+
 
-This is a natural minor scale without the 2nd and 6th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>D</div> and the <div class=chord>A</div>.
-Note that standard tuning (E-A-D-G-B-E) forms an Em pentatonic scale.
+This is the Aeolian (natural minor) scale without the 2nd and 6th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>D</div> and the <div class=chord>A</div>.
+On guitar, standard tuning (E-A-D-G-B-E) forms an Em pentatonic scale.
 
 <!--<div class=tabline>Type 1                           Type 2                                Type 3                            Type 4                        Type 5</div> -->
 <div class=tabline>|-8--|----|----|----|            |----|-11-|----|----|                 |----|-1--|----|----|----|        |-3--|----|----|----|         |----|-6--|----|----|</div>
