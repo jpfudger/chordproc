@@ -212,6 +212,10 @@ h3 {
     font-weight: bold;
     }
 
+.key {
+    display: none;
+    }
+
 .comment {
     display: inline;
     color: #27ae60; /* green */

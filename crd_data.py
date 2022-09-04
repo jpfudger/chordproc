@@ -17,9 +17,10 @@ import datetime
 #
 
 DO_WORDLISTS = [ ] # [ "Bob Dylan" ]
-DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
+DO_CRDFILES  = [ ]
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 FIXED_WIDTH_CHORDS = True
+DO_KEY_DIVS = False
 
 def common_html(want_chord_controls=True):
     lines = [
@@ -597,6 +598,7 @@ class CRD_song():
             self.title_sort = self.title[1:]
         self.gui_item = None
         self.cover = None
+        self.current_key = None # last encountered key set by song
         self.wordlist = []
     def add_fingering(self,chord,fingering):
         self.fingerings[ chord.format() ] = fingering.lower()
@@ -630,6 +632,9 @@ class CRD_song():
             return line, "capo"
         elif line.lower().strip().startswith( 'harp:' ):
             return line, "harp"
+        elif line.lower().strip().startswith( 'key:' ):
+            key = line[4:].split()[0]
+            return key, "key"
         elif line.lower().strip().startswith( 'tuning' ):
             if self.tuning:
                 link = "<a href=\"tunings.html#%s\">%s</a>" % ( self.tuning.offset(), line )
@@ -775,6 +780,19 @@ class CRD_song():
                         comline += "(sounding key: <div class=chord>%s</div>)" % formatted 
             elif comtype == "cover":
                 return ""
+            elif comtype == "key":
+                key = comline
+                key_line = "<div class=comment>Key:</div>"
+                if self.current_key and key != self.current_key:
+                    key_line = "<div class=comment>Modulate to:</div>"
+                key_line += " <div class=chord>%s</div>" % key
+                self.current_key = key
+
+                if DO_KEY_DIVS:
+                    # Adds an invisible key div which can be read by the javascript
+                    key_line = ("<div class=key>%s</div>" % comline) + key_line
+
+                return key_line
 
             return '<div class=%s>%s</div>' % ( comtype, comline )
         splits = re.split( r'(\s+)', line)
@@ -890,6 +908,8 @@ class CRD_song():
                 if in_span:
                     line = "</span>"
                     in_span = False
+            elif "<div class=key>" in line:
+                pass
             elif not in_span and not lastline:
                 nextline = formatted[ii+1]
                 if nextline != "":
@@ -908,6 +928,11 @@ class CRD_song():
                 break
 
         formatted_with_spans = formatted_with_spans[n_empty_leaders:]
+
+        for ii, line in enumerate(formatted_with_spans):
+            if "<div class=key>" in line:
+                del formatted_with_spans[ii+1]
+                break
 
         return formatted_with_spans
     def ignore_word(self,word):
@@ -1088,6 +1113,15 @@ class CRD_song():
 
         lines += formatted_song_lines
         lines += [ '</div>' ]
+
+        new_lines = []
+        for i, line in enumerate(lines):
+            if "<div class=key>" in line:
+                if "span>" not in new_lines[-1]:
+                    new_lines[-1] += line
+                    continue
+            new_lines.append(line)
+        lines = new_lines
 
         for version in self.versions:
             #version.inherit_fingerings()
@@ -1425,12 +1459,35 @@ class CRD_data():
                 for crdfile in DO_CRDFILES:
                     if crdfile in f:
                         self.process_chord_file(f)
+
+        # add artists with few songs to misc:
+        # for artist in self.artists:
+        #     songs = artist.all_songs()
+        #     if len(songs) < 5:
+        #         print(artist.name)
+        #         for song in songs:
+        #             print("   ", song.title)
+
         self.artists.sort(key=lambda x: x.name)
         if os.path.isfile('collections.html'):
             lines = []
             with open('collections.html') as f:
                 lines = f.readlines()
             self.collections = [ x for x in lines if 'href' in x ]
+
+        # This doesn't work because we haven't formatted the songlines
+        # and therefore we haven't set the cover.
+        # for a1 in self.artists:
+        #     print(a1.name)
+        #     others_covers = []
+        #     for a2 in self.artists:
+        #         if a1 == a2: continue
+        #         for s in a2.all_songs():
+        #             if s.cover: print(s.cover)
+        #             if s.cover == a1.name:
+        #                 print(s.cover)
+        # exit()
+
     def group_songs_by_tunings(self):
         if not self.tunings:
             self.tunings = []
