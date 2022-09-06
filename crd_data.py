@@ -17,7 +17,7 @@ import datetime
 #
 
 DO_WORDLISTS = [ ] # [ "Bob Dylan" ]
-DO_CRDFILES  = [ ]
+DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 FIXED_WIDTH_CHORDS = True
 DO_KEY_DIVS = False
@@ -633,7 +633,7 @@ class CRD_song():
         elif line.lower().strip().startswith( 'harp:' ):
             return line, "harp"
         elif line.lower().strip().startswith( 'key:' ):
-            key = line[4:].split()[0]
+            key = line.strip()[4:].split()[0]
             return key, "key"
         elif line.lower().strip().startswith( 'tuning' ):
             if self.tuning:
@@ -1362,6 +1362,8 @@ class CRD_data():
                 if this_version and level_version == level:
                     this_version = None
                 level -= 1
+            elif comment_level > 0:
+                pass # don't add commented lines to version or song
             elif this_version:
                 this_version.add_line(line.rstrip())
             elif this_song:
