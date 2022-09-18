@@ -1078,6 +1078,7 @@ class CRD_song():
                 if self.versions:
                     # use first version as top
                     top_version = self.versions.pop(0)
+                    top_version.inherit_fingerings()
                     formatted_song_lines = top_version.format_song_lines(transpose,prefer_sharp)
                     self.cover = top_version.cover
 
@@ -1145,7 +1146,7 @@ class CRD_song():
         lines = new_lines
 
         for version in self.versions:
-            #version.inherit_fingerings()
+            version.inherit_fingerings()
             version.index = self.index
             lines += version.html(add_artist,transpose,prefer_sharp)
 
