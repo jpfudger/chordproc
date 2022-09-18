@@ -507,6 +507,7 @@ class CRD_tuning():
         tmp_strings = tmp_strings.replace("b","")
         self.n_strings = len(tmp_strings)
     def get_fingering(self,crd_string,as_title=False):
+        crd_string = crd_string.strip()
         fingering = ''
         try:
             fingering = self.fingerings[crd_string]
@@ -609,6 +610,7 @@ class CRD_song():
         self.versions.append(version)
         return version
     def get_fingering(self,crd_string,as_title=False):
+        crd_string = crd_string.strip()
         fingering = ''
         try:
             fingering = self.fingerings[crd_string]
@@ -616,6 +618,9 @@ class CRD_song():
                 fingering = ' title="%s = %s"' % ( crd_string, fingering )
         except KeyError:
             pass
+
+        #print(self.fingerings)
+        #print(crd_string, "=>", fingering)
         return fingering
     def is_comment_line(self,line):
         if line.strip().startswith('[') and line.strip().endswith(']'):
@@ -1040,9 +1045,10 @@ class CRD_song():
                 elif t.tuning == self.tuning.tuning:
                     stock_tuning = t
                     break
-            elif t.name() == 'standard':
+            if 'Standard' in t.names:
                 stock_tuning = t
                 break
+
         if stock_tuning:
             for crd, fing in t.fingerings.items():
                 if self.get_fingering(crd,True) == "":
