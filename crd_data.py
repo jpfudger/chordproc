@@ -602,7 +602,8 @@ class CRD_song():
         self.current_key = None # last encountered key set by song
         self.wordlist = []
     def add_fingering(self,chord,fingering):
-        self.fingerings[ chord.format() ] = fingering.lower()
+        chord_string = chord.format().strip()
+        self.fingerings[ chord_string ] = fingering.lower()
     def add_version(self,name,path,lnum):
         version = CRD_song(name,self.artist,path,lnum,-1)
         version.album = self.album
