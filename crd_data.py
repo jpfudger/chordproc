@@ -1078,6 +1078,7 @@ class CRD_song():
                 if self.versions:
                     # use first version as top
                     top_version = self.versions.pop(0)
+                    self.lines = top_version.lines
                     top_version.inherit_fingerings()
                     formatted_song_lines = top_version.format_song_lines(transpose,prefer_sharp)
                     self.cover = top_version.cover
