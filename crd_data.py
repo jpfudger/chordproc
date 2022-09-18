@@ -918,7 +918,8 @@ class CRD_song():
 
             formatted_with_spans.append(line)
 
-        formatted_with_spans.append("</span>") # close last one
+        if in_span:
+            formatted_with_spans.append("</span>") # close last one
 
         n_empty_leaders = 0
         for line in formatted_with_spans:
@@ -1062,9 +1063,22 @@ class CRD_song():
         lines = []
 
         if not self.version_of:
+            # case: top level
+
+            top_version = None
+            if not formatted_song_lines:
+                # nothing at top level:
+                if self.versions:
+                    # use first version as top
+                    top_version = self.versions.pop(0)
+                    formatted_song_lines = top_version.format_song_lines(transpose,prefer_sharp)
+                    self.cover = top_version.cover
+
             if self.versions:
                 default = "Default"
-                if self.album and self.album.date:
+                if top_version:
+                    default = top_version.title
+                elif self.album and self.album.date:
                     default = str(self.album.date.year) + " " + self.album.title
                 elif self.date:
                     default = str(self.date.year) + " Default"
