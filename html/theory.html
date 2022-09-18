@@ -10,9 +10,17 @@
 <a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>
 <a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>
 </head>
+<h2><div title=theory>Chords and Scales</div></h2>
 <hr>
+<ol>
+<li><a href=#ChordNames>Chord Names</a>
+<li><a href=#CircleOfFifths>Circle Of Fifths</a>
+<li><a href=#DiatonicHarmonicaPositions>Diatonic Harmonica Positions</a>
+<li><a href=#TonewheelOrganSettings>Tonewheel Organ Settings</a>
+<li><a href=#Scales>Scales</a>
+</ol>
+<hr> <a name=ChordNames></a>
 <h3>Chord Names</h3>
-<!--<h3>Chord Dictionary</h3> -->
 <div id=chord.names class="chords_2col version" style="display:block">
 <span>+--------------------------------------------------------------------------------------+
 | Symbol   | Name              | Scale degrees             | Notes in <div class=chord>C </div>               |
@@ -89,7 +97,7 @@ The inversions of these chords overlap, so there are only 4 unique augmented cho
 <br>
 
 <br>
-<hr>
+<hr> <a name=CircleOfFifths></a>
 <h3>Circle of Fifths</h3>
 <div id=fifths class="chords_2col version" style="display:block">
 <span>
@@ -141,7 +149,7 @@ The inversions of these chords overlap, so there are only 4 unique augmented cho
 </div>
 
 
-<hr> <a name=Harmonica></a>
+<hr> <a name=DiatonicHarmonicaPositions></a>
 <h3>Diatonic Harmonica Positions</h3>
 <div id=harmonica class="chords_2col version" style="display:block">
 <span>                                                     +----+
@@ -190,7 +198,7 @@ draw &darr;  +-------------------------------------------------+
 
 
 <br>
-<hr>
+<hr> <a name=TonewheelOrganSettings></a>
 <h3>Tonewheel Organ Settings</h3>
 <div id=organ class="chords_1col version" style="display:block">
 
@@ -210,7 +218,7 @@ Reeds       <div class=comment>87 4246 000</div>
 
 
 <br>
-<hr>
+<hr> <a name=Scales></a>
 <h3 id="theory.scales">Scales</h3>
 <select id="theory.scales.select" onchange="update_song_version('theory.scales');">
     <option value=0>1: Ionian Scale (Major)</option>
