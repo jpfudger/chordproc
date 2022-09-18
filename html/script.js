@@ -293,24 +293,42 @@ function set_version_selector(song_id, index)
 //}}}
 
 //{{{ function: get_divs_of_song
-function get_divs_of_song(song_index, cls)
+function get_divs_of_song(song_index, classes=[])
     {
     var divs = [];
     var all_divs = document.getElementsByTagName("div");
+    var keep = false;
+    var div = null;
 
     for ( var i=0; i<all_divs.length; i++ )
         {
-        if ( all_divs[i].classList.contains(cls) && 
-             (
-             // chord is directly in the version div:
-             all_divs[i].parentNode.id == song_index
-             // chord is in a span div in the version div:
-          || all_divs[i].parentNode.parentNode.id == song_index
-             )
-            )
+        div = all_divs[i];
+
+        keep = false;
+        var tmp_div = div
+        while ( tmp_div.parentNode != null )
             {
-            divs.push(all_divs[i]);
+            if ( tmp_div.id == song_index )
+                {
+                keep = true;
+                break;
+                }
+            tmp_div = tmp_div.parentNode;
             }
+        if ( !keep ) { continue; }
+
+        keep = false;
+        for ( var j=0; j<classes.length; j++ )
+            {
+            if ( div.classList.contains(classes[j]) )
+                {
+                keep = true;
+                break;
+                }
+            }
+
+        if ( keep ) { divs.push(div); }
+
         }
 
     return divs;
@@ -319,8 +337,8 @@ function get_divs_of_song(song_index, cls)
 //{{{ function: transpose_song
 function transpose_song(song_index, up)
     {
-    var chords = get_divs_of_song(song_index, "chord");
-    var capos = get_divs_of_song(song_index, "capo");
+    var chords = get_divs_of_song(song_index, ["chord"]);
+    var capos = get_divs_of_song(song_index, ["capo"]);
 
     for ( var i=0; i<chords.length; i++ )
         {
