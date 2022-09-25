@@ -37,6 +37,71 @@ def common_html(want_chord_controls=True):
         ]
     return lines
 
+def html_song_index(allsongs, artist=None):
+    lines  = [ '<html>', '<body>', '<head>' ]
+
+    if artist:
+        lines += [ '<title>Chordproc: %s</title>' % artist.name ]
+    else:
+        lines += [ '<title>Chordproc</title>' ]
+
+    lines += common_html(False)
+    lines += [ '</head>' ]
+
+    if artist:
+        lines += [ '<h2><div title="%s">%s Song Index</title></h2>' % (artist.index, artist.name) ]
+    else:
+        lines += [ '<h2><div title="%s">ChordProc Song Index</title></h2>' ]
+
+    lines += [ '<hr>' ]
+
+    add_letter_links = len(allsongs) > 100
+
+    if add_letter_links:
+        alphastring = ''
+        for char in list('#' + ALPHABET):
+            alphastring += '<a href="#%s">%s</a> ' % ( char, char )
+        lines += [ alphastring ]
+        lines += [ '<hr>' ]
+    else:
+        lines += [ '<br>' ]
+    
+    lines += [ '<div class=songindex>' ]
+    cur_letter = None
+
+    if add_letter_links:
+        for song in allsongs:
+            if cur_letter == None:
+                pass
+            elif not song.title_sort[0] in ALPHABET:
+                pass # all non alpha characters in same section
+            elif cur_letter and cur_letter != song.title_sort[0]:
+                lines.append('</div>')
+                lines.append('<a name="%s">' % song.title_sort[0])
+                lines.append('<br><hr>')
+                #lines.append('<h3>%s</h3>' % song.title_sort[0])
+                lines.append('<div class=songindex>')
+            cur_letter = song.title_sort[0]
+            s_link = song.album.fname + '#' + song.link
+            s_class = ' class=cover' if song.cover else ''
+            lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
+    else:
+        for song in allsongs:
+            if cur_letter == None:
+                pass
+            elif not song.title_sort[0] in ALPHABET:
+                pass # all non alpha characters in same section
+            elif cur_letter and cur_letter != song.title_sort[0]:
+                lines.append('<br>')
+            cur_letter = song.title_sort[0]
+            s_link = song.album.fname + '#' + song.link
+            s_class = ' class=cover' if song.cover else ''
+            lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
+    
+    lines += [ '</div>', '<br>' ]
+    lines += [ '</body>', '</html>' ]
+    return lines
+
 class CRD_artist():
     def __init__(self,name,index=0,data=None):
         self.name = name.strip()
@@ -97,31 +162,6 @@ class CRD_artist():
         #lines += [ '</ol>' ]
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
-        lines += [ '</body>', '</html>' ]
-        return lines
-    def html_index(self):
-        lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc: %s</title>' % self.name ]
-        lines += common_html(False)
-        lines += [ '</head>' ]
-        lines += [ '<h2><div title="%s">%s Song Index</title></h2>' % (self.index, self.name) ]
-        lines += [ '<hr>', '<br>', '<div class=songindex>' ]
-        #lines += [ '<ol>' ]
-        allsongs = self.all_songs()
-        cur_letter = None
-        for song in allsongs:
-            if cur_letter == None:
-                pass
-            elif not song.title_sort[0] in ALPHABET:
-                pass # all non alpha characters in same section
-            elif cur_letter != song.title_sort[0]:
-                lines.append('<br>')
-            cur_letter = song.title_sort[0]
-            s_link = song.album.fname + '#' + song.link
-            s_class = ' class=cover' if song.cover else ''
-            lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
-        #lines += [ '</ol>' ]
-        lines += [ '</div>', '<br>' ]
         lines += [ '</body>', '</html>' ]
         return lines
     def latex(self):
@@ -1577,7 +1617,8 @@ class CRD_data():
                         f.write('\n' + line)
 
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
-                for l in artist.html_index():
+                allsongs = artist.all_songs()
+                for l in html_song_index(allsongs, artist):
                     f.write('\n' + l)
 
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
@@ -1707,44 +1748,12 @@ class CRD_data():
                 f.write('\n' + l)
 
         return "%d/%d" % (n_tunings_songs, n_tunings)
-    def make_song_index(self):
-        lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc</title>' ]
-        lines += common_html(False)
-        lines += [ '</head>' ]
-        lines += [ '<h2>ChordProc Song Index</h2>' ]
-
-        alphastring = ''
-        for char in list('#' + ALPHABET):
-            alphastring += '<a href="#%s">%s</a> ' % ( char, char )
-        lines += [ alphastring ]
-
-        lines += [ '<br><br><hr>', 
-                   #'<h3>#</h3>', 
-                   '<div class=songindex>' ]
-        allsongs = self.all_songs()
-        cur_letter = None
-        for song in allsongs:
-            if cur_letter == None:
-                pass
-            elif not song.title_sort[0] in ALPHABET:
-                pass # all non alpha characters in same section
-            elif cur_letter != song.title_sort[0]:
-                lines.append('</div>')
-                lines.append('<a name="%s">' % song.title_sort[0])
-                lines.append('<br><hr>')
-                #lines.append('<h3>%s</h3>' % song.title_sort[0])
-                lines.append('<div class=songindex>')
-            cur_letter = song.title_sort[0]
-            s_link = song.album.fname + '#' + song.link
-            lines.append( '<a href=%s>%s</a> (%s, %s)' % ( s_link, song.title, song.artist.name, song.album.title ) )
-        lines += [ '</div>', '</body>', '</html>' ]
-        with open(self.opts["html_root"] + 'songs.html', 'w') as f:
-            for l in lines:
-                f.write('\n' + l)
     def make_html(self):
         if not DO_CRDFILES:
-            self.make_song_index()
+            allsongs = self.all_songs()
+            with open(self.opts["html_root"] + 'songs.html', 'w') as f:
+                for l in html_song_index(allsongs):
+                    f.write('\n' + l)
         artists_summary, artists_links, misc_links = self.make_artists_index()
         tunings_summary = self.make_tuning_index()
 
