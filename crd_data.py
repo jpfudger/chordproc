@@ -55,48 +55,35 @@ def html_song_index(allsongs, artist=None):
 
     lines += [ '<hr>' ]
 
+    # long lists of songs warrant alphabet links
     add_letter_links = len(allsongs) > 100
 
     if add_letter_links:
         alphastring = ''
         for char in list('#' + ALPHABET):
             alphastring += '<a href="#%s">%s</a> ' % ( char, char )
-        lines += [ alphastring ]
-        lines += [ '<hr>' ]
-    else:
-        lines += [ '<br>' ]
-    
+        lines += [ alphastring, '<hr>' ]
+
     lines += [ '<div class=songindex>' ]
     cur_letter = None
 
-    if add_letter_links:
-        for song in allsongs:
-            if cur_letter == None:
-                pass
-            elif not song.title_sort[0] in ALPHABET:
-                pass # all non alpha characters in same section
-            elif cur_letter and cur_letter != song.title_sort[0]:
+    for song in allsongs:
+        if cur_letter == None:
+            pass
+        elif not song.title_sort[0] in ALPHABET:
+            pass # all non alpha characters in same section
+        elif cur_letter and cur_letter != song.title_sort[0]:
+            if add_letter_links:
                 lines.append('</div>')
                 lines.append('<a name="%s">' % song.title_sort[0])
-                lines.append('<br><hr>')
-                #lines.append('<h3>%s</h3>' % song.title_sort[0])
+                lines.append('<hr>')
                 lines.append('<div class=songindex>')
-            cur_letter = song.title_sort[0]
-            s_link = song.album.fname + '#' + song.link
-            s_class = ' class=cover' if song.cover else ''
-            lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
-    else:
-        for song in allsongs:
-            if cur_letter == None:
-                pass
-            elif not song.title_sort[0] in ALPHABET:
-                pass # all non alpha characters in same section
-            elif cur_letter and cur_letter != song.title_sort[0]:
+            else:
                 lines.append('<br>')
-            cur_letter = song.title_sort[0]
-            s_link = song.album.fname + '#' + song.link
-            s_class = ' class=cover' if song.cover else ''
-            lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
+        cur_letter = song.title_sort[0]
+        s_link = song.album.fname + '#' + song.link
+        s_class = ' class=cover' if song.cover else ''
+        lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
     
     lines += [ '</div>', '<br>' ]
     lines += [ '</body>', '</html>' ]
