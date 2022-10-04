@@ -411,9 +411,9 @@ class CRD_chord():
             if self.string.lower().endswith( '/' + t) or self.string.lower().endswith( '\\' + t):
                 self.bass = t
                 break
-    def __notes(self,which,prefer_sharp=False):
+    def __notes(self,which=None,prefer_sharp=False):
         notes = [ 'A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab' ]
-        if prefer_sharp or '#' in which:
+        if prefer_sharp or (which and '#' in which):
             notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
         return notes + notes
     def format(self,transpose=0,prefer_sharp=False):
@@ -426,14 +426,13 @@ class CRD_chord():
             if self.root:
                 if len(self.root) == 1: max_width += 1
 
-                try:
-                    notes = self.__notes(self.root,prefer_sharp)
-                    lowernotes = [ n.lower() for n in notes ]
-                    rootindex = lowernotes.index(self.root.lower())
-                except ValueError:
-                    notes = self.__notes(self.root,not prefer_sharp)
-                    lowernotes = [ n.lower() for n in notes ]
-                    rootindex = lowernotes.index(self.root.lower())
+                # get notes in the form that the root note can be looked up:
+                notes = self.__notes(self.root)
+                lowernotes = [ n.lower() for n in notes ]
+                rootindex = lowernotes.index(self.root.lower())
+
+                # get notes in form requested by caller; index will be the same
+                notes = self.__notes(None,prefer_sharp)
                 newroot = notes[rootindex + transpose]
                 formatted = newroot + formatted[len(self.root):]
 
@@ -895,9 +894,16 @@ class CRD_song():
                 word, starter, ender = self.strip_delimeters(word)
                 chord = CRD_chord(word)
                 if chord.is_chord():
+                    if transpose == 0:
+                        prefer_sharp = "#" in word
                     formatted_crd = chord.format(transpose,prefer_sharp)
                     fingering = self.get_fingering(formatted_crd,True)
-                    # if fingering == "" and self.tuning:
+                    
+                    if not fingering and ("#" in formatted_crd or "b" in formatted_crd):
+                        formatted_crd_alt = chord.format(transpose,not prefer_sharp)
+                        fingering = self.get_fingering(formatted_crd_alt,True)
+
+                    # if fingering ==:
                     #     print( "[%s] No fingering for %s" % ( self.tuning.name(), formatted_crd ) )
                     formatted += starter + '<div class=chord%s>%s</div>%s' % \
                                                 ( fingering, formatted_crd, ender )
