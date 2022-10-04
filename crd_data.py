@@ -49,9 +49,9 @@ def html_song_index(allsongs, artist=None):
     lines += [ '</head>' ]
 
     if artist:
-        lines += [ '<h2><div title="%s">%s Song Index</title></h2>' % (artist.index, artist.name) ]
+        lines += [ '<h2 title="%s">%s Song Index</h2>' % (artist.index, artist.name) ]
     else:
-        lines += [ '<h2><div title="%s">ChordProc Song Index</title></h2>' ]
+        lines += [ '<h2>ChordProc Song Index</h2>' ]
 
     lines += [ '<hr>' ]
 
@@ -124,7 +124,7 @@ class CRD_artist():
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
         lines += common_html(False)
         lines += [ '</head>' ]
-        lines += [ '<h2><div title="%s">%s</title></h2>' % (self.index, self.name) ]
+        lines += [ '<h2 title="%s">%s</h2>' % (self.index, self.name) ]
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
         c_origs, c_covers = self.song_counts()
         if c_covers:
@@ -329,7 +329,7 @@ class CRD_album():
         lines += [ '<title>Chordproc: %s</title>' % title ]
         lines += common_html()
         lines += [ '</head>' ]
-        lines += [ '<h2><div title="%s">%s</div></h2>' % (self.index, title) ]
+        lines += [ '<h2 title="%s">%s</h2>' % (self.index, title) ]
         #lines += [ self.get_playlist_link() ]
         lines += [ '<hr>', '<ol>' ]
         songs_body = []
@@ -1749,7 +1749,7 @@ class CRD_data():
         lines += common_html(False)
         lines += [ '</head>' ]
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
-        lines += [ '<h2><div title="%s">ChordProc</div></h2>' % timestamp ]
+        lines += [ '<h2 title="%s">ChordProc</h2>' % timestamp ]
         lines += [ '<hr>' ]
         lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary ]
         lines += [ '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary ]
