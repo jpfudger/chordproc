@@ -83,7 +83,8 @@ def html_song_index(allsongs, artist=None):
         cur_letter = song.title_sort[0]
         s_link = song.album.fname + '#' + song.link
         s_class = ' class=cover' if song.cover else ''
-        lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, song.album.title ) )
+        album = song.album.title if artist else (song.album.artist.name + ", " + song.album.title)
+        lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, album ) )
     
     lines += [ '</div>', '<br>' ]
     lines += [ '</body>', '</html>' ]
@@ -1418,6 +1419,7 @@ class CRD_data():
                     inherited_album_gap = False
                 if this_version and level_version == level:
                     this_version = None
+                    prev_song_close_line = 0
                 level -= 1
             elif comment_level > 0:
                 pass # don't add commented lines to version or song
