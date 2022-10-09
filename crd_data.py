@@ -1087,7 +1087,7 @@ class CRD_song():
                 elif t.tuning == self.tuning.tuning:
                     stock_tuning = t
                     break
-            if 'Standard' in t.names:
+            elif 'Standard' in t.names:
                 stock_tuning = t
                 break
 
