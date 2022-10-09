@@ -30,6 +30,9 @@ C9  000000
 }}}
 {{{ tuning: CGCGGE    [Open C5]
 }}}
+{{{ tuning: CGCDGA    [Martin Carthy]
+# He also uses DGCGCD (Famous Flower of Serving Men), DGDGGD, DGDGDG, DGBDGB
+}}}
 {{{ tuning: DADGBD    [Double Drop D] [Open Gadd9]
 
 D       0xx230
@@ -131,7 +134,10 @@ Csus2   x30010
 C6      x32210
 C7      x32310
 
-Db      553335
+C#      446664
+C#7     446464
+C#m     446654
+C#m7    446454
 
 D       xx0232
 D6      xx0202
@@ -151,11 +157,15 @@ E       022100
 Em      022000
 
 F       133211
+F7      131211
 Fm      133111
+Fm7     131111
 Fmaj7   x33210
 
 F#      244322
+F#7     242322
 F#m     244222
+F#m7    242222
 
 G       320003
 G7      320001
@@ -164,7 +174,9 @@ Gsus4   3x2013
 Gmaj9   3x0202
 
 G#      466544
+G#7     464544
 G#m     466444
+G#m7    464444
 
 }}}
 {{{ tuning: EADGBD    [Lazy D]
@@ -200,7 +212,7 @@ G#m     466444
 {{{ --- tuning: CGDFCE    [Open C13] --- Coyote
 }}}
 
-{{{ tuning: GDGBD     [Banjo: Standard]
+{{{ tuning: GDGBD     [Banjo: Standard] [Banjo: Open G]
 G       x0000
 D7      x0210
 Em      x2002
@@ -211,6 +223,7 @@ E       x2102
 C(iii)  x3333
 D(v)    x5555
 D       x4234
+Dm      x0233
 F       x3213
 G(iii)  x5435
 }}}
@@ -218,7 +231,34 @@ G(iii)  x5435
 Gm      x0000
 G       x0010
 }}}
-{{{ tuning: GCGBD     [Banjo: Drop C]
+{{{ tuning: GCGBD     [Banjo: Drop C] [Banjo: Standard C]
+C       00012
+C7      00312
+Cm      00011
+
+F       0x213
+
+G       02000
+G7      02003
+Gsus4   02010
+
+A       x4222
+A7      04222
+Am7     0x212
+
+E       x4456
+Em      04002
+Em7     04000    
+
+D       x2234
+D7      x2210
+D7sus4  02210
+Dm      x2233
+
+Bb      x5333
+
+B       x6444
+Bm      xx434
 }}}
 {{{ tuning: GCGCD     [Banjo: Double C]
 C       x0002
@@ -229,6 +269,19 @@ Am      x0202
 C(iv)   x0545
 }}}
 {{{ tuning: GCGCE     [Banjo: Open C]
+
+C   x0000
+F   x0201
+G   x2023
+D   x2222
+E   x4444
+A   x1210
+B   xx332
+Dm  x2221
+Em  x4043
+Am  x0200
+Bb  xx321
+
 }}}
 {{{ tuning: GCGCC     [Banjo: Triple C]
 Cm  x0003
