@@ -41,8 +41,7 @@ D       0xx230
 {{{ tuning: DADDAD    [Dulcimer D Modal]
 # Calling it simply "Dulcimer" means it is matched to the Joni tuning EADAAE.
 }}}
-{{{ tuning: DGDGBE
-#    [Drop D/g] [Open G6]
+{{{ tuning: DGDGBE      [Drop D/g] [Open G6]
 # Only used for Richard Thompson: Easy There, Steady Now?
 }}}
 {{{ tuning: DADGBE    [Drop D]
@@ -50,18 +49,20 @@ A       202220
 A/e     202220
 C       x32010
 D       0xx232
+D/c     x30030
+D/b     x20030
 Dsus2   000230
 Dsus4   000233
 D7      000210
 D/c     030030
+Dm      0xx231
 E       222100
 Em      222000
+F       3x321x
 F#m     444222
 G       5xx003 
 G/d     020003
 G/b     x20033
-D/c     x30030
-D/b     x20030
 }}}
 {{{ tuning: CGDGBE    [Drop C/g]
 G   x00033
@@ -96,7 +97,7 @@ F#dim   x9ABAx / 2342xx
 Gdim    xABCBx / 3453xx
 G#dim   4564Xx
 Adim    5675Xx
-A#dim   6786Xx
+C#dim   6786Xx
 Bdim    x2343x
 
 Cdim7   xxABAB
@@ -209,29 +210,64 @@ G#m7    464444
 }}}
 {{{ tuning: EBDGAD    [Open Em11] [David Crosby]
 }}}
-{{{ --- tuning: CGDFCE    [Open C13] --- Coyote
+{{{ tuning: CGDFCE    [Open C13]
+# Coyote
+}}}
+{{{ tuning: BGDGBD    [Open G/b]
+# Both Sides Now (Tallest Man on Earth)
+}}}
+{{{ tuning: CACFAC    [Open F/c]
+# Refuge of the Roads
+}}}
+{{{ tuning: EADAAE    [Open Asus4]
+# Case Of You
 }}}
 
-{{{ tuning: GDGBD     [Banjo: Standard] [Banjo: Open G]
-G       x0000
-D7      x0210
-Em      x2002
+{{{ tuning: GDGBD     [Banjo: Open G]
+# [Banjo: Standard]
+
 C       x2012
-Am      x2212
-A       x2222
-E       x2102
 C(iii)  x3333
-D(v)    x5555
+Cm      x1011
+C7      x2310
+C7      x5312
+
 D       x4234
+D7      x0210
+D(v)    x5555
 Dm      x0233
+
+E       x2102
+Em      x2002
+E7      x2100
+
 F       x3213
+Fm      x3113
+F7      x1213
+
+G       x0000
 G(iii)  x5435
+Gm      x4334
+G7      x3000
+G7      x0003
+
+A       x2222
+A7      x2225
+Am      x2212
+
+B       x1404
+B(iv)   x4444
+Bm      x4434
+B7      x4244
+B7      x1204
+
 }}}
 {{{ tuning: GDGBbD    [Banjo: Open Gm]
 Gm      x0000
 G       x0010
 }}}
-{{{ tuning: GCGBD     [Banjo: Drop C] [Banjo: Standard C]
+{{{ tuning: GCGBD     [Banjo: Drop C] 
+# [Banjo: Standard C]
 C       00012
 C7      00312
 Cm      00011
@@ -261,12 +297,44 @@ B       x6444
 Bm      xx434
 }}}
 {{{ tuning: GCGCD     [Banjo: Double C]
+
+A       xx212
+A7      x1012
+A7      xx677
+Am      x0202
+
+Bb      xx323
+
+B       x3431  
+Bm      x2420
+B7      x3231
+
+C(iv)   x0545
 C       x0002
+C7      x0302
+Cm      x0001
+
+D       xx323
+D7      x2200
+D       x2224
+Dm      x2223
+D7      x0254
+
+E       x4445
+E       x4142
+E7      xx233
+E7      x2420
+Em      x4445
+
 F       x0203
+F7      x0233
+F7      x0201
+Fm      x0103
+F6      x0223
+
 G       x2020
 G7      x2023
-Am      x0202
-C(iv)   x0545
+
 }}}
 {{{ tuning: GCGCE     [Banjo: Open C]
 
@@ -287,12 +355,90 @@ Bb  xx321
 Cm  x0003
 G   x2022
 }}}
-{{{ tuning: GDGCD     [Banjo: Sawmill] [Banjo: Mountain]
+{{{ tuning: GDGCD     [Banjo: Sawmill] 
+# [Banjo: Mountain]
 Gm      x0020
 F       x3203
 Bb      x3323
 C       x3003
 }}}
-{{{ tuning: FDGCD     [Banjo: Cumberland Gap]
+{{{ tuning: FDGCD     [Banjo: F-tuning]
+# [Banjo: Cumberland Gap]
+
+# This is Sawmill tuning with the 5th string dropped to F.
+
+F       03203
+Bb      0x323
+Csus4   02002
+Dm      00220
+D7      x0200
+C       0x545
+G       x0020
+
+}}}
+{{{ tuning: F#DGAD    [Banjo: Dock Boggs]
+# Used in Danville Girl 
+}}}
+
+{{{ tuning: GDAE      [Mandolin: Standard]
+
+C       0230
+C+      5678
+C6      5500
+C7      5576
+Cm      5563
+Cm7     5566
+
+D       2002
+D+      x012
+D7      x032
+Dmaj7   x042
+Dm      x001
+Dm7     x031
+
+E       x224
+E+      x234
+E7      x254
+Em      0220
+Em7     x253
+
+F       5301
+
+G       0023
+G+      0123
+G6      0020
+G7      0021
+Gmaj7   0022
+Gm      0013
+Gm7     5566
+
+A       2240
+A+      2345
+A6      2242
+A7      2243
+Am      2235
+Am7     2233
+
+B       4122
+B+      4567
+B6      4464
+B7      4465
+Bmaj7   4466
+Bm      4022
+Bm7     4455
+
+}}}
+{{{ tuning: DAD       [Dulcimer: Standard]
+D5      000
+E5      111
+F#5     222
+G5      333
+D       xx2
+Em      113
+F#m     224
+G       310
+A       421
+Bm      210
+C#dim   123
 }}}
 
