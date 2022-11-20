@@ -662,7 +662,10 @@ class CRD_song():
     def is_comment_line(self,line):
         if line.strip().startswith('[') and line.strip().endswith(']'):
             m_ws = re.search('(^\s*)', line)
-            return ( m_ws.group(1) + line.strip()[1:-1] ), "comment"
+            line = m_ws.group(1) + line.strip()[1:-1]
+            w_url = re.search('(https?:\S+)', line)
+            line = re.sub( '(https?:\S+)', '<a href="\\1">\\1</a>', line)
+            return line, "comment"
 
         if line.strip().startswith('<') and line.strip().endswith('>'):
             self.cover = line.strip()[1:-1].strip()
