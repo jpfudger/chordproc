@@ -1618,47 +1618,16 @@ class CRD_data():
 
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
     def make_tuning_map(self):
-        raw_lines = [
-            '                                         EADGBE',
-            '                                           |',
-            '                  +-------------+----------------------+------------+',
-            '                  |             |                      |            |',
-            '                DADGBE        EADGBD                EADF#BE       CADGBE',
-            '                  |             |                                   |',
-            '                  +-------------+                                   |',
-            '                         |                                          |',
-            '                       DADGBD                                     CGDGBE',
-            '                         |                                          |',
-            '    +----------------------------------------+                      |',
-            '    |                                        |            +-------------------+',
-            '    |               +----------+         +---------+      |       CGCGBE      |',
-            '    |               |  GDGBD   | > > > > | DGDGBD  |      |         |         |',
-            '    |               |    |     |         |   |     |      |         |         |',
-            '    |               |    |     |         |   |     |      |       CGCGGE      |',
-            '    |               |  GDGBbD  | > > > > | DGDGBbD |      |         |         |',
-            '    |               |    |     |         +---------+      |         |         |',
-            '+---------+  capo5  |    |     |          G-family        |       CGCGCE      |',
-            '| DADGAD  | < < < < |  GDGCD   |                          |         |         |',
-            '|   |     |         |    |     |                          |   +-----------+   |',
-            '|   |     |         |    |     |                          |   |           |   |',
-            '| DADF#AD |         |  GCGCD   | > > > > > > > > > > > >  | CGCGCD     CGCFCE |',
-            '|   |     |         |    |     |                          |               |   |',
-            '|   |     |         |    |     |                          |               |   |',
-            '| DADFAD  |         |  GCGCC   |                          |            CGDFCE |',
-            '|   |     |         +----------+                          +-------------------+',
-            '|   |     |            Banjo                                     C-family',
-            '| DADEAD  |  ',
-            '|   |     |  ',
-            '|   |     |  ',
-            '| DADDAD  |  ',
-            '+---------+',
-            ' D-family',
-            '' # empty line for better in-line spacing
-            ]
+        path = self.resource_root() + 'tuning_map.txt'
+        raw_lines = []
+
+        with open(path) as f:
+            raw_lines = f.readlines()[:]
 
         lines = []
 
         for line in raw_lines:
+            line = line.rstrip()
             tunings = re.findall('[ABCDEFG#b]{5,}', line)
             for t in tunings:
                 offset = None
