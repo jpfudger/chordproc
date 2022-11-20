@@ -21,6 +21,8 @@ DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 FIXED_WIDTH_CHORDS = True
 DO_KEY_DIVS = False
+WRITE_FINGERINGS = True
+
 
 def common_html(want_chord_controls=True):
     lines = [
@@ -611,7 +613,7 @@ class CRD_tuning():
             #print("Error: no name for tuning: " + self.input_string)
         return self._name
     def standard(self):
-        return self._name and self._name.lower() == 'standard'
+        return "standard" in [ n.lower() for n in self.names ]
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
@@ -692,7 +694,8 @@ class CRD_song():
                 if cw.lower() in line.lower():
                     return line, "comment"
 
-        finger_regex = '([0-9xXA-G]{6,})' 
+        n_strings = self.tuning.n_strings if self.tuning else 6
+        finger_regex = '([0-9xXA-G]{%d,})' % n_strings
         if '---' in line:
             pass # line is probably a tab
         elif re.search(finger_regex, line):
@@ -903,8 +906,10 @@ class CRD_song():
                         formatted_crd_alt = chord.format(transpose,not prefer_sharp)
                         fingering = self.get_fingering(formatted_crd_alt,True)
 
-                    # if fingering ==:
-                    #     print( "[%s] No fingering for %s" % ( self.tuning.name(), formatted_crd ) )
+                    # if not fingering:
+                    #     tname = self.tuning.name() if self.tuning else "standard"
+                    #     print("No fingering for %s in %s (%s)" % (formatted_crd,tname,self.title))
+
                     formatted += starter + '<div class=chord%s>%s</div>%s' % \
                                                 ( fingering, formatted_crd, ender )
                 else:
@@ -1080,7 +1085,7 @@ class CRD_song():
         # self.tuning object
         stock_tuning = None
         for t in self.artist.stock_tunings:
-            if self.tuning:
+            if self.tuning and not self.tuning.standard():
                 if t.name() == self.tuning.name():
                     stock_tuning = t
                     break
@@ -1464,8 +1469,10 @@ class CRD_data():
             mopen = re.match('^\s*\{\{\{\s+(.*)',line)
             mclose = re.match('^\s*\}\}\}',line)
             mblank = re.match('^\s*$',line)
-            mc = re.match('^\s*\{\{\{\s*---',line)
-            if mblank:
+            mcf = re.match('^\s*\{\{\{\s*---',line)
+            mcl = re.match('^\s*#',line)
+
+            if mblank or mcl:
                 pass
             elif mclose and current_tuning:
                 tunings.append( current_tuning )
@@ -1576,6 +1583,21 @@ class CRD_data():
                                 self.tunings.append(tuning_artist)
                                 pos = len(self.tunings)-1
                             self.tunings[pos].albums[0].songs.append(song)
+                        elif song.fingerings:
+                            # standard tuning
+                            try:
+                                offsets = [ x.tuning.offset() for x in self.tunings ]
+                                pos = offsets.index("55545")
+                            except ValueError:
+                                tuning_artist = CRD_artist("EADGBE")
+                                tuning_artist.add_album('Misc')
+                                tuning_artist.tuning = CRD_tuning('EADGBE', ['Standard'])
+                                tuning_artist.fname = '55545.html'
+                                self.tunings.append(tuning_artist)
+                                pos = len(self.tunings)-1
+                            song.tuning = self.tunings[pos].tuning
+                            self.tunings[pos].albums[0].songs.append(song)
+
             # sort by offset => similar tuning appear next to each other
             self.tunings.sort(key=lambda x: (-x.albums[0].songs[0].tuning.n_strings, -len(x.all_songs()) ))
         return self.tunings
@@ -1653,11 +1675,15 @@ class CRD_data():
         lines += [ '<title>Chordproc</title>' ]
         lines += common_html(False)
         lines += [ '</head>' ]
-        lines += [ '<h2>ChordProc Tuning Index</h2>' ]
+        lines += [ '<h2>Tuning Index</h2>' ]
+        lines += [ '<hr>' ]
+        lines += [ '<a href=fingerings.html>All Fingerings</a>' ]
         lines += [ '<hr>' ]
         lines += [ '<ul>' ]
 
         body = []
+
+        fingerings_lines = []
 
         n_tunings = 0
         n_tunings_songs = 0
@@ -1670,20 +1696,60 @@ class CRD_data():
             n_tunings_songs += len(tartist.all_songs())
             offset = tartist.tuning.offset()
 
+            fingerings = {}
+
             # collect all possible names of this tuning
             names = []
             for song in tartist.all_songs():
+                if WRITE_FINGERINGS:
+                    # collect fingerings
+                    for f in song.fingerings:
+                        if f not in fingerings:
+                            fingerings[f] = []
+                        fingerings[f].append(song.fingerings[f])
+
                 for name in song.tuning.names:
                     if name not in names:
                         names.append(name)
+
             names_string = "-".join('(' + name + ')' for name in names)
             name_fw = tartist.tuning.tuning.ljust(12,'-') + \
                     ('[' + offset + ']').ljust(10,'-') + \
-                    names_string.ljust(40,'-')
+                    names_string.ljust(35,'-')
             name = re.sub("-+", " ", name_fw)
-        
+
+            if WRITE_FINGERINGS:
+                ### make fingerings page
+                # To do this we need to inherit the stock fingerings, and the
+                # custom fingerings from each song logged against the tuning.
+                # This is slow. But we should already have done it while generating
+                # the html for each song. Can we store them as we go?
+                if fingerings:
+                    tname = tartist.tuning.tuning
+                    if tartist.tuning.names:
+                        tname += " (%s)" % (", ".join(tartist.tuning.names))
+                    fingerings_lines.append( "<h3>%s</h3>" % tname)
+                    fingerings_lines.append( "<pre>" )
+
+                    all_chords = list(fingerings.keys())
+                    all_chords.sort(key=lambda c: ( CRD_chord(c).root, c))
+
+                    root = None
+                    for chord in all_chords:
+                        this_root = CRD_chord(chord).root
+                        if root and root != this_root:
+                            fingerings_lines.append("")
+                        fings = list(set(fingerings[chord]))
+                        fings.sort()
+                        fingerings_lines.append("  " + chord.ljust(15) + (", ".join(fings)))
+                        root = this_root
+
+                    fingerings_lines.append( "</pre>" )
+
+            if tartist.tuning.standard(): continue
+
             lines.append( '<li><a class=tuning href="#%s">%s</a> <div class=count>%d</div>' %
-                    ( offset, name_fw, len(tartist.all_songs() ) ) )
+                ( offset, name_fw, len(tartist.all_songs() ) ) )
 
             body.append( '<hr> <a name=%s></a>' % offset )
             body.append( '<h3>%s</h3>' % name )
@@ -1696,6 +1762,7 @@ class CRD_data():
                     s_title = "%s (%s)" % ( song.version_of.title, song.title )
                     s_link = song.album.fname + '#' + song.version_of.link
                 body.append( '<li> <a href="%s">%s</a> (%s)' % ( s_link, s_title, song.artist.name ) )
+
             body.append( '</ol>' )
             body.append( '<br>' )
 
@@ -1706,6 +1773,14 @@ class CRD_data():
 
         lines += body
         lines += [ '<br>' * 50, '</body>', '</html>' ]
+
+        if WRITE_FINGERINGS:
+            header = [ "<html> <body> <head> <title>ChordProc Fingerings</title>" ]
+            footer = [ "</title> </head> </body> </html>" ]
+            fingerings_lines = header + fingerings_lines + footer
+            with open(self.opts["html_root"] + 'fingerings.html', 'w') as f:
+                for l in fingerings_lines:
+                    f.write(l + "\n")
 
         with open(self.opts["html_root"] + 'tunings.html', 'w') as f:
             for l in lines:
