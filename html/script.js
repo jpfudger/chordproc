@@ -308,6 +308,13 @@ function get_divs_of_song(song_index, classes=[])
         var tmp_div = div
         while ( tmp_div.parentNode != null )
             {
+            if ( tmp_div.classList.contains("version") &&
+                 tmp_div.style.display == "none" )
+                {
+                keep = false;
+                break;
+                }
+
             if ( tmp_div.id == song_index )
                 {
                 keep = true;
@@ -347,7 +354,7 @@ function transpose_song(song_index, up)
 
     for ( var i=0; i<capos.length; i++ )
         {
-        cycle_capo_div(capos[i], up);
+        cycle_capo_div(capos[i], !up);
         }
 
     }
@@ -393,8 +400,10 @@ function transpose_topmost_song(up)
 function assign_shortcuts()
     {
     shortcut.add("a",function() { show_all_versions() });
+    shortcut.add("h",function() { cycle_versions(topmost_song().id, false) });
     shortcut.add("j",function() { transpose_topmost_song(false) });
     shortcut.add("k",function() { transpose_topmost_song(true)  });
+    shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
     }
 //}}}
 
