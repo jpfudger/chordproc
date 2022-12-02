@@ -1458,7 +1458,7 @@ class CRD_data():
         lines = []
         path = self.resource_root() + 'stock_tunings.crd'
 
-        if self.opts["tunings"] and os.path.isfile(self.opts["tunings"]):
+        if self.opts.get("tunings") and os.path.isfile(self.opts.get("tunings")):
             path = self.opts["tunings"]
 
         if os.path.isfile(path):
