@@ -404,6 +404,18 @@ function assign_shortcuts()
     shortcut.add("j",function() { transpose_topmost_song(false) });
     shortcut.add("k",function() { transpose_topmost_song(true)  });
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
+
+    // extract url parameter to set song version
+    var anchor = window.location.href.match(/\?v=(\d+)#(\w+)/);
+    if ( anchor )
+        {
+        var version = anchor[1];
+        //var song = anchor[2];
+        var song_id = topmost_song().id
+        set_version_of_song(song_id, version);
+        set_version_selector(song_id, version);
+        }
+
     }
 //}}}
 

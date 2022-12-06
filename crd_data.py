@@ -623,6 +623,7 @@ class CRD_song():
         self.lnum = lnum
         self.index = index
         self.lines = []
+        self.version_index = 0
         self.versions = []
         self.version_of = None
         self.tuning = None
@@ -645,6 +646,7 @@ class CRD_song():
         version.album = self.album
         version.version_of = self
         self.versions.append(version)
+        version.version_index = len(self.versions) - 1
         return version
     def get_fingering(self,crd_string,as_title=False):
         crd_string = crd_string.strip()
@@ -1763,7 +1765,10 @@ class CRD_data():
                 s_title = song.title
                 if song.version_of:
                     s_title = "%s (%s)" % ( song.version_of.title, song.title )
-                    s_link = song.album.fname + '#' + song.version_of.link
+                    s_link = song.album.fname
+                    if song.version_index > 0:
+                        s_link += '?v=' + str(song.version_index) # pass index by url
+                    s_link += '#' + song.version_of.link
                 body.append( '<li> <a href="%s">%s</a> (%s)' % ( s_link, s_title, song.artist.name ) )
 
             body.append( '</ol>' )
