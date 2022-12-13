@@ -1413,6 +1413,7 @@ class CRD_data():
                     level_version = level
                 else:
                     print("Unknown fold type in %s: %s" % (path, line.strip()))
+                    raise ValueError("Unknown fold type")
             elif mclose:
                 if comment_level > 0 and comment_level == level:
                     comment_level = 0
