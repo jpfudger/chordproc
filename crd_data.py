@@ -146,7 +146,9 @@ class CRD_artist():
             if album.gap_before: lines.append("<br>")
             n_songs = len(album.songs)
             style = " class=cover" if album.all_songs_are_covers() else ""
-            lines.append( '<a href=%s%s>%s</a> <div class=count>%d</div>' 
+            if album.date:
+                style += " title=%d" % album.date.year
+            lines.append( '<a href=%s%s>%s</a> <div class=count>%d</div>'
                                 % ( album.fname, style, album.title, n_songs ) )
             lines.append( '<br>' )
         #lines += [ '</ol>' ]
@@ -389,7 +391,6 @@ class CRD_album():
             if not song.cover:
                 return False
         return True
-
 
 class CRD_chord():
     def __init__(self,string):
