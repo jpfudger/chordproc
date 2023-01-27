@@ -339,6 +339,7 @@ class CRD_album():
         lines += [ '<hr>', '<ol>' ]
         songs_body = []
         for song in self.songs:
+            # needs to be done separately, so that song.cover gets set
             songs_body += song.html()[:]
         for song in self.songs:
             s_class = ' class=cover' if song.cover else ''
@@ -1576,7 +1577,12 @@ class CRD_data():
                 for album in artist.albums:
                     songs = album.songs[:]
                     for song in album.songs:
-                        songs += song.versions[:]
+                        for version in song.versions[:]:
+                            # need to fix up title and title_sort so that
+                            # they start with the song title, not the version title
+                            version.title = "%s (%s)" % ( version.version_of.title, version.title )
+                            version.title_sort = "%s (%s)" % ( version.version_of.title_sort, version.title)
+                            songs.append(version)
                     for song in songs:
                         if song.tuning:
                             try:
