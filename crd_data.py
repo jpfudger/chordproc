@@ -1104,6 +1104,8 @@ class CRD_song():
                 self.tuning = CRD_tuning(line, [], self.artist.stock_tunings)
                 if self.tuning.standard():
                     self.tuning = None
+                elif self.tuning.tuning.lower() not in line.lower():
+                    print("Wrong tuning?", line, "=>", self.tuning.tuning)
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
@@ -1612,9 +1614,13 @@ class CRD_data():
                     songs = album.songs[:]
                     for song in album.songs:
                         for version in song.versions[:]:
-                            # need to fix up title and title_sort so that
-                            # they start with the song title, not the version title
-                            version.title = "%s (%s)" % ( version.version_of.title, version.title )
+                            if version.tuning and version.version_of.tuning \
+                                and version.tuning.offset() == version.version_of.tuning.offset():
+                                print("Ignoring version with same tuning as song: ")
+                                print("   ", version.version_of.title, version.title)
+                                continue
+
+                            # set title_sort to include the version_of title
                             version.title_sort = "%s (%s)" % ( version.version_of.title_sort, version.title)
                             songs.append(version)
                     for song in songs:
