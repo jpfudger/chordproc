@@ -119,6 +119,8 @@ class CRD_artist():
         allsongs = []
         for album in self.albums:
             for song in album.songs:
+                if song.dummy: 
+                    continue
                 allsongs.append(song)
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
@@ -144,12 +146,11 @@ class CRD_artist():
         for album in self.albums:
             #lines.append( '<li>' )
             if album.gap_before: lines.append("<br>")
-            n_songs = len(album.songs)
             style = " class=cover" if album.all_songs_are_covers() else ""
             if album.date:
                 style += " title=%d" % album.date.year
             lines.append( '<a href=%s%s>%s</a> <div class=count>%d</div>'
-                                % ( album.fname, style, album.title, n_songs ) )
+                                % ( album.fname, style, album.title, album.n_songs() ) )
             lines.append( '<br>' )
         #lines += [ '</ol>' ]
         lines += [ '<hr>' ]
@@ -277,7 +278,9 @@ class CRD_artist():
         covers = 0
         for a in self.albums:
             for s in a.songs:
-                if s.cover:
+                if s.dummy:
+                    pass
+                elif s.cover:
                     covers += 1
                 else:
                     origs += 1
@@ -343,10 +346,14 @@ class CRD_album():
             # needs to be done separately, so that song.cover gets set
             songs_body += song.html()[:]
         for song in self.songs:
-            s_class = ' class=cover' if song.cover else ''
             if song.gap_before: lines.append("<br><br>")
-            s_year = ' title=%d' % song.date.year if song.date else ''
-            lines.append( '<li><a href=#%s%s%s>%s</a>' % ( song.link, s_class, s_year, song.title ) )
+            if song.dummy:
+                # can't have dummies that are covers, but that's okay
+                lines.append( '<li><div class=dummy>%s</div>' % ( song.title ) )
+            else:
+                s_class = ' class=cover' if song.cover else ''
+                s_year = ' title=%d' % song.date.year if song.date else ''
+                lines.append( '<li><a href=#%s%s%s>%s</a>' % ( song.link, s_class, s_year, song.title ) )
         lines += [ '</ol>' ]
         lines += songs_body
         lines += [ '<hr>' ]
@@ -389,6 +396,13 @@ class CRD_album():
         if playlist and image:
             link = '<a href="%s"><img class=cover src="%s"></a>' % ( playlist, image )
         return link
+    def n_songs(self):
+        n = 0
+        for song in self.songs:
+            if song.dummy:
+                continue
+            n += 1
+        return n
     def all_songs_are_covers(self):
         for song in self.songs:
             if not song.cover:
@@ -623,6 +637,7 @@ class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
         self.title, self.date = set_title_and_date(title)
         self.artist = artist
+        self.dummy = True
         self.fpath = fpath
         self.lnum = lnum
         self.index = index
@@ -646,6 +661,7 @@ class CRD_song():
         chord_string = chord.format().strip()
         self.fingerings[ chord_string ] = fingering.lower()
     def add_version(self,name,path,lnum):
+        self.dummy = False
         version = CRD_song(name,self.artist,path,lnum,-1)
         version.album = self.album
         version.version_of = self
@@ -1079,6 +1095,9 @@ class CRD_song():
         return
     def add_line(self,newline):
         line = newline.rstrip()
+        if not line.lstrip().startswith("<"):
+            # if it has a line which is not a cover artist, it can't be a dummy
+            self.dummy = False
         self.lines.append(line)
         if not self.tuning:
             if 'tuning:' in line.lower():
@@ -1267,6 +1286,7 @@ class CRD_data():
         self.n_artists = 0
         self.albums = []
         self.songs = []
+        self.dummy_songs = []
         self.collections = []
         self.player = opts.get('player')
 
@@ -1300,6 +1320,7 @@ class CRD_data():
         print( "artists: %d" % len(self.artists) )
         print( "albums:  %d" % len(self.all_albums() ) )
         print( "songs:   %d" % len(self.all_songs() ) )
+        print( "dummies: %d" % len(self.all_dummy_songs() ) )
         print( "tunings: %d" % len(self.tunings) )
 
         artists = self.artists[:]
@@ -1320,9 +1341,20 @@ class CRD_data():
         if len(self.songs) == 0:
             for album in self.all_albums():
                 for song in album.songs:
+                    if song.dummy: continue
                     self.songs.append(song)
             self.songs.sort( key=lambda x: x.title_sort.lower() )
         return self.songs
+    def all_dummy_songs(self):
+        if len(self.dummy_songs) == 0:
+            for album in self.all_albums():
+                for song in album.songs:
+                    if not song.dummy: continue
+                    print("Dummy song: %s/%s/%s" % ( album.artist.name, album.title, song.title ))
+                    raise Exception("Dummy songs are not currently supported")
+                    self.dummy_songs.append(song)
+            self.dummy_songs.sort( key=lambda x: x.title_sort.lower() )
+        return self.dummy_songs
     def get_artist(self,name):
         for a in self.artists:
             if a.name == name:
