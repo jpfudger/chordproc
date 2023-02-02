@@ -39,6 +39,16 @@ a.cover:link, a.cover:visited, a.cover:active {
     color: lightblue;
     }
 
+h2 a:link, h2 a:visited, h2 a:active {
+    text-decoration: none;
+    color: black;
+    }
+
+h3 a:link, h3 a:visited, h3 a:active {
+    text-decoration: none;
+    color: black;
+    }
+
 /* RED hover on all links */
 a:hover, a.cover:hover {
     text-decoration: none;
@@ -153,7 +163,7 @@ h3 {
 
 .tuning_map {
     display: block;
-    top: 10%;
+    top: 20%;
     right: 10%;
     position: absolute;
     white-space: pre;
@@ -195,7 +205,7 @@ h3 {
 
     .tuning_map {
         display: block;
-        top: 10%;
+        top: 20%;
         right: 10%;
         position: static;
         white-space: pre;
