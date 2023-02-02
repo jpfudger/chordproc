@@ -1,5 +1,11 @@
 {{{ tuning: AAAAAA    [Ostrich] [Unison]
 }}}
+{{{ tuning: GGDGBD    [Open G Low]
+# Note: GGDGBD (Open G Low) gets picked up as Open G (because one name is
+# included inside the other)its own. But that's actually more useful than
+# listing GGDGBD as an exotic tuning of its own.
+G   000000
+}}}
 {{{ tuning: DGDGBD    [Open G]
 # Note: GGDGBD (Open G Low) gets picked up as Open G (because one name is
 # included inside the other)its own. But that's actually more useful than
