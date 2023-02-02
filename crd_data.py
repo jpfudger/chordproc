@@ -127,7 +127,7 @@ class CRD_artist():
         lines += [ '<title>Chordproc: %s</title>' % self.name ]
         lines += common_html(False)
         lines += [ '</head>' ]
-        lines += [ '<h2 title="%s">%s</h2>' % (self.index, self.name) ]
+        lines += [ '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
         c_origs, c_covers = self.song_counts()
         if c_covers:
@@ -330,11 +330,12 @@ class CRD_album():
         return new_song
     def html(self):
         title = self.artist.name + ' : ' + self.title
+        title_link = '<a href=%s>%s</a> : %s' % (self.artist.fname, self.artist.name, self.title)
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc: %s</title>' % title ]
         lines += common_html()
         lines += [ '</head>' ]
-        lines += [ '<h2 title="%s">%s</h2>' % (self.index, title) ]
+        lines += [ '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
         #lines += [ self.get_playlist_link() ]
         lines += [ '<hr>', '<ol>' ]
         songs_body = []
@@ -344,7 +345,8 @@ class CRD_album():
         for song in self.songs:
             s_class = ' class=cover' if song.cover else ''
             if song.gap_before: lines.append("<br><br>")
-            lines.append( '<li><a href=#%s%s>%s</a>' % ( song.link, s_class, song.title ) )
+            s_year = ' title=%d' % song.date.year if song.date else ''
+            lines.append( '<li><a href=#%s%s%s>%s</a>' % ( song.link, s_class, s_year, song.title ) )
         lines += [ '</ol>' ]
         lines += songs_body
         lines += [ '<hr>' ]
@@ -1730,6 +1732,10 @@ class CRD_data():
                     ('[' + offset + ']').ljust(10,'-') + \
                     names_string.ljust(35,'-')
             name = re.sub("-+", " ", name_fw)
+            
+            splits = name.split(" ", maxsplit=1)
+            name = '<a href=fingerings.html#%s>%s</a> ' % (offset, splits[0])
+            name += splits[1]
 
             if WRITE_FINGERINGS:
                 ### make fingerings page
@@ -1741,6 +1747,7 @@ class CRD_data():
                     tname = tartist.tuning.tuning
                     if tartist.tuning.names:
                         tname += " (%s)" % (", ".join(tartist.tuning.names))
+                    fingerings_lines.append( "<a name=%s>" % tartist.tuning.offset())
                     fingerings_lines.append( "<h3>%s</h3>" % tname)
                     fingerings_lines.append( "<pre>" )
 
