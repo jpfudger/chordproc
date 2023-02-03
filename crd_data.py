@@ -1115,7 +1115,8 @@ class CRD_song():
                 if self.tuning.standard():
                     self.tuning = None
                 elif self.tuning.tuning.lower() not in line.lower():
-                    print("Wrong tuning?", line, "=>", self.tuning.tuning)
+                    pass
+                    #print("Wrong tuning?", line, "=>", self.tuning.tuning)
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
@@ -1626,8 +1627,8 @@ class CRD_data():
                         for version in song.versions[:]:
                             if version.tuning and version.version_of.tuning \
                                 and version.tuning.offset() == version.version_of.tuning.offset():
-                                print("Ignoring version with same tuning as song: ")
-                                print("   ", version.version_of.title, version.title)
+                                #print("Ignoring version with same tuning as song: ")
+                                #print("   ", version.version_of.title, version.title)
                                 continue
 
                             # set title_sort to include the version_of title
