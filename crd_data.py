@@ -655,6 +655,8 @@ class CRD_song():
             self.title_sort = self.title[1:]
         self.gui_item = None
         self.cover = None
+        self.roud = 0
+        self.child = 0
         self.current_key = None # last encountered key set by song
         self.wordlist = []
     def add_fingering(self,chord,fingering):
@@ -691,6 +693,14 @@ class CRD_song():
 
         if line.strip().startswith('<') and line.strip().endswith('>'):
             self.cover = line.strip()[1:-1].strip()
+            m_roud = re.search('roud (\d+)', line.lower())
+            m_child = re.search('child (\d+)', line.lower())
+            if m_roud: 
+                self.roud = int(m_roud.group(1))
+                #print("Roud %s: %s (%s)" % (self.roud, self.title, self.artist.name))
+            if m_child: 
+                self.child = int(m_child.group(1))
+                #print("Child %s: %s (%s)" % (self.child, self.title, self.artist.name))
             newline = line.replace('<', '&lt;')
             newline = newline.replace('>', '&gt;')
             return newline, "cover"
