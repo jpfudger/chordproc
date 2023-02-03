@@ -1785,9 +1785,10 @@ class CRD_data():
                     tname = tartist.tuning.tuning
                     if tartist.tuning.names:
                         tname += " (%s)" % (", ".join(tartist.tuning.names))
+                    fingerings_lines.append( "<hr>" )
                     fingerings_lines.append( "<a name=%s>" % tartist.tuning.offset())
                     fingerings_lines.append( "<h3>%s</h3>" % tname)
-                    fingerings_lines.append( "<pre>" )
+                    fingerings_lines.append( "<div class=chords_1col>" )
 
                     all_chords = list(fingerings.keys())
                     all_chords.sort(key=lambda c: ( CRD_chord(c).root, c))
@@ -1802,7 +1803,7 @@ class CRD_data():
                         fingerings_lines.append("  " + chord.ljust(15) + (", ".join(fings)))
                         root = this_root
 
-                    fingerings_lines.append( "</pre>" )
+                    fingerings_lines.append( "</div>" )
 
             if tartist.tuning.standard(): continue
 
@@ -1836,8 +1837,13 @@ class CRD_data():
         lines += [ '<br>' * 50, '</body>', '</html>' ]
 
         if WRITE_FINGERINGS:
-            header = [ "<html> <body> <head> <title>ChordProc Fingerings</title>" ]
-            footer = [ "</title> </head> </body> </html>" ]
+            header = [ "<html>", "<head>", "<title>ChordProc Fingerings</title>" ]
+            header += [ '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">' ]
+            header += [ '<link rel="stylesheet" type="text/css" href="style1.css" id="style">' ]
+            header += [ '<script src="script.js"></script>' ]
+            header += [ '<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>' ]
+            header += [ "</head>", "<body>" ]
+            footer = [ "</body>", "</html>'" ]
             fingerings_lines = header + fingerings_lines + footer
             with open(self.opts["html_root"] + 'fingerings.html', 'w') as f:
                 for l in fingerings_lines:
