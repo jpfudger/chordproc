@@ -697,10 +697,13 @@ class CRD_song():
             m_child = re.search('child (\d+)', line.lower())
             if m_roud: 
                 self.roud = int(m_roud.group(1))
-                #print("Roud %s: %s (%s)" % (self.roud, self.title, self.artist.name))
             if m_child: 
                 self.child = int(m_child.group(1))
-                #print("Child %s: %s (%s)" % (self.child, self.title, self.artist.name))
+
+            if self.version_of:
+                self.version_of.roud = self.roud
+                self.version_of.child = self.child
+
             newline = line.replace('<', '&lt;')
             newline = newline.replace('>', '&gt;')
             return newline, "cover"
@@ -1849,10 +1852,7 @@ class CRD_data():
 
         if WRITE_FINGERINGS:
             header = [ "<html>", "<head>", "<title>ChordProc Fingerings</title>" ]
-            header += [ '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">' ]
-            header += [ '<link rel="stylesheet" type="text/css" href="style1.css" id="style">' ]
-            header += [ '<script src="script.js"></script>' ]
-            header += [ '<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>' ]
+            header += common_html(False)
             header += [ "</head>", "<body>" ]
             footer = [ "</body>", "</html>'" ]
             fingerings_lines = header + fingerings_lines + footer
@@ -1903,6 +1903,8 @@ class CRD_data():
             with open(self.opts["html_root"] + 'index.html', 'w') as f:
                 for l in lines:
                     f.write('\n' + l)
+
+        self.make_folk_index()
     def lookup_chord(self,tuning,chord):
         fingerings = []
         for song in self.all_songs():
@@ -1921,4 +1923,44 @@ class CRD_data():
         n_songs = 0
         for artist in self.artists:
             artist.latex()
+    def make_folk_index(self):
+        html_lines = [ "<html>", "<head>", "<title>ChordProc Fingerings</title>" ]
+        html_lines += common_html(False)
+        html_lines += [ "</head>", "<body>" ]
+        html_lines += [ "<h2> <a href=index.html>Folk Song Index</a> </h2>" ]
+        html_lines += [ "<table>" ]
+
+        # Could link to Roud Index, e.g. https://www.vwml.org/roudnumber/5
+        # What about Child Ballads?
+
+        trad_songs = []
+
+        for song in self.all_songs():
+            if song.cover and song.cover.startswith("Trad"):
+                    trad_songs.append(song)
+
+        trad_songs.sort(key=lambda s: s.title_sort)
+
+        for song in trad_songs:
+            line = "<tr>"
+
+            s_link = song.album.fname + '#' + song.link
+            line += "<td> <a href=%s>%s</a> </td>" % (s_link, song.title)
+            line += "<td> %s </td>" % (song.artist.name)
+
+            roud = "Roud %d" % song.roud if song.roud else ""
+            child = "Child %d" % song.child if song.child else ""
+        
+            line += "<td> %s </td>" % child
+            line += "<td> %s </td>" % roud
+
+            line += "<tr>"
+
+            html_lines.append(line)
+
+        html_lines += [ "</table>", "</body>", "</html>"]
+
+        with open(self.opts["html_root"] + 'folk_index.html', 'w') as f:
+            for l in html_lines:
+                f.write('\n' + l)
 
