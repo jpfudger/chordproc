@@ -1619,7 +1619,6 @@ class CRD_data():
         #             if s.cover == a1.name:
         #                 print(s.cover)
         # exit()
-
     def group_songs_by_tunings(self):
         if not self.tunings:
             self.tunings = []
@@ -1873,6 +1872,7 @@ class CRD_data():
                     f.write('\n' + l)
         artists_summary, artists_links, misc_links = self.make_artists_index()
         tunings_summary = self.make_tuning_index()
+        folk_summary = self.make_folk_index()
 
         lines  = [ '<html>', '<body>', '<head>' ]
         lines += [ '<title>Chordproc</title>' ]
@@ -1881,7 +1881,7 @@ class CRD_data():
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2 title="%s">ChordProc</h2>' % timestamp ]
         lines += [ '<hr>' ]
-        lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary ]
+        lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div> <a href=folk_index.html>Folk Index</a> <div class=count>%s</div> <br>' % (artists_summary, folk_summary) ]
         lines += [ '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary ]
         lines += [ '<a href=theory.html>Chords and Scales</a>' ]
         lines += [ '<hr>' ]
@@ -1903,8 +1903,6 @@ class CRD_data():
             with open(self.opts["html_root"] + 'index.html', 'w') as f:
                 for l in lines:
                     f.write('\n' + l)
-
-        self.make_folk_index()
     def lookup_chord(self,tuning,chord):
         fingerings = []
         for song in self.all_songs():
@@ -1963,4 +1961,6 @@ class CRD_data():
         with open(self.opts["html_root"] + 'folk_index.html', 'w') as f:
             for l in html_lines:
                 f.write('\n' + l)
+
+        return "%s" % len(trad_songs)
 
