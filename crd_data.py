@@ -692,18 +692,6 @@ class CRD_song():
             return line, "comment"
 
         if line.strip().startswith('<') and line.strip().endswith('>'):
-            self.cover = line.strip()[1:-1].strip()
-            m_roud = re.search('roud (\d+)', line.lower())
-            m_child = re.search('child (\d+)', line.lower())
-            if m_roud: 
-                self.roud = int(m_roud.group(1))
-            if m_child: 
-                self.child = int(m_child.group(1))
-
-            if self.version_of:
-                self.version_of.roud = self.roud
-                self.version_of.child = self.child
-
             newline = line.replace('<', '&lt;')
             newline = newline.replace('>', '&gt;')
             return newline, "cover"
@@ -1108,7 +1096,16 @@ class CRD_song():
         return
     def add_line(self,newline):
         line = newline.rstrip()
-        if not line.lstrip().startswith("<"):
+
+        if line.strip().startswith('<') and line.strip().endswith('>'):
+            self.cover = line.strip()[1:-1].strip()
+            m_roud = re.search('roud (\d+)', line.lower())
+            m_child = re.search('child (\d+)', line.lower())
+            if m_roud: 
+                self.roud = int(m_roud.group(1))
+            if m_child: 
+                self.child = int(m_child.group(1))
+        else:
             # if it has a line which is not a cover artist, it can't be a dummy
             self.dummy = False
 
