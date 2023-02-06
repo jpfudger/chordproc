@@ -45,7 +45,7 @@ def html_song_index(allsongs, artist=None):
     if artist:
         lines += [ '<title>Chordproc: %s</title>' % artist.name ]
     else:
-        lines += [ '<title>Chordproc</title>' ]
+        lines += [ '<title>Chordproc: Song Index</title>' ]
 
     lines += common_html(False)
     lines += [ '</head>' ]
@@ -1111,6 +1111,7 @@ class CRD_song():
         if not line.lstrip().startswith("<"):
             # if it has a line which is not a cover artist, it can't be a dummy
             self.dummy = False
+
         self.lines.append(line)
         if not self.tuning:
             if 'tuning:' in line.lower():
@@ -1738,7 +1739,7 @@ class CRD_data():
         return lines
     def make_tuning_index(self):
         lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc</title>' ]
+        lines += [ '<title>Chordproc: Tuning Index</title>' ]
         lines += common_html(False)
         lines += [ '</head>' ]
         lines += [ '<h2>Tuning Index</h2>' ]
@@ -1781,7 +1782,7 @@ class CRD_data():
             names_string = "-".join('(' + name + ')' for name in names)
             name_fw = tartist.tuning.tuning.ljust(12,'-') + \
                     ('[' + offset + ']').ljust(10,'-') + \
-                    names_string.ljust(35,'-')
+                    names_string.ljust(40,'-')
             name = re.sub("-+", " ", name_fw)
             
             splits = name.split(" ", maxsplit=1)
@@ -1850,7 +1851,7 @@ class CRD_data():
         lines += [ '<br>' * 50, '</body>', '</html>' ]
 
         if WRITE_FINGERINGS:
-            header = [ "<html>", "<head>", "<title>ChordProc Fingerings</title>" ]
+            header = [ "<html>", "<head>", "<title>ChordProc: Fingerings</title>" ]
             header += common_html(False)
             header += [ "</head>", "<body>" ]
             footer = [ "</body>", "</html>'" ]
@@ -1922,7 +1923,7 @@ class CRD_data():
         for artist in self.artists:
             artist.latex()
     def make_folk_index(self):
-        html_lines = [ "<html>", "<head>", "<title>ChordProc Fingerings</title>" ]
+        html_lines = [ "<html>", "<head>", "<title>ChordProc: Folk Index</title>" ]
         html_lines += common_html(False)
         html_lines += [ "</head>", "<body>" ]
         html_lines += [ "<h2> <a href=index.html>Folk Song Index</a> </h2>" ]
