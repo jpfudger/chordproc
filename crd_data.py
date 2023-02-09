@@ -1371,14 +1371,18 @@ class CRD_data():
                     self.dummy_songs.append(song)
             self.dummy_songs.sort( key=lambda x: x.title_sort.lower() )
         return self.dummy_songs
-    def get_artist(self,name):
+    def get_artist(self,name,add=False):
         for a in self.artists:
             if a.name == name:
                 return a
-        self.n_artists += 1
-        a = CRD_artist(name,self.n_artists,self)
-        self.artists.append(a)
-        return a
+        
+        if add:
+            self.n_artists += 1
+            a = CRD_artist(name,self.n_artists,self)
+            self.artists.append(a)
+            return a
+        
+        return None
     def process_chord_file(self,path):
         lines = []
         try:
@@ -1425,12 +1429,12 @@ class CRD_data():
                             inherited_album_gap = True
                 elif len(title) > 6 and title[0:6] == 'artist':
                     a_name = re.match( '.*artist:\s+(.*)', line ).group(1)
-                    this_artist = self.get_artist(a_name)
+                    this_artist = self.get_artist(a_name, add=True)
                     level_artist = level
                 elif len(title) > 6 and title[0:5] == 'album':
                     a_name = re.match( '.*album:\s+(.*)', line ).group(1)
                     if not this_artist:
-                        this_artist = self.get_artist('Misc')
+                        this_artist = self.get_artist('Misc', add=True)
                     this_album = this_artist.add_album(a_name)
                     level_album = level
                     if prev_album_close_line > 0 and prev_album_close_line != lnum - 1:
@@ -1441,7 +1445,7 @@ class CRD_data():
                 elif len(title) > 4 and title[0:4] == 'song':
                     s_name = re.match( '.*song:\s+(.*)', line ).group(1)
                     if not this_artist:
-                        this_artist = self.get_artist('Misc')
+                        this_artist = self.get_artist('Misc', add=True)
                     if not this_album:
                         this_album = this_artist.add_album('Misc')
                     this_song = this_album.add_song(s_name,path,lnum)
