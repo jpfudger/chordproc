@@ -657,6 +657,8 @@ class CRD_song():
             self.title_sort = self.title[1:]
         self.gui_item = None
         self.cover = None
+        self.cover_title = None # if the original song has a different name
+        self.cover_link = None
         self.roud = 0
         self.child = 0
         self.current_key = None # last encountered key set by song
@@ -1100,13 +1102,33 @@ class CRD_song():
         line = newline.rstrip()
 
         if line.strip().startswith('<') and line.strip().endswith('>'):
+            # set cover/roud/child
             self.cover = line.strip()[1:-1].strip()
+            self.cover_title = self.title
+
+            if ":" in self.cover:
+                splits = self.cover.split(":")
+
+                if len(splits) > 2:
+                    print("Error: unhandled cover song entry: " + self.cover)
+
+                self.cover = splits[0].strip()
+                self.cover_title = splits[1].strip()
+
             m_roud = re.search('roud (\d+)', line.lower())
             m_child = re.search('child (\d+)', line.lower())
             if m_roud: 
                 self.roud = int(m_roud.group(1))
             if m_child: 
                 self.child = int(m_child.group(1))
+
+            if self.version_of:
+                self.version_of.cover = self.cover
+                self.version_of.cover_link = self.cover_link
+                self.version_of.cover_title = self.cover_title
+                self.version_of.roud = self.roud
+                self.version_of.child = self.child
+
         else:
             # if it has a line which is not a cover artist, it can't be a dummy
             self.dummy = False
@@ -1161,7 +1183,6 @@ class CRD_song():
 
         if not self.version_of:
             # case: top level
-
             top_version = None
             if not formatted_song_lines:
                 # nothing at top level:
@@ -1209,11 +1230,18 @@ class CRD_song():
             #     lines += [ button_cycle_1, button_cycle_2 ]
 
             if self.cover:
-                lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % self.cover ]
+                cname = self.cover
+                if self.cover_link:
+                    cname = "<a href=%s>%s</a>" % (self.cover_link, self.cover)
+                lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % cname ]
 
             # lines += [ button_trans_1, button_trans_2 ]
             if self.versions:
                 lines += versions
+        else:
+            self.version_of.cover = self.cover
+            self.version_of.cover_link = self.cover_link
+            self.version_of.cover_title = self.cover_title
 
         n_lines = len(self.lines)
 
@@ -1571,6 +1599,7 @@ class CRD_data():
         self.collections = []
         if update or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
+            self.add_covers()
 
             # This performs the part of song.html() which adds song-specific
             # fingerings to the local chord dictionary. 
@@ -1885,9 +1914,10 @@ class CRD_data():
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2 title="%s">ChordProc</h2>' % timestamp ]
         lines += [ '<hr>' ]
-        lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div> <a href=folk_index.html>Folk Index</a> <div class=count>%s</div> <br>' % (artists_summary, folk_summary) ]
-        lines += [ '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary ]
-        lines += [ '<a href=theory.html>Chords and Scales</a>' ]
+        lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
+        lines += [ '<br> <a href=folk_index.html>Folk Index</a> <div class=count>%s</div>' % folk_summary ]
+        lines += [ '<br> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
+        lines += [ '<br> <a href=theory.html>Chords and Scales</a>' ]
         lines += [ '<hr>' ]
 
         lines += [ '<div class=artistlist>' ]
@@ -1950,8 +1980,15 @@ class CRD_data():
             line += "<td> <a href=%s>%s</a> </td>" % (s_link, song.title)
             line += "<td> %s </td>" % (song.artist.name)
 
-            roud = "Roud %d" % song.roud if song.roud else ""
-            child = "Child %d" % song.child if song.child else ""
+            roud = ""
+            child = ""
+
+            if song.roud:
+                roud = "Roud %d" % song.roud
+                roud = "<a href=https://www.vwml.org/roudnumber/%d>%s</a>" % ( song.roud, roud )
+
+            if song.child:
+                child = "Child %d" % song.child
         
             line += "<td> %s </td>" % child
             line += "<td> %s </td>" % roud
@@ -1967,4 +2004,42 @@ class CRD_data():
                 f.write('\n' + l)
 
         return "%s" % len(trad_songs)
+    def add_covers(self):
+        # This needs to called after song.cover is set
+        # which is currently in format_song_lines so there's no easy place to call it.
+        # Can we just set song.cover from song.add_line?
+        cover_artists_songs = {}
+
+        for song in self.all_songs():
+            # collect cover songs; set cover_link for trad
+            if song.cover:
+                if song.cover.startswith("Trad"):
+                    song.cover_link = "folk_index.html"
+                    continue
+                if song.cover not in cover_artists_songs:
+                    cover_artists_songs[song.cover] = []
+
+                cover_artists_songs[song.cover].append(song)
+        
+        for covered_artist, songs in cover_artists_songs.items():
+            # look up original song and set cover_link
+            artist = self.get_artist(covered_artist)
+
+            if artist:
+                for csong in songs:
+                    found = False
+                    csong.cover_link = artist.fname
+                    for song in artist.all_songs():
+                        if song.title == csong.cover_title:
+                            found = True
+                            csong.cover_link = song.album.fname + '#' + song.link
+                            break
+                    if not found:
+                        print("Artist but no song! %s / %s" % ( artist.name, csong.title ))
+
+            # If the covered artist exists, but the song doesn't, we could 
+            # add the song to a new album. But this would lead to overcounting
+            # the song, which is tricky to solve.
+
+            # Also, if an original song is found, we could add links to the cover(s).
 
