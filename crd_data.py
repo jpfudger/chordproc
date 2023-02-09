@@ -22,6 +22,7 @@ ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 FIXED_WIDTH_CHORDS = True
 DO_KEY_DIVS = False
 WRITE_FINGERINGS = True
+IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
 
 
 def common_html(want_chord_controls=True):
@@ -95,6 +96,7 @@ def html_song_index(allsongs, artist=None):
 class CRD_artist():
     def __init__(self,name,index=0,data=None):
         self.name = name.strip()
+        self.ignore = self.name in IGNORE_ARTISTS
         self.albums = []
         self.index = index
         self.player = None
@@ -1680,7 +1682,7 @@ class CRD_data():
 
             if artist.name.startswith("Misc"):
                 misc_links.append(link)
-            else:
+            elif not artist.ignore:
                 links.append(link)
 
             for album in artist.albums:
