@@ -35,6 +35,8 @@ a:link, a:visited, a:active {
     text-decoration: bold;
     }
 
+/* cover divs and a.cover links should be the same */
+.cover a:link, .cover a:visited, .cover a:active,
 a.cover:link, a.cover:visited, a.cover:active {
     color: green;
     }
@@ -167,6 +169,7 @@ h3 {
     }
 
 .tuning_map {
+    page-break-before: always; /* print on own page */
     display: block;
     top: 20%;
     right: 10%;
@@ -270,5 +273,16 @@ img.cover {
     width: 100px;
     height: 100px;
     border: 1px solid black;
+    }
+
+table {
+    border-collapse: collapse;
+    border: 1px;
+    }
+
+td, tr {
+    border-style: solid;
+    padding: 5px;
+    border-width: 1px;
     }
 
