@@ -109,12 +109,12 @@ Gdim7   xx5656 / 345353
 Adim7   xx7878 / 567575
 Bdim7   xx9A9A / 789797
 
-
-
 A       x02220
 A/e     002220
 Asus4   x02230
 Asus2   x02200
+Amaj7   x02120
+A6      x02222
 Am      x02210
 Am6     x02212
 Am7     x02010
@@ -356,14 +356,14 @@ Bb  xx321
 Cm  x0003
 G   x2022
 }}}
-{{{ tuning: GDGCD     [Banjo: Sawmill] 
+{{{ tuning: GDGCD     [Banjo: Sawmill] [Banjo: Open Gsus4]
 # [Banjo: Mountain]
 Gm      x0020
 F       x3203
 Bb      x3323
 C       x3003
 }}}
-{{{ tuning: FDGCD     [Banjo: F-tuning]
+{{{ tuning: FDGCD     [Banjo: F-tuning] [Old G]
 # [Banjo: Cumberland Gap]
 
 # This is Sawmill tuning with the 5th string dropped to F.
