@@ -661,6 +661,7 @@ class CRD_song():
         self.cover_link = None
         self.roud = 0
         self.child = 0
+        self.comment_links = []
         self.current_key = None # last encountered key set by song
         self.wordlist = []
     def add_fingering(self,chord,fingering):
@@ -697,6 +698,12 @@ class CRD_song():
             line = m_ws.group(1) + line.strip()[1:-1]
             w_url = re.search('(https?:\S+)', line)
             line = re.sub( '(https?:\S+)', '<a href="\\1">\\1</a>', line)
+
+            if "{" in line:
+                for link in self.comment_links:
+                    if link["text"] and link["link"]:
+                        line = re.sub( link["text"], link["link"], line )
+
             return line, "comment"
 
         if line.strip().startswith('<') and line.strip().endswith('>'):
@@ -1154,7 +1161,27 @@ class CRD_song():
                 self.version_of.cover_title = self.cover_title
                 self.version_of.roud = self.roud
                 self.version_of.child = self.child
+        elif "{" in line and "}" in line:
+            links = re.findall('(\{[^}]+\})', line )
+            # store a link for later processing in add_comment_links
+            for link in links:
+                link_dict = { "text"   : link,
+                              "artist" : None,
+                              "album"  : None,
+                              "song"   : None,
+                              "link"   : None,
+                              }
 
+                link = link[1:-1]
+
+                splits = link.split("|")
+                link_dict["song"] = splits[-1]
+                if len(splits) > 1:
+                    link_dict["artist"] = splits[0]
+                if len(splits) > 2:
+                    link_dict["album"] = splits[1]
+
+                self.comment_links.append(link_dict)
         else:
             # if it has a line which is not a cover artist, it can't be a dummy
             self.dummy = False
@@ -1622,6 +1649,7 @@ class CRD_data():
         if update or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
             self.add_covers()
+            self.add_comment_links()
 
             # This performs the part of song.html() which adds song-specific
             # fingerings to the local chord dictionary. 
@@ -2068,4 +2096,25 @@ class CRD_data():
             # the song, which is tricky to solve.
 
             # Also, if an original song is found, we could add links to the cover(s).
+    def add_comment_links(self):
+        all_songs = self.all_songs()
+
+        #artist = self.get_artist(covered_artist)
+        for song in all_songs:
+            for link in song.comment_links:
+                matching_songs = [ s for s in all_songs if s.title.lower() == link["song"].lower() ]
+
+
+                # If these ambiguity warnings get triggered, we can narrow down the search
+                # using the artist|album|song information.
+
+                if len(matching_songs) == 0:
+                    print("No song matching comment_link: " + link["song"])
+                elif len(matching_songs) > 1:
+                    print("Ambiguous song comment_link: " + link["song"])
+
+                for ms in matching_songs:
+                    url = ms.album.fname + "#" + ms.link
+                    s_link = "<a href=%s class=cover>%s</a>" % (url, link["song"])
+                    link["link"] = s_link
 
