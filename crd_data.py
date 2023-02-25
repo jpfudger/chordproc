@@ -898,20 +898,36 @@ class CRD_song():
             elif word.replace('.','') == '':
                 formatted += word
             elif word.isspace():
-                if FIXED_WIDTH_CHORDS and formatted.endswith("</div>"):
-                    nodiv = formatted[:-6]
-                    trimmed = nodiv.rstrip()
+                if FIXED_WIDTH_CHORDS:
+                    if formatted.endswith("</div>"):
+                        nodiv = formatted[:-6]
+                        trimmed = nodiv.rstrip()
 
-                    n_pad = len(nodiv) - len(trimmed)
-                    n_word = len(word)
+                        n_pad = len(nodiv) - len(trimmed)
+                        n_word = len(word)
 
-                    if n_word > n_pad:
-                        # replace padding with ws word inside div
-                        formatted = trimmed + word + "</div>"
+                        if n_word > n_pad:
+                            # replace padding with ws word inside div
+                            formatted = trimmed + word + "</div>"
+                        else:
+                            # remove padding to avoid symbols running together
+                            formatted = trimmed + "</div>" + word
+                    elif re.search("\s+</div>\)$", formatted):
+                        #print(formatted)
+                        m = re.search("(\s+)</div>\)$", formatted)
+                        if m:
+                            n_pre_ws = len(m.group(1))
+                            n_word = len(word)
+
+                            if n_word > n_pre_ws:
+                                # subtract previous padding from next padding...
+                                formatted += " " * (n_word - n_pre_ws)
+                            else:
+                                formatted += word
+
+                            #print(pre_bracket_ws)
                     else:
-                        # remove padding to avoid symbols running together
-                        formatted = trimmed + "</div>" + word
-
+                        formatted += word
                 else:
                     formatted += word
             elif word == 'etc' or word == 'etc.':
