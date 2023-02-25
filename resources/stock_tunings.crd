@@ -1,4 +1,5 @@
 {{{ tuning: AAAAAA    [Ostrich] [Unison]
+# Named by Lou Reed after a pre-Velvet song of the same name.
 }}}
 {{{ tuning: GGDGBD    [Open G Low]
 # Must be above Open G, otherwise it matches against Open G.
@@ -35,15 +36,13 @@ C9  000000
 # He also uses DGCGCD (Famous Flower of Serving Men), DGDGGD, DGDGDG, DGBDGB
 }}}
 {{{ tuning: DADGBD    [Double Drop D] [Open Gadd9]
+# Neil Young has called this "D Modal"
 
 D       0xx230
 
 }}}
 {{{ tuning: DADDAD    [Dulcimer D Modal]
 # Calling it simply "Dulcimer" means it is matched to the Joni tuning EADAAE.
-}}}
-{{{ tuning: DGDGBE      [Drop D/g] [Open G6]
-# Only used for Richard Thompson: Easy There, Steady Now?
 }}}
 {{{ tuning: DADGBE    [Drop D]
 A       202220
@@ -69,7 +68,9 @@ G/b     x20033
 G   x00033
 C   002010
 Am  x22210
+A   x22220
 D   2xx232
+Em  4x2000
 }}}
 {{{ tuning: CADGBE    [Drop C]
 
@@ -157,6 +158,8 @@ Ebm     668876
 
 E       022100
 Em      022000
+E7      020100, 022130
+Emaj7   021100
 
 F       133211
 F7      131211
@@ -199,6 +202,36 @@ G#m7    464444
 {{{ tuning: DADEAD    [Open Dsus2]
 }}}
 {{{ tuning: CGDGCD    [Orkney] [Sawmill]
+# This is DADGAD with Capo V and the strings moved over.
+
+C5      055005, 00A00A
+Cmaj    055045
+Cm      055035
+C7      055305 (no3)
+Cmaj7   055405 (no3)
+Cadd9   055040
+
+D       xx0224
+D5      xx0220
+Dm      xx0223
+
+Em7     x42020
+
+F       xx3203
+Fm      xx3103
+F7      xx3201
+Fmaj7   xx3202
+
+G       x00025, x00420
+Gm      x00320
+G5      x00020
+G7      x00023
+
+Am      x22202
+Am7     x22002
+
+Bm      xx0424
+
 }}}
 {{{ tuning: CGCFCE    [Open Cadd4] [Nick Drake]
 }}}
@@ -430,6 +463,10 @@ Bm7     4455
 
 }}}
 {{{ tuning: DAD       [Dulcimer: Standard]
+
+# Dulcimer tunings are labelled low-high (like guitar tunings) even though
+# dulcimers are held with the (double course) high melody strings the top.
+
 D5      000
 E5      111
 F#5     222
@@ -441,5 +478,6 @@ G       310
 A       421
 Bm      210
 C#dim   123
+
 }}}
 

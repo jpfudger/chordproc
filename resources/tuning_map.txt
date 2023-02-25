@@ -24,9 +24,9 @@
 |  DADF#AD |           |    |       |                 |           G-family        |    |           |    |
 |    |     |           |    |       |                 |                           |    |           |    |
 |    |     |           |  FDGCD   GCGCD = = = = = = = | = = = = = = = = = = = = = |  CGCGCD     CGCFCE  |
-|  DADFAD  |           |            |                 |                           |                |    |
-|    |     |           |            |                 |                           |                |    |
-|    |     |           |          GCGCC               |                           |             CGDFCE  |
+|  DADFAD  |           |            |                 |                           |    |           |    |
+|    |     |           |            |                 |                           |    |           |    |
+|    |     |           |          GCGCC               |                           |  CGDGCD     CGDFCE  |
 |  DADEAD  |           |            |                 |                           |                     |
 |    |     |           |            |                 |                           +---------------------+
 |    |     |           |          GCGCE               |                                   C-family
