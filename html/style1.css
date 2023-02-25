@@ -51,6 +51,11 @@ h3 a:link, h3 a:visited, h3 a:active {
     }
 
 /* RED hover on all links */
+a:hover, a.cover:hover {
+    text-decoration: none;
+    color: red;
+    text-decoration: bold;
+    }
 
 a.tuning {
     font-family: monospace;
