@@ -673,6 +673,10 @@ class CRD_song():
         version.version_of = self
         self.versions.append(version)
         version.version_index = len(self.versions) - 1
+        if self.lines: 
+            # if the master song has song lines (meaning is not in a version fold)
+            # we need to increment the version index so the links work properly.
+            version.version_index += 1
         return version
     def get_fingering(self,crd_string,as_title=False):
         crd_string = crd_string.strip()
@@ -874,6 +878,13 @@ class CRD_song():
         formatted = ''
         finger_regex = '([0-9xXA-G]{6,})' 
         got_a_not_chord = False
+
+        valid_chordline_chards = [ '|', '-', # used for timing and as starter/ender delims
+                                   '%',      # sometimes used for repeats
+                                   '*', '**', '***', 
+                                   '.', ',', '|:', ':|', '[', ']', 
+                                   '||', '(', ')', ':' ]
+
         for word in splits:
             if word == '':
                 pass
@@ -916,9 +927,7 @@ class CRD_song():
             elif re.match( '\$\d+', word ):
                 # $1 $2 etc used for links between sections
                 formatted += word
-            elif word in [ '|', '-', '%', '*', '**', '***', '.', ',', '|:', ':|', '[', ']', '||', '(', ')', ':' ]:
-                # | and - are used for timing (and are also allowed as starter/ender delimieters)
-                # % is sometimes used for repetition.
+            elif word in valid_chordline_chards:
                 formatted += word
             elif re.match( '\(?\s*[xX]?\s*\d+[xX]?\s*\)?', word ):
                 # this is to match (x4) for repetition
@@ -1774,7 +1783,7 @@ class CRD_data():
         lines += [ '<title>Chordproc: Tuning Index</title>' ]
         lines += common_html(False)
         lines += [ '</head>' ]
-        lines += [ '<h2>Tuning Index</h2>' ]
+        lines += [ '<h2> <a href=index.html>Tuning Index</a> </h2>' ]
         lines += [ '<hr>' ]
         lines += [ '<a href=fingerings.html>All Fingerings</a>' ]
         lines += [ '<hr>' ]
@@ -1812,9 +1821,9 @@ class CRD_data():
                         names.append(name)
 
             names_string = "-".join('(' + name + ')' for name in names)
-            name_fw = tartist.tuning.tuning.ljust(12,'-') + \
+            name_fw = tartist.tuning.tuning.ljust(10,'-') + \
                     ('[' + offset + ']').ljust(10,'-') + \
-                    names_string.ljust(40,'-')
+                    names_string.ljust(39,'-')
             name = re.sub("-+", " ", name_fw)
             
             splits = name.split(" ", maxsplit=1)
