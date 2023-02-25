@@ -67,7 +67,7 @@ def html_song_index(allsongs, artist=None):
             alphastring += '<a href="#%s">%s</a> ' % ( char, char )
         lines += [ alphastring, '<hr>' ]
 
-    lines += [ '<div class=songindex>' ]
+    lines += [ '<div class="songindex col2">' ]
     cur_letter = None
 
     for song in allsongs:
@@ -80,7 +80,7 @@ def html_song_index(allsongs, artist=None):
                 lines.append('</div>')
                 lines.append('<a name="%s">' % song.title_sort[0])
                 lines.append('<hr>')
-                lines.append('<div class=songindex>')
+                lines.append('<div class="songindex col2">')
             else:
                 lines.append('<br>')
         cur_letter = song.title_sort[0]
@@ -258,7 +258,7 @@ class CRD_artist():
                 lines.append('<a name="%s">' % word[0])
                 lines.append('<br><hr>')
                 #lines.append('<h3>%s</h3>' % word[0])
-                lines.append('<div class=songindex>')
+                lines.append('<div class="songindex col2">')
             else:
                 lines.append('<br>')
             cur_letter = word[0]
@@ -1246,11 +1246,11 @@ class CRD_song():
         n_lines = len(self.lines)
 
         if n_lines > 100 and self.longest_line() <= 65:
-            lines += [ '<div id=%s class="chords_3col version"%s>' % (self.index, style) ]
-        elif n_lines > 50:
-            lines += [ '<div id=%s class="chords_2col version"%s>' % (self.index, style) ]
-        else:
-            lines += [ '<div id=%s class="chords_1col version"%s>' % (self.index, style) ]
+            lines += [ '<div id=%s class="chords col3 version"%s>' % (self.index, style) ]
+        elif n_lines > 50:                           
+            lines += [ '<div id=%s class="chords col2 version"%s>' % (self.index, style) ]
+        else:                                        
+            lines += [ '<div id=%s class="chords col1 version"%s>' % (self.index, style) ]
 
         lines += formatted_song_lines
         lines += [ '</div>' ]
@@ -1834,7 +1834,7 @@ class CRD_data():
                     fingerings_lines.append( "<hr>" )
                     fingerings_lines.append( "<a name=%s>" % tartist.tuning.offset())
                     fingerings_lines.append( "<h3>%s</h3>" % tname)
-                    fingerings_lines.append( "<div class=chords_1col>" )
+                    fingerings_lines.append( "<div class=\"chords col1\">" )
 
                     all_chords = list(fingerings.keys())
                     all_chords.sort(key=lambda c: ( CRD_chord(c).root, c))
@@ -1920,13 +1920,13 @@ class CRD_data():
         lines += [ '<br> <a href=theory.html>Chords and Scales</a>' ]
         lines += [ '<hr>' ]
 
-        lines += [ '<div class=artistlist>' ]
+        lines += [ '<div class=col4>' ]
         lines += artists_links
         lines += [ '</div>' ] 
         lines += [ '<hr>' ]
 
         if misc_links:
-            lines += [ '<div>' ] # class=artistlist>' ]
+            lines += [ '<div>' ] # class=col4>' ]
             lines += misc_links
             lines += [ '</div>' ] 
             lines += [ '<hr>' ]

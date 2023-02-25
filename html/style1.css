@@ -51,11 +51,6 @@ h3 a:link, h3 a:visited, h3 a:active {
     }
 
 /* RED hover on all links */
-a:hover, a.cover:hover {
-    text-decoration: none;
-    color: red;
-    text-decoration: bold;
-    }
 
 a.tuning {
     font-family: monospace;
@@ -131,40 +126,23 @@ h3 {
     /* font-style: italic; */
     }
 
-.artistlist {
-    color: black;
-    column-count: 1;
-    }
-
 .songindex {
     color: black;
     padding-left: 20px;
     padding-right: 20px;
-    column-count: 1;
     white-space: pre-line;
     }
 
-.chords_1col {
-    white-space: pre;
-    font-family: monospace;
-    color: black;
-    padding-left: 50px;
-    }
+.col1 { column-count: 1; }
+.col2 { column-count: 1; }
+.col3 { column-count: 1; }
+.col4 { column-count: 1; }
 
-.chords_2col {
+.chords {
+    color: black;
     white-space: pre;
     font-family: monospace;
-    color: black;
     padding-left: 50px;
-    column-count: 1;
-    }
-
-.chords_3col {
-    white-space: pre;
-    font-family: monospace;
-    color: black;
-    padding-left: 50px;
-    column-count: 1;
     }
 
 .tuning_map {
@@ -181,34 +159,9 @@ h3 {
 @media only screen and (min-width: 1281px) {
     /* Only allow multi-column on large screens (desktops) */
 
-    .artistlist {
-        color: black;
-        column-count: 4;
-        }
-
-    .songindex {
-        color: black;
-        padding-left: 20px;
-        padding-right: 20px;
-        column-count: 2;
-        white-space: pre-line;
-        }
-
-    .chords_2col {
-        white-space: pre;
-        font-family: monospace;
-        color: black;
-        padding-left: 50px;
-        column-count: 2;
-        }
-
-    .chords_3col {
-        white-space: pre;
-        font-family: monospace;
-        color: black;
-        padding-left: 50px;
-        column-count: 3;
-        }
+    .col2 { column-count: 2; }
+    .col3 { column-count: 3; }
+    .col4 { column-count: 4; }
 
     .tuning_map {
         display: block;
