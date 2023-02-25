@@ -1147,7 +1147,8 @@ class CRD_song():
             if m_child: 
                 self.child = int(m_child.group(1))
 
-            if self.version_of:
+            if self.version_of and not self.version_of.cover:
+                # back-fill the main song, if it isn't already
                 self.version_of.cover = self.cover
                 self.version_of.cover_link = self.cover_link
                 self.version_of.cover_title = self.cover_title
@@ -1263,10 +1264,6 @@ class CRD_song():
             # lines += [ button_trans_1, button_trans_2 ]
             if self.versions:
                 lines += versions
-        else:
-            self.version_of.cover = self.cover
-            self.version_of.cover_link = self.cover_link
-            self.version_of.cover_title = self.cover_title
 
         n_lines = len(self.lines)
 
@@ -2002,18 +1999,21 @@ class CRD_data():
             line = "<tr>"
 
             s_link = song.album.fname + '#' + song.link
-            line += "<td> <a href=%s>%s</a> </td>" % (s_link, song.title)
-            line += "<td> %s </td>" % (song.artist.name)
+            line += "<td> <a name=%s> <a href=%s>%s</a> </td>" % (song.link, s_link, song.title)
+
+            a_name = "" if song.artist.name.startswith("Misc:") else song.artist.name
+            line += "<td> %s </td>" % a_name
 
             roud = ""
             child = ""
 
             if song.roud:
-                roud = "Roud %d" % song.roud
-                roud = "<a href=https://www.vwml.org/roudnumber/%d>%s</a>" % ( song.roud, roud )
+                url = "https://www.vwml.org/roudnumber/%d" % song.roud
+                roud = "<a href=%s target=_blank>Roud %d</a>" % ( url, song.roud )
 
             if song.child:
-                child = "Child %d" % song.child
+                url = "https://www.childballadrecordings.com/all?ballad_id=%d" % song.child
+                child = "<a href=%s target=_blank>Child %d</a>" % ( url, song.child )
         
             line += "<td> %s </td>" % child
             line += "<td> %s </td>" % roud
@@ -2022,7 +2022,8 @@ class CRD_data():
 
             html_lines.append(line)
 
-        html_lines += [ "</table>", "</body>", "</html>"]
+        html_lines += [ "</table>", "</body>", "</html>" ]
+        html_lines += [ "<br> <br> <br> <br> <br>" ]
 
         with open(self.opts["html_root"] + 'folk_index.html', 'w') as f:
             for l in html_lines:
@@ -2039,7 +2040,7 @@ class CRD_data():
             # collect cover songs; set cover_link for trad
             if song.cover:
                 if song.cover.startswith("Trad"):
-                    song.cover_link = "folk_index.html"
+                    song.cover_link = "folk_index.html" + "#" + song.link
                     continue
                 if song.cover not in cover_artists_songs:
                     cover_artists_songs[song.cover] = []
