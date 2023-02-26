@@ -6,6 +6,7 @@ html,body {
     color: grey;
     background: black;
     }
+
 #body {
     font-size: 1.6ex;
     font-family: sans-serif;
@@ -36,7 +37,7 @@ a:link, a:visited, a:active {
     }
 
 /* cover divs and a.cover links should be the same */
-.cover a:link, .cover a:visited, .cover a:active,
+.cover, .cover a:link, .cover a:visited, .cover a:active,
 a.cover:link, a.cover:visited, a.cover:active {
     color: cyan;
     }
@@ -216,11 +217,6 @@ h3 {
     display: inline-block;
     font-family: monospace;
     min-width: 75;
-    }
-
-.cover {
-    display: inline;
-    color: cyan;
     }
 
 img.cover {

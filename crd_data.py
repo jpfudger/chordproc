@@ -1285,7 +1285,7 @@ class CRD_song():
             if self.cover:
                 cname = self.cover
                 if self.cover_link:
-                    cname = "<a href=%s>%s</a>" % (self.cover_link, self.cover)
+                    cname = "<a class=cover href=%s>%s</a>" % (self.cover_link, self.cover)
                 lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % cname ]
 
             # lines += [ button_trans_1, button_trans_2 ]
