@@ -25,31 +25,60 @@ WRITE_FINGERINGS = True
 IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
 
 
-def common_html(want_chord_controls=True):
+def html_header(title, want_chord_controls=True, index_page=False):
     lines = [
+    '<head>',
+    '<title>%s</title>' % title,
     '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
     '<link rel="stylesheet" type="text/css" href="style1.css" id="style">',
     '<script src="script.js"></script>',
-    '<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
+    #'<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
     ]
-    if want_chord_controls:
-        lines += [
-        '<a onclick="transpose_topmost_song(true);" title="Transpose Up"><div id=t_l></div></a>',
-        '<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>',
-        '<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>',
-        ]
+    # if want_chord_controls:
+    #     lines += [
+    #     '<a onclick="transpose_topmost_song(true);" title="Transpose Up"><div id=t_l></div></a>',
+    #     '<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>',
+    #     #'<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>',
+    #     ]
+    lines += [ '<head>' ]
+
+    lines += html_context_menu(index=index_page, chords=want_chord_controls)
+
+    return lines
+
+def html_context_menu(index=False, chords=False):
+    lines = []
+
+    lines.append("<div class=settings>")
+    lines.append("  <img class=settings-icon onclick=\"toggle_settings_menu();\" src=gear.png>")
+    #lines.append("  <div id=t_r></div></a>")
+    lines.append("  <div class=settings-menu>")
+
+    if chords:
+        lines.append("    <a onclick=\"transpose_topmost_song(true);\">Transpose up (k)</a>")
+        lines.append("    <a onclick=\"transpose_topmost_song(false);\">Transpose down (j)</a>")
+        lines.append("    <a onclick=\"cycle_topmost_song(true);\">Cycle song versions (h/l)</a>")
+        #lines.append("    <a onclick=\"theory_popup();\">Theory popup (t)</a>")
+        lines.append("    <a onclick=\"nashville_system();\">Toggle Nashville chords (n)</a>")
+        lines.append("    <a onclick=\"lyrics_only();\">Toggle lyrics only (z)</a>")
+
+    if index:
+        lines.append("    <a onclick=\"toggle_artist_sort();\">Toggle artist sort (s) </a>")
+
+    #lines.append("    <a onclick=\"toggle_column_mode();\">Toggle column mode</a>")
+    #lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
+    lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
+
+    lines.append("  </div>")
+    lines.append("</div>")
+
     return lines
 
 def html_song_index(allsongs, artist=None):
-    lines  = [ '<html>', '<body>', '<head>' ]
+    lines  = [ '<html>', '<body>' ]
 
-    if artist:
-        lines += [ '<title>Chordproc: %s</title>' % artist.name ]
-    else:
-        lines += [ '<title>Chordproc: Song Index</title>' ]
-
-    lines += common_html(False)
-    lines += [ '</head>' ]
+    title_text = "Chordproc: " + (artist.name if artist else "Song Index")
+    lines += html_header(title_text, False)
 
     if artist:
         lines += [ '<h2 title="%s">%s Song Index</h2>' % (artist.index, artist.name) ]
@@ -130,10 +159,8 @@ class CRD_artist():
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
     def html(self,add_artist=False):
-        lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc: %s</title>' % self.name ]
-        lines += common_html(False)
-        lines += [ '</head>' ]
+        lines  = [ '<html>', '<body>' ]
+        lines += html_header("Chordproc: %s" % self.name, False)
         lines += [ '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
         c_origs, c_covers = self.song_counts()
@@ -355,10 +382,8 @@ class CRD_album():
     def html(self):
         title = self.artist.name + ' : ' + self.title
         title_link = '<a href=%s>%s</a> : %s' % (self.artist.fname, self.artist.name, self.title)
-        lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc: %s</title>' % title ]
-        lines += common_html()
-        lines += [ '</head>' ]
+        lines  = [ '<html>', '<body>' ]
+        lines += html_header("Chordproc: " + title)
         lines += [ '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
         #lines += [ self.get_playlist_link() ]
         lines += [ '<hr>', '<ol>' ]
@@ -1843,10 +1868,8 @@ class CRD_data():
 
         return lines
     def make_tuning_index(self):
-        lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc: Tuning Index</title>' ]
-        lines += common_html(False)
-        lines += [ '</head>' ]
+        lines  = [ '<html>', '<body>' ]
+        lines += html_header("Chordproc: Tuning Index", False)
         lines += [ '<h2> <a href=index.html>Tuning Index</a> </h2>' ]
         lines += [ '<hr>' ]
         lines += [ '<a href=fingerings.html>All Fingerings</a>' ]
@@ -1956,9 +1979,9 @@ class CRD_data():
         lines += [ '<br>' * 50, '</body>', '</html>' ]
 
         if WRITE_FINGERINGS:
-            header = [ "<html>", "<head>", "<title>ChordProc: Fingerings</title>" ]
-            header += common_html(False)
-            header += [ "</head>", "<body>" ]
+            header = [ "<html>" ]
+            header += html_header("ChordProc: Fingerings", False)
+            header += [ "<body>" ]
             footer = [ "</body>", "</html>'" ]
             fingerings_lines = header + fingerings_lines + footer
             with open(self.opts["html_root"] + 'fingerings.html', 'w') as f:
@@ -1980,10 +2003,8 @@ class CRD_data():
         tunings_summary = self.make_tuning_index()
         folk_summary = self.make_folk_index()
 
-        lines  = [ '<html>', '<body>', '<head>' ]
-        lines += [ '<title>Chordproc</title>' ]
-        lines += common_html(False)
-        lines += [ '</head>' ]
+        lines  = [ '<html>', '<body>' ]
+        lines += html_header("ChordProc", False, True)
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2 title="%s">ChordProc</h2>' % timestamp ]
         lines += [ '<hr>' ]
@@ -2029,9 +2050,9 @@ class CRD_data():
         for artist in self.artists:
             artist.latex()
     def make_folk_index(self):
-        html_lines = [ "<html>", "<head>", "<title>ChordProc: Folk Index</title>" ]
-        html_lines += common_html(False)
-        html_lines += [ "</head>", "<body>" ]
+        html_lines = [ "<html>" ]
+        html_lines += html_header("ChordProc: Folk Index", False)
+        html_lines += [ "<body>" ]
         html_lines += [ "<h2> <a href=index.html>Folk Song Index</a> </h2>" ]
         html_lines += [ "<table>" ]
 
