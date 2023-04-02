@@ -98,6 +98,7 @@ class CRD_artist():
         self.name = name.strip()
         self.ignore = self.name in IGNORE_ARTISTS
         self.albums = []
+        self.too_many_albums = False
         self.index = index
         self.player = None
         self.stock_tunings = None
@@ -116,6 +117,8 @@ class CRD_artist():
         album_index = '%d.%d' % ( self.index, len(self.albums) + 1 )
         new_album = CRD_album( title, self, album_index, self.player )
         self.albums.append(new_album)
+        if len(self.albums) > 30:
+            self.too_many_albums = True
         return new_album
     def all_songs(self):
         allsongs = []
@@ -143,18 +146,34 @@ class CRD_artist():
         if DO_WORDLISTS and self.name in DO_WORDLISTS:
             lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
 
+        col_class = "col2" if self.too_many_albums else "col1"
         lines += [ '<hr>' ]
+        lines += [ '<div class="%s" style="display:block">' % col_class ]
+        if self.too_many_albums: lines.append("<span>")
+
         #lines += [ '<ol>' ]
+        decade = None
         for album in self.albums:
             #lines.append( '<li>' )
-            if album.gap_before: lines.append("<br>")
+
+
+            if album.gap_before:
+                lines.append("<br>")
+            elif decade and album.date and decade != int(str(album.date.year)[:-1]):
+                lines.append("</span><br><span>")
+
             style = " class=cover" if album.all_songs_are_covers() else ""
             if album.date:
                 style += " title=%d" % album.date.year
             lines.append( '<a href=%s%s>%s</a> <div class=count>%d</div>'
                                 % ( album.fname, style, album.title, album.n_songs() ) )
             lines.append( '<br>' )
+            if self.too_many_albums and album.date: 
+                decade = int(str(album.date.year)[:-1])
+
+        if self.too_many_albums: lines.append("</span>")
         #lines += [ '</ol>' ]
+        lines += [ '</div>' ]
         lines += [ '<hr>' ]
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
