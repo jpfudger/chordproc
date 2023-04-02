@@ -2126,14 +2126,22 @@ class CRD_data():
             for link in song.comment_links:
                 matching_songs = [ s for s in all_songs if s.title.lower() == link["song"].lower() ]
 
-
                 # If these ambiguity warnings get triggered, we can narrow down the search
                 # using the artist|album|song information.
 
                 if len(matching_songs) == 0:
                     print("No song matching comment_link: " + link["song"])
                 elif len(matching_songs) > 1:
-                    print("Ambiguous song comment_link: " + link["song"])
+                    new_matching = []
+                    if "artist" in link:
+                        for ms in matching_songs:
+                            if ms.artist.name == link["artist"]:
+                                new_matching.append(ms)
+                    matching_songs = new_matching
+
+                    if len(matching_songs):
+                        print("Ambiguous song comment_link: " + link["song"])
+
 
                 for ms in matching_songs:
                     url = ms.album.fname + "#" + ms.link
