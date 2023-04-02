@@ -1198,6 +1198,7 @@ class CRD_song():
 
                 splits = link.split("|")
                 link_dict["song"] = splits[-1]
+                link_dict["artist"] = self.artist.name # default to current artist
                 if len(splits) > 1:
                     link_dict["artist"] = splits[0]
                 if len(splits) > 2:
