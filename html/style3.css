@@ -236,3 +236,41 @@ td, tr {
     border-width: 1px;
     }
 
+.settings {
+    /* container div: needed to position the menu */
+    position: fixed;
+    display: block;
+    top: 50px;
+    right: 0;
+    }
+
+.settings-icon {
+    /* opacity: 0; */
+    /* width: 30px; */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    }
+
+.settings-menu {
+    /* menu content: hidden by default */
+    display: none;
+    position: relative;
+    background-color: #f1f1f1;
+    min-width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    }
+
+.settings-menu a {
+    /* styles links in the menu */
+    display: block;
+    color: black;
+    padding: 7px 7px;
+    user-select: none;
+    }
+
+/* .settings:hover .settings-menu { display: block; } */
+/* .settings-icon:hover { opacity: 1; } */
+.settings-menu a:hover { background-color: #ddd; }
+

@@ -1,18 +1,30 @@
 // vim: foldmethod=marker
 
+function set_style_cookie(cs) { document.cookie = "Stylesheet=" + cs; }
+function get_style_cookie(cs) 
+    {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; Stylesheet=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+function del_style_cookie(cs) { document.cookie = "Stylesheet="; }
+
 //{{{ function: cycle_styles
-function cycle_styles() {
+function cycle_styles(prefer=null) {
     var ss = document.getElementById("style");
     //window.alert(ss.href);
 
     var styles = [ "style1.css", "style2.css", "style3.css", "style4.css" ];
     styles.push(styles[0]); // for cyclicity
 
+    if ( prefer ) { styles = [ "style1.css", prefer ]; }
+
     for ( var i=0; i<styles.length; i++) 
         {
         if ( ss.href.endsWith(styles[i]) )
             {
             ss.setAttribute('href', ss.href.replace(styles[i], styles[i+1]));
+            set_style_cookie(styles[i+1]);
             break;
             }
         }
@@ -273,6 +285,13 @@ function update_song_version(song_index)
     set_version_of_song(song_index, value);
     }
 //}}}
+//{{{ function: cycle_topmost_song
+function cycle_topmost_song(up)
+    {
+    var song_div = topmost_song();
+    cycle_versions(song_div.id, up);
+    }
+//}}}
 
 //{{{ function: reset_version_selectors
 function reset_version_selectors()
@@ -368,19 +387,38 @@ function transpose_all_songs(up) {
 //{{{ function: topmost_song
 function topmost_song()
     {
-    var divs = document.getElementsByTagName("div");
+    // Note: this function attaches the title (from the preceding h3) as .title
+    var elements = document.getElementsByTagName("*");
     var y_offset = window.pageYOffset; // equal to document.body.scrollTop ?
 
-    for ( var i=0; i<divs.length; i++ )
-        {
-        if ( divs[i].classList.contains("version") &&
-             divs[i].style.display == "block" )
-            {
-            var rect = divs[i].getBoundingClientRect();
+    var current_title = null;
 
-            if ( divs[i].offsetTop >= y_offset )
+    for ( var i=0; i<elements.length; i++ )
+        {
+        var elem = elements[i];
+
+        if ( elem.tagName == "H3" )
+            {
+            current_title = elem.innerHTML;
+            }
+
+        if ( elem.tagName == "DIV" && 
+             elem.classList.contains("version") &&
+             elem.style.display == "block" )
+            {
+            var rect = elem.getBoundingClientRect();
+
+            if ( elem.offsetTop >= y_offset )
                 {
-                return divs[i];
+                elem.title = current_title;
+
+                if ( !elem.hasOwnProperty("raw") )
+                    {
+                    // store default lines for easy restoring
+                    elem.raw = elem.innerHTML;
+                    }
+
+                return elem;
                 }
             }
         }
@@ -396,6 +434,236 @@ function transpose_topmost_song(up)
     }
 //}}}
 
+//{{{ function: get_scale
+function get_scale(key)
+    {
+    var scale = [ key ];
+    var intervals = [ 2, 2, 1, 2, 2, 2, 1 ];
+    var notes = get_notes(key, key.includes("#"));
+    var index = notes.indexOf(key);
+
+    for ( var i=0; i<intervals.length; i++ )
+        {
+        index += intervals[i];
+        scale.push(notes[index]);
+        }
+
+    // alert(key + " scale: " + scale.join(","))
+
+    return scale;
+    }
+//}}}
+//{{{ function: nashville_chord
+function nashville_chord(chord_div, key)
+    {
+    var root = get_root(chord_div.innerHTML);
+    var scale = get_scale(key);
+    var degree = scale.indexOf(root) + 1;
+    if ( !degree )
+        {
+        // alert("No " + root + " in " + key);
+        }
+    var numeral = decimal_to_numeral(degree);
+    // alert("key " + key + " : " + root + " = " + degree + " = " + numeral);
+    chord_div.innerHTML = chord_div.innerHTML.replace(RegExp("^" + root), numeral);
+    }
+//}}}
+//{{{ function: nashville_system
+function nashville_system()
+    {
+    var song_div = topmost_song();
+
+    if ( song_div.hasOwnProperty("nashville") )
+        {
+        song_div.innerHTML = song_div.raw;
+        delete song_div.nashville;
+        return;
+        }
+
+    song_div.nashville = true;
+
+    var divs = get_divs_of_song(song_div.id, ["chord", "key"]);
+    var key = null;
+
+    for ( var i=0; i<divs.length; i++ )
+        {
+        var div = divs[i];
+        if ( div.classList.contains("key") )
+            {
+            key = div.innerHTML.trim();
+            // alert("Key change: " + key);
+            // alert(get_scale(key));
+            }
+        else
+            {
+            if ( !key ) { key = get_root(div.innerHTML.trim()); }
+            nashville_chord(div, key);
+            }
+        }
+    }
+//}}}
+
+//{{{ function: get_artist_album_song
+function get_artist_album_song()
+    {
+    // get topmost song title:
+    var song_div = topmost_song();
+    var song_title = song_div.title
+
+    // get artist and album name from page title:
+    var all_divs = document.getElementsByTagName("title");
+    var page_title = all_divs[0].innerHTML;
+    var splits = page_title.split(":");
+    var artist = splits[1].trim();
+    var album = splits[2].trim();
+
+    return [ artist, album, song_title ];
+    }
+//}}}
+//{{{ function: play_current_song
+function play_current_song(bootlegs=false)
+    {
+    var y_offset = window.pageYOffset;
+    var artist_album_song = get_artist_album_song();
+
+    var artist = artist_album_song[0];
+    var album = artist_album_song[1];
+    var song = artist_album_song[2];
+
+    if ( y_offset == 0 )
+        {
+        // top of page => album
+        var artist = artist.replace(" ", "%20");
+        var album = album.replace(" ", "%20");
+        var song = null;
+        }
+    else
+        {
+        if ( artist == "Misc" )
+            {
+            var artist = "";
+            if ( song.includes("(") )
+                { song = song.replace(/\([^)]+\)$/, ""); }
+            }
+
+        var artist = artist.replace(" ", "%20");
+        var album = album.replace(" ", "%20");
+        var song = song.replace(" ", "%20");
+
+        var album = null; /// CURRENTLY UNSUPPORTED BY LAUDABLE
+        }
+
+    var url = "http://127.0.0.1:5000/laudable"
+            
+    if ( artist && album && song ) 
+        { url += "?artist=" + artist + "&album=" + album + "&song=" + song }
+    else if ( artist && song )
+        { url += "?artist=" + artist + "&song=" + song }
+    else if ( artist && album )
+        { url += "?artist=" + artist + "&album=" + album }
+    else if ( song )
+        { url += "?song=" + song }
+
+    if ( bootlegs )
+        { url += "&bootlegs=true" }
+
+    fetch(url);
+    }
+//}}}
+
+//{{{ function: navigate_up
+function navigate_up()
+    {
+    // top of screen -> artist page -> index
+
+    var url = window.location.pathname;
+    var filename = url.substring(url.lastIndexOf('/')+1);
+    var subs = filename.split("#")[0].split("_");
+    var not_artists = [ "folk_index.html" ];
+    var back = "index.html";
+
+    if ( document.body.scrollTop > 0 )
+        {
+        window.scrollTo(0,0);
+        return;
+        }
+
+    if ( subs.length > 1 && !not_artists.includes(filename) )
+        {
+        back = subs[0] + ".html";
+        }
+
+    window.location.href = back;
+    return;
+    }
+//}}}
+
+//{{{ function: lyrics_only
+function lyrics_only() {
+    var div = topmost_song();
+
+    if ( div.hasOwnProperty("lyrics_only") )
+        {
+        div.innerHTML = div.raw;
+        delete div.lyrics_only;
+        return;
+        }
+
+    div.lyrics_only = true;
+
+    var lines = div.innerHTML.split(/\r?\n|\r|\n/g);
+    var newlines = [];
+
+    ignore_divs = [ "chord", "capo", "tabline", "fingering", "tuning", "comment" ]
+
+    for ( var i=0; i<lines.length; i++ )
+        {
+        var line = lines[i];
+        var keep = true;
+    
+        for ( var j=0; j<ignore_divs.length && keep; j++ )
+            {
+            if ( line.includes("<div class=\"" + ignore_divs[j] + "\"") )
+                {
+                // ignore unwanted div lines
+                keep = false;
+                }
+            }
+
+        if ( keep && line.trim() == "" && newlines.length == 0 )
+            {
+            // ignore whitespace at the top
+            keep = false;
+            }
+
+        if ( keep )
+            { 
+            newlines.push(line);
+            }
+        }
+
+    div.innerHTML = newlines.join("\n");
+    }
+//}}}
+//{{{ function: theory_popup
+function theory_popup(harp=false) 
+    {
+    var target = "theory.html";
+
+    if ( !window.location.pathname.includes(target) )
+        {
+        if ( harp ) 
+            { 
+            target = target + "#DiatonicHarmonicaPositions"; 
+            }
+
+        // pass wprops as third argument to force new window; but more annoying than expected
+        var wprops = "location=yes,height=570,width=820,scrollbars=yes,status=yes";
+        window.open(target, "_blank");
+        }
+    }
+//}}}
+
 //{{{ function: assign_shortcuts
 function assign_shortcuts()
     {
@@ -404,18 +672,58 @@ function assign_shortcuts()
     shortcut.add("j",function() { transpose_topmost_song(false) });
     shortcut.add("k",function() { transpose_topmost_song(true)  });
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
+    shortcut.add("n",function() { nashville_system()  });
+    shortcut.add("p",function() { play_current_song()  });
+    shortcut.add("o",function() { play_current_song(true)  });
+    shortcut.add("u",function() { navigate_up()  });
+    shortcut.add("s",function() { toggle_artist_sort() });
+    //shortcut.add("t",function() { theory_popup(true) });
+    shortcut.add("z",function() { lyrics_only() });
 
-    // extract url parameter to set song version
-    var anchor = window.location.href.match(/\?v=(\d+)#(\w+)/);
-    if ( anchor )
+    var ss = get_style_cookie();
+    if ( ss ) { cycle_styles(ss); }
+
+    var version_anchor = window.location.href.match(/\?v=(\d+)#(\w+)/);
+    if ( version_anchor )
         {
-        var version = anchor[1];
-        //var song = anchor[2];
+        var version = version_anchor[1];
+        var anchor = version_anchor[2];
+
+        // jump to anchor
+        location.replace("#" + anchor)
+
+        // set version from url parameter
         var song_id = topmost_song().id
         set_version_of_song(song_id, version);
         set_version_selector(song_id, version);
         }
 
+    }
+//}}}
+
+//{{{ function: toggle_artist_sort
+function toggle_artist_sort()
+    {
+    var div = document.getElementsByClassName('col4')[0];
+    var lines = div.innerHTML.split(/\r?\n|\r|\n/g);
+
+    var sorted_by_name = lines.slice();
+    sorted_by_name.sort();
+
+    var sorted_by_count = lines.slice();
+    sorted_by_count.sort( function(a, b) {
+        var m_a = a.match(/(\d+)\/(\d+)/);
+        var m_b = b.match(/(\d+)\/(\d+)/);
+
+        if ( m_a && m_b ) { return Number(m_b[1]) - Number(m_a[1]); }
+        else if ( m_a ) { return -1; }
+        else if ( m_b ) { return 1; }
+        } );
+
+    if ( lines[0] == sorted_by_count[0] ) { lines = sorted_by_name;  }
+    else                                  { lines = sorted_by_count; }
+
+    div.innerHTML = lines.join("\n");
     }
 //}}}
 
@@ -435,6 +743,18 @@ function handle_horizontal_swipe()
         var song = topmost_song();
         cycle_versions(song.id, false);
         }
+    }
+//}}}
+
+//{{{ function: toggle_settings_menu
+function toggle_settings_menu()
+    {
+    var div = document.getElementsByClassName('settings-menu')[0];
+
+    if ( div.style.display == "block" )
+        { div.style.display = "none"; }
+    else
+        { div.style.display = "block"; }
     }
 //}}}
 
