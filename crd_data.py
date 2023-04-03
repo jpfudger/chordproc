@@ -1051,7 +1051,8 @@ class CRD_song():
                     change_range = range(2,n_tab_lines+2)
                 
             if change_range:
-                if n_tab_lines in [4,5,6]: # bass/banjo/guitar tabs
+                if n_tab_lines in [3,4,5,6]: # dulcimer/bass/banjo/guitar tabs
+                    #if n_tab_lines == 3: print("New dulcimer tab in: " + self.title)
                     for i in change_range:
                         l = formatted[-i]
                         formatted[-i] = '<div class=tabline>%s</div>' % l
