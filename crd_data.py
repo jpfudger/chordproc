@@ -1872,6 +1872,9 @@ class CRD_data():
                     link = "<a href=#%s title=\"%s\">%s</a>" % ( offset, name, t)
                     line = re.sub( r"\b" + t + r"\b", link, line)
 
+            # highlight connections between tunings
+            line = re.sub( r"(=[ =]+=)", r"<div class=highlight>\1</div>", line )
+
             lines.append(line)
 
         return lines
