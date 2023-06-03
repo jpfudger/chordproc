@@ -83,12 +83,12 @@ def html_song_index(allsongs, artist=None):
 
     if artist:
         lines += html_header("Song Index: " + artist.name)
-        lines += ["<body"]
+        lines += ["<body>"]
         title_link = "<a href=%s>%s Song Index</a>" % ( artist.fname, artist.name )
         lines += [ '<h2 title="%s">%s</h2>' % ( artist.index, title_link ) ]
     else:
         lines += html_header("ChordProc: Song Index")
-        lines += ["<body"]
+        lines += ["<body>"]
         title_link = "<a href=index.html>Song Index</a>"
         lines += [ '<h2>%s</h2>' % title_link ]
 
