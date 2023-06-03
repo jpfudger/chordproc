@@ -1,4 +1,4 @@
-{{{ tuning: AAAAAA    [Ostrich] [Unison]
+{{{ tuning: AAAAAA    [Ostrich]
 # Named by Lou Reed after a pre-Velvet song of the same name.
 }}}
 {{{ tuning: GGDGBD    [Open G Low]
@@ -19,7 +19,10 @@ G   000000
 Gm  000000
 }}}
 {{{ tuning: DADF#AD   [Open D]
-D   000000
+D       000000
+F(iii)  333333
+G(v)    555555
+A(vii)  777777
 }}}
 {{{ tuning: DADFAD    [Open Dm]
 Dm  000000
@@ -233,7 +236,7 @@ Am7     x22002
 Bm      xx0424
 
 }}}
-{{{ tuning: CGCFCE    [Open Cadd4] [Nick Drake]
+{{{ tuning: CGCFCE    [Open Cadd4]
 }}}
 {{{ tuning: CGCGBE    [Open Cmaj7]
 }}}
@@ -258,6 +261,45 @@ Bm      xx0424
 }}}
 
 {{{ tuning: GDGBD     [Banjo: Open G]
+# [Banjo: Standard]
+
+C       x2012
+C(iii)  x3333
+Cm      x1011
+C7      x2310
+C7      x5312
+
+D       x4234
+D7      x0210
+D(v)    x5555
+Dm      x0233
+
+E       x2102
+Em      x2002
+E7      x2100
+
+F       x3213
+Fm      x3113
+F7      x1213
+
+G       x0000
+G(iii)  x5435
+Gm      x4334
+G7      x3000
+G7      x0003
+
+A       x2222
+A7      x2225
+Am      x2212
+
+B       x1404
+B(iv)   x4444
+Bm      x4434
+B7      x4244
+B7      x1204
+
+}}}
+{{{ tuning: ADGBD     [Banjo: Open G/a]
 # [Banjo: Standard]
 
 C       x2012
@@ -462,10 +504,20 @@ Bm      4022
 Bm7     4455
 
 }}}
-{{{ tuning: DAD       [Dulcimer: Standard]
 
 # Dulcimer tunings are labelled low-high (like guitar tunings) even though
 # dulcimers are held with the (double course) high melody strings the top.
+
+{{{ tuning: DAA       [Dulcimer: Ionian]
+
+# Used by Joni Mitchel on "Carey".
+# Also used a lot by Jean Ritchie.
+
+}}}
+{{{ tuning: DAD       [Dulcimer: Mixolydian]
+
+# Used by Laura Marling on "All My Rage".
+# Also used a lot by Jean Ritchie.
 
 D5      000
 E5      111
@@ -479,5 +531,22 @@ A       421
 Bm      210
 C#dim   123
 
+}}}
+{{{ tuning: DGD       [Dulcimer: Reverse Ionian]
+}}}
+{{{ tuning: DAC       [Dulcimer: Aeolian]
+}}}
+{{{ tuning: DAG       [Dulcimer: Dorian]
+}}}
+{{{ tuning: AAA       [Dulcimer: Bagpipe]
+}}}
+{{{ tuning: CDD       [Dulcimer: Open C2]
+}}}
+{{{ tuning: FAA       [Dulcimer: Unknown]
+
+# Used by Joni Mitchel on "All I Want".
+
+}}}
+{{{ tuning: FCA       [Dulcimer: Open]
 }}}
 
