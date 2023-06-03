@@ -406,7 +406,12 @@ class CRD_album():
         return new_song
     def html(self):
         title = self.artist.name + ' : ' + self.title
-        title_link = '<a href=%s>%s</a> : %s' % (self.artist.fname, self.artist.name, self.title)
+
+        year_sub = ""
+        if self.date and self.date.year:
+            year_sub = " <div class=count>%d</div>" % self.date.year
+
+        title_link = '<a href=%s>%s</a> : %s%s' % (self.artist.fname, self.artist.name, self.title, year_sub)
         lines  = [ '<html>' ]
         lines += html_header(title, chords=True)
         lines += [ '<body>', '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
