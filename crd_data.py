@@ -1839,20 +1839,20 @@ class CRD_data():
                 album_path = self.opts["html_root"] + album.fname
                 with open(album_path, 'w') as f:
                     for l in album.html():
-                        f.write('\n' + l)
+                        f.write(l + '\n')
             with open(self.opts["html_root"] + artist.fname, 'w') as f:
                 for l in artist.html():
-                    f.write('\n' + l)
+                    f.write(l + '\n')
 
             if DO_WORDLISTS and artist.name in DO_WORDLISTS:
                 with open(self.opts["html_root"] + artist.words_fname, 'w') as f:
                     for line in artist.words_html():
-                        f.write('\n' + line)
+                        f.write(line + '\n')
 
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 allsongs = artist.all_songs()
                 for l in html_song_index(allsongs, artist):
-                    f.write('\n' + l)
+                    f.write(l + '\n')
 
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
     def make_tuning_map(self):
