@@ -28,11 +28,11 @@ IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
 def html_header(title, chords=False, index_page=False, folk=False):
     lines = [
     '<head>',
-    '<title>%s</title>' % title,
-    '<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
-    '<link rel="stylesheet" type="text/css" href="style1.css" id="style">',
-    '<script src="script.js"></script>',
-    #'<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
+    '    <title>%s</title>' % title,
+    '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
+    '    <link rel="stylesheet" type="text/css" href="style1.css" id="style">',
+    '    <script src="script.js"></script>',
+    #'    <a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
     ]
     # if chords:
     #     lines += [
@@ -40,7 +40,7 @@ def html_header(title, chords=False, index_page=False, folk=False):
     #     '<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>',
     #     #'<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>',
     #     ]
-    lines += [ '<head>' ]
+    lines += [ '</head>' ]
 
     lines += html_context_menu(index=index_page, chords=chords, folk=folk)
 
@@ -50,14 +50,15 @@ def html_context_menu(index=False, chords=False, folk=False):
     lines = []
 
     lines.append("<div class=settings>")
-    lines.append("  <img class=settings-icon onclick=\"toggle_settings_menu();\" src=gear.png>")
+    lines.append("  <img class=settings-icon src=menu.png>")
+    #lines.append("  <img class=settings-icon onclick=\"toggle_settings_menu();\" src=menu.png>")
     #lines.append("  <div id=t_r></div></a>")
     lines.append("  <div class=settings-menu>")
 
     if chords:
         lines.append("    <a onclick=\"transpose_topmost_song(true);\">Transpose up (k)</a>")
         lines.append("    <a onclick=\"transpose_topmost_song(false);\">Transpose down (j)</a>")
-        lines.append("    <a onclick=\"cycle_topmost_song(true);\">Cycle song versions (h/l)</a>")
+        lines.append("    <a onclick=\"cycle_topmost_song(true);\">Cycle song versions (v)</a>")
         #lines.append("    <a onclick=\"theory_popup();\">Theory popup (t)</a>")
         #lines.append("    <a onclick=\"nashville_system();\">Toggle Nashville chords (n)</a>")
         lines.append("    <a onclick=\"lyrics_only();\">Toggle lyrics only (z)</a>")
@@ -68,9 +69,9 @@ def html_context_menu(index=False, chords=False, folk=False):
     if folk:
         lines.append("    <a onclick=\"toggle_sort();\">Toggle index sort (s) </a>")
 
-    #lines.append("    <a onclick=\"toggle_column_mode();\">Toggle column mode</a>")
-    #lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
-    lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
+    lines.append("    <a onclick=\"toggle_multicolumn();\">Toggle multicolumn</a>")
+    lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
+    #lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
 
     lines.append("  </div>")
     lines.append("</div>")
@@ -78,15 +79,18 @@ def html_context_menu(index=False, chords=False, folk=False):
     return lines
 
 def html_song_index(allsongs, artist=None):
-    lines  = [ '<html>', '<body>' ]
-
-    title_text = "Chordproc: " + (artist.name if artist else "Song Index")
-    lines += html_header(title_text)
+    lines  = [ '<html>' ]
 
     if artist:
-        lines += [ '<h2 title="%s">%s Song Index</h2>' % (artist.index, artist.name) ]
+        lines += html_header("Song Index: " + artist.name)
+        lines += ["<body"]
+        title_link = "<a href=%s>%s Song Index</a>" % ( artist.fname, artist.name )
+        lines += [ '<h2 title="%s">%s</h2>' % ( artist.index, title_link ) ]
     else:
-        lines += [ '<h2>ChordProc Song Index</h2>' ]
+        lines += html_header("ChordProc: Song Index")
+        lines += ["<body"]
+        title_link = "<a href=index.html>Song Index</a>"
+        lines += [ '<h2>%s</h2>' % title_link ]
 
     lines += [ '<hr>' ]
 
@@ -162,9 +166,9 @@ class CRD_artist():
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
     def html(self,add_artist=False):
-        lines  = [ '<html>', '<body>' ]
-        lines += html_header("Chordproc: %s" % self.name)
-        lines += [ '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
+        lines  = [ '<html>' ]
+        lines += html_header(self.name)
+        lines += [ '<body>', '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
         c_origs, c_covers = self.song_counts()
         if c_covers:
@@ -385,9 +389,9 @@ class CRD_album():
     def html(self):
         title = self.artist.name + ' : ' + self.title
         title_link = '<a href=%s>%s</a> : %s' % (self.artist.fname, self.artist.name, self.title)
-        lines  = [ '<html>', '<body>' ]
-        lines += html_header("Chordproc: " + title, chords=True)
-        lines += [ '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
+        lines  = [ '<html>' ]
+        lines += html_header(title, chords=True)
+        lines += [ '<body>', '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
         #lines += [ self.get_playlist_link() ]
         lines += [ '<hr>', '<ol>' ]
         songs_body = []
@@ -1872,8 +1876,9 @@ class CRD_data():
 
         return lines
     def make_tuning_index(self):
-        lines  = [ '<html>', '<body>' ]
-        lines += html_header("Chordproc: Tuning Index")
+        lines  = [ '<html>' ]
+        lines += html_header("Tuning Index")
+        lines += [ '<body>' ]
         lines += [ '<h2> <a href=index.html>Tuning Index</a> </h2>' ]
         lines += [ '<hr>' ]
         lines += [ '<a href=fingerings.html>All Fingerings</a>' ]
@@ -1984,7 +1989,7 @@ class CRD_data():
 
         if WRITE_FINGERINGS:
             header = [ "<html>" ]
-            header += html_header("ChordProc: Fingerings")
+            header += html_header("Fingerings")
             header += [ "<body>" ]
             footer = [ "</body>", "</html>'" ]
             fingerings_lines = header + fingerings_lines + footer
@@ -2007,10 +2012,11 @@ class CRD_data():
         tunings_summary = self.make_tuning_index()
         folk_summary = self.make_folk_index()
 
-        lines  = [ '<html>', '<body>' ]
-        lines += html_header("ChordProc", index_page=True)
+        lines  = [ '<html>' ]
+        lines += html_header("Chords", index_page=True)
+        lines += [ '<body>' ]
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
-        lines += [ '<h2 title="%s">ChordProc</h2>' % timestamp ]
+        lines += [ '<h2 title="%s">Chords</h2>' % timestamp ]
         lines += [ '<hr>' ]
         lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
         lines += [ '<br> <a href=folk_index.html>Folk Index</a> <div class=count>%s</div>' % folk_summary ]
@@ -2055,7 +2061,7 @@ class CRD_data():
             artist.latex()
     def make_folk_index(self):
         html_lines = [ "<html>" ]
-        html_lines += html_header("ChordProc: Folk Index", folk=True)
+        html_lines += html_header("Folk Index", folk=True)
         html_lines += [ "<body>" ]
         html_lines += [ "<h2> <a href=index.html>Folk Song Index</a> </h2>" ]
         html_lines += [ "<table>" ]
@@ -2068,6 +2074,18 @@ class CRD_data():
         for song in self.all_songs():
             if song.cover and song.cover.startswith("Trad"):
                     trad_songs.append(song)
+            
+            if False and song.cover:
+                # check for inconsistent covers
+                covers = [ str(song.cover) ]
+
+                for version in song.versions:
+                    covers.append(str(version.cover))
+
+                covers = list(set(covers))
+
+                if len(covers) > 1:
+                    print("Inconsistent covers: ", covers)
 
         trad_songs.sort(key=lambda s: s.title_sort)
 
