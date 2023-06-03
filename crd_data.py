@@ -751,6 +751,9 @@ class CRD_song():
             # we need to increment the version index so the links work properly.
             version.version_index += 1
         return version
+    def get_all_versions(self):
+        all_versions = [self] + self.versions
+        return all_versions
     def get_fingering(self,crd_string,as_title=False):
         crd_string = crd_string.strip()
         fingering = ''
@@ -2203,28 +2206,29 @@ class CRD_data():
 
         #artist = self.get_artist(covered_artist)
         for song in all_songs:
-            for link in song.comment_links:
-                matching_songs = [ s for s in all_songs if s.title.lower() == link["song"].lower() ]
+            for version in song.get_all_versions():
+                for link in version.comment_links:
+                    matching_songs = [ s for s in all_songs if s.title.lower() == link["song"].lower() ]
 
-                # If these ambiguity warnings get triggered, we can narrow down the search
-                # using the artist|album|song information.
+                    # If these ambiguity warnings get triggered, we can narrow down the search
+                    # using the artist|album|song information.
 
-                if len(matching_songs) == 0:
-                    print("No song matching comment_link: " + link["song"])
-                elif len(matching_songs) > 1:
-                    new_matching = []
-                    if "artist" in link:
-                        for ms in matching_songs:
-                            if ms.artist.name == link["artist"]:
-                                new_matching.append(ms)
-                    matching_songs = new_matching
+                    if len(matching_songs) == 0:
+                        print("No song matching comment_link: " + link["song"])
+                    elif len(matching_songs) > 1:
+                        new_matching = []
+                        if "artist" in link:
+                            for ms in matching_songs:
+                                if ms.artist.name == link["artist"]:
+                                    new_matching.append(ms)
+                        matching_songs = new_matching
 
-                    if len(matching_songs):
-                        print("Ambiguous song comment_link: " + link["song"])
+                        if len(matching_songs):
+                            print("Ambiguous song comment_link: " + link["song"])
 
 
-                for ms in matching_songs:
-                    url = ms.album.fname + "#" + ms.link
-                    s_link = "<a href=%s class=cover>%s</a>" % (url, link["song"])
-                    link["link"] = s_link
+                    for ms in matching_songs:
+                        url = ms.album.fname + "#" + ms.link
+                        s_link = "<a href=%s class=cover>%s</a>" % (url, link["song"])
+                        link["link"] = s_link
 
