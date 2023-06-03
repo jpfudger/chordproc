@@ -746,6 +746,9 @@ class CRD_song():
         #print(self.fingerings)
         #print(crd_string, "=>", fingering)
         return fingering
+    def markup_comment_chords(self,line):
+        line = re.sub( r"@([A-Za-z0-9+/#]+)" , r"<div class=chord>\1</div>", line )
+        return line
     def is_comment_line(self,line):
         if line.strip().startswith('[') and line.strip().endswith(']'):
             m_ws = re.search('(^\s*)', line)
@@ -754,9 +757,13 @@ class CRD_song():
             line = re.sub( '(https?:\S+)', '<a href="\\1">\\1</a>', line)
 
             if "{" in line:
+                # extract comment links
                 for link in self.comment_links:
                     if link["text"] and link["link"]:
-                        line = re.sub( link["text"], link["link"], line )
+                        line = line.replace( link["text"], link["link"] )
+
+            if "@" in line:
+                line = self.markup_comment_chords(line)
 
             return line, "comment"
 
@@ -823,6 +830,10 @@ class CRD_song():
                         fingering = None
                 else:
                     chord = CRD_chord(word)
+
+            if "@" in line:
+                line = self.markup_comment_chords(line)
+
             #return None, None # This allows chords to be identified in the fingering lines
             return line, "fingering"
 
