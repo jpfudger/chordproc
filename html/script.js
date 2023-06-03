@@ -1,14 +1,84 @@
 // vim: foldmethod=marker
 
-function set_style_cookie(cs) { document.cookie = "Stylesheet=" + cs; }
+//{{{ function: toggle_multicolumn
+function toggle_multicolumn()
+    {
+    // switch between style (1,2) or (3,4)
+    var ss = document.getElementById("style");
+
+    if ( ss.href.endsWith("style1.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style1", "style2"));
+        set_style_cookie("style2.css")
+        }
+    else if ( ss.href.endsWith("style2.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style2", "style1"));
+        set_style_cookie("style1.css")
+        }
+    else if ( ss.href.endsWith("style3.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style3", "style4"));
+        set_style_cookie("style4.css")
+        }
+    else if ( ss.href.endsWith("style4.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style4", "style3"));
+        set_style_cookie("style3.css")
+        }
+
+    }
+//}}}
+//{{{ function: toggle_dark_mode
+function toggle_dark_mode()
+    {
+    // switch between style (1,3) or (2,4)
+    var ss = document.getElementById("style");
+
+    if ( ss.href.endsWith("style1.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style1", "style3"));
+        set_style_cookie("style3.css")
+        }
+    else if ( ss.href.endsWith("style3.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style3", "style1"));
+        set_style_cookie("style1.css")
+        }
+    else if ( ss.href.endsWith("style2.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style2", "style4"));
+        set_style_cookie("style4.css")
+        }
+    else if ( ss.href.endsWith("style4.css") )
+        {
+        ss.setAttribute('href', ss.href.replace("style4", "style2"));
+        set_style_cookie("style2.css")
+        }
+
+    }
+//}}}
+
+//{{{ function: set_style_cookie
+function set_style_cookie(cs) 
+    { 
+    document.cookie = "Stylesheet=" + cs; 
+    }
+///}}}
+//{{{ function: get_style_cookie
 function get_style_cookie(cs) 
     {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; Stylesheet=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
     }
-function del_style_cookie(cs) { document.cookie = "Stylesheet="; }
-
+//}}}
+//{{{ function: del_style_cookie
+function del_style_cookie(cs)
+    { 
+    document.cookie = "Stylesheet=";
+    }
+//}}}
 //{{{ function: cycle_styles
 function cycle_styles(prefer=null) {
     var ss = document.getElementById("style");
@@ -249,6 +319,10 @@ function show_all_versions()
     var versions = [];
     var divs = document.getElementsByTagName("div");
 
+    // This function just makes all the version divs visible.
+    // It doesn't add a title or a divider, so it can be hard
+    // to tell them apart.
+
     for ( var i=0; i<divs.length; i++ )
         {
         if ( divs[i].classList.contains("version") )
@@ -308,6 +382,16 @@ function set_version_selector(song_id, index)
     {
     var selector = document.getElementById(song_id + ".select");
     selector.value = index;
+    }
+//}}}
+
+//{{{ function: goto_dylan
+function goto_dylan()
+    {
+    var url = window.location.pathname;
+    url = url.replace(RegExp("\\w+\\.html.*"), "bobdylan.html");
+    window.location.href = url;
+    return;
     }
 //}}}
 
@@ -668,17 +752,20 @@ function theory_popup(harp=false)
 function assign_shortcuts()
     {
     shortcut.add("a",function() { show_all_versions() });
+    shortcut.add("d",function() { goto_dylan() });
     shortcut.add("h",function() { cycle_versions(topmost_song().id, false) });
     shortcut.add("j",function() { transpose_topmost_song(false) });
     shortcut.add("k",function() { transpose_topmost_song(true)  });
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
+    shortcut.add("v",function() { cycle_versions(topmost_song().id, true) });
     shortcut.add("n",function() { nashville_system()  });
     shortcut.add("p",function() { play_current_song()  });
     shortcut.add("o",function() { play_current_song(true)  });
     shortcut.add("u",function() { navigate_up()  });
-    shortcut.add("s",function() { toggle_artist_sort() });
+    shortcut.add("s",function() { toggle_sort() });
     //shortcut.add("t",function() { theory_popup(true) });
     shortcut.add("z",function() { lyrics_only() });
+    shortcut.add("f",function() { redirect_to_search() });
 
     var ss = get_style_cookie();
     if ( ss ) { cycle_styles(ss); }
@@ -696,6 +783,11 @@ function assign_shortcuts()
         var song_id = topmost_song().id
         set_version_of_song(song_id, version);
         set_version_selector(song_id, version);
+        }
+
+    if ( window.location.pathname.includes("search.html") )
+        {
+        search();
         }
 
     }
@@ -724,6 +816,56 @@ function toggle_artist_sort()
     else                                  { lines = sorted_by_count; }
 
     div.innerHTML = lines.join("\n");
+    }
+//}}}
+//{{{ function: toggle_folk_sort
+function toggle_folk_sort()
+    {
+    var div = document.getElementsByTagName('tbody')[0];
+    var lines = div.innerHTML.split("</tr>");
+
+    if ( !div.hasOwnProperty("raw") )
+        { div.raw = lines }
+
+    var child = lines.slice();
+    var roud = lines.slice();
+
+    child.sort( function(a, b) {
+        var m_a = a.match(/Child (\d+)/);
+        var m_b = b.match(/Child (\d+)/);
+
+        if ( m_a && m_b ) { return Number(m_a[1]) - Number(m_b[1]); }
+        else if ( m_a ) { return -1; }
+        else if ( m_b ) { return 1; }
+        } );
+
+    roud.sort( function(a, b) {
+        var m_a = a.match(/Roud (\d+)/);
+        var m_b = b.match(/Roud (\d+)/);
+
+        if ( m_a && m_b ) { return Number(m_a[1]) - Number(m_b[1]); }
+        else if ( m_a ) { return -1; }
+        else if ( m_b ) { return 1; }
+        } );
+
+    if      ( lines[0] == child[0] ) { lines = roud;  }
+    else if ( lines[0] == roud[0]  ) { lines = div.raw; }
+    else                             { lines = child; }
+
+    div.innerHTML = lines.join("</tr>");
+
+    }
+//}}}
+//{{{ function: toggle_sort
+function toggle_sort()
+    {
+
+    if ( document.getElementsByClassName('col4').length > 0 ) 
+        { toggle_artist_sort(); return; }
+
+    if ( document.getElementsByTagName('tbody').length > 0 ) 
+        { toggle_folk_sort(); return; }
+
     }
 //}}}
 
@@ -757,6 +899,53 @@ function toggle_settings_menu()
         { div.style.display = "block"; }
     }
 //}}}
+//{{{ function: hide_settings_menu
+function hide_settings_menu()
+    {
+    var div = document.getElementsByClassName('settings-menu')[0];
+    if ( div.style.display == "block" )
+        { div.style.display = "none"; }
+    }
+//}}}
+
+//{{{ function: search
+function search(pattern)
+    {
+
+    if ( !pattern )
+        {
+        pattern = prompt("Search pattern");
+        }
+
+    if ( pattern )
+        {
+        var div = document.getElementById("allsongs");
+        var res = document.getElementById("results");
+
+        var lines = div.innerHTML.split(/\r?\n|\r|\n/g);
+        var matches = [];
+
+        for ( var i=0; i<lines.length; i++ )
+            {
+            if ( lines[i].toLowerCase().includes(pattern.toLowerCase()) )
+                {
+                matches.push(lines[i]);
+                }
+            }
+
+        res.innerHTML = matches.join("\n<br>");
+        
+        }
+
+    }
+//}}}
+//{{{ function: redirect_to_search
+function redirect_to_search()
+    {
+    window.location.href = "search.html";
+    }
+//}}}
+
 
 let touchstartX = 0
 let touchendX = 0
@@ -773,4 +962,12 @@ document.addEventListener('touchend', e => {
 document.addEventListener('DOMContentLoaded', reset_version_selectors, false);
 window.onload = assign_shortcuts;
 document.write('<script src="shortcut.js"></script>');
+document.onclick = function(e) {
+    if ( e.target.className == "settings-icon" )
+        { toggle_settings_menu(); }
+    else if ( e.target.parentElement.className == "settings-menu" )
+        { }
+    else
+        { hide_settings_menu(); }
+    }
 

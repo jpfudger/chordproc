@@ -1,23 +1,33 @@
 <html>
-<body>
 <head>
-<title>Chordproc: Chords and Scales</title>
-<link rel="shortcut icon" href="thumb.ico" type="image/x-icon">
-<link rel="stylesheet" type="text/css" href="style1.css" id="style">
-<script src="script.js"></script>
-<a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>
-<a onclick="transpose_topmost_song(true);" title="Transpose Up"><div id=t_l></div></a>
-<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>
-<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>
+    <title>Chordproc: Chords and Scales</title>
+    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="style1.css" id="style">
+    <script src="script.js"></script>
 </head>
+<body>
+<div class=settings>
+  <img class=settings-icon src=menu.png>
+  <div class=settings-menu>
+    <a onclick="transpose_topmost_song(true);">Transpose up (k)</a>
+    <a onclick="transpose_topmost_song(false);">Transpose down (j)</a>
+    <a onclick="cycle_topmost_song(true);">Cycle song versions (h/l)</a>
+    <!-- <a onclick="nashville_system();">Nashville system (n)</a> -->
+    <!-- <a onclick="lyrics_only();">Lyric mode (z)</a> -->
+    <a onclick="cycle_styles();">Cycle styles</a>
+  </div>
+</div>
 <h2><div title=theory>Chords and Scales</div></h2>
 <hr>
 <ol>
 <li><a href=#ChordNames>Chord Names</a>
 <li><a href=#CircleOfFifths>Circle Of Fifths</a>
+<li><a href=#Scales>Scales</a>
+<li><a href=#NonDiatonic>Non-Diatonic Chords</a>
+<br> <br>
+<li><a href=#Fretboards>Fretboard Layouts</a>
 <li><a href=#DiatonicHarmonicaPositions>Diatonic Harmonica Positions</a>
 <li><a href=#TonewheelOrganSettings>Tonewheel Organ Settings</a>
-<li><a href=#Scales>Scales</a>
 </ol>
 <hr> <a name=ChordNames></a>
 <h3>Chord Names</h3>
@@ -153,74 +163,6 @@ The inversions of these chords overlap, so there are only 4 unique augmented cho
 </div>
 
 
-<hr> <a name=DiatonicHarmonicaPositions></a>
-<h3>Diatonic Harmonica Positions</h3>
-<div id=harmonica class="chords col2 version" style="display:block">
-<span>Notes on a <div class=chord>C </div> harp:                                  +----+
-(omitting overblows/overdraws)                       | <div class=chord>Bb</div> |
-                                           +--------------+
-                                           | <div class=chord>Eb</div> | <div class=chord>F#</div> | <div class=chord>B </div> |
-        +-------------------------------------------------+
-        | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> |
-blow &uarr;  +-------------------------------------------------+
-        | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 |
-draw &darr;  +-------------------------------------------------+
-        | <div class=chord>D </div> | <div class=chord>G </div> | <div class=chord>B </div> | <div class=chord>D </div> | <div class=chord>F </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>D </div> | <div class=chord>F </div> | <div class=chord>A </div> |
-        +-------------------------------------------------+
-        | <div class=chord>Db</div> | <div class=chord>F#</div> | <div class=chord>Bb</div> | <div class=chord>Db</div> |    | <div class=chord>Ab</div> |
-        +-------------------+    +----+
-             | <div class=chord>F </div> | <div class=chord>A </div> |
-             +---------+
-                  | <div class=chord>Ab</div> |
-                  +----+
-</span>
-<span>
-+------------------+----------+-----------------+--------+---------------------------------------+
-| <div class=chord>C </div> harp position | Song key | Interval (Mode) | Root   | Song example                          |
-+------------------+----------+-----------------+--------+---------------------------------------+                             
-| 1st (straight)   | <div class=chord>C </div>       | 1 (Ionian)      | 1 blow | Mr Tambourine Man                     |
-| 2nd (cross)      | <div class=chord>G </div>       | 5 (Mixolydian)  | 2 draw | Don't Think Twice, It's All Right     |
-| 3rd (slant)      | <div class=chord>Dm </div>      | 2 (Dorian)      | 1 draw | The River                             |
-| 4th              | <div class=chord>Am </div>      | 6 (Aeolian)     | 6 draw | All Along the Watchower               |
-| 5th              | <div class=chord>Em </div>      | 3 (Phrygian)    | 2 blow | As I Went Out One Morning             |
-| 12th             | <div class=chord>F </div>       | 4 (Lydian)      | 5 draw | Lily, Rosemary and the Jack of Hearts |
-+------------------+----------+-----------------+--------+---------------------------------------+
-</span>
-<span>
-           +------------------------------------+
-           |           Harp Position            |
-+----------+-----+-----+-----+-----+-----+------+
-| Song key | 1st | 2nd | 3rd | 4th | 5th | 12th |
-+----------+-----+-----+-----+-----+-----+------+
-| <div class=chord>C </div>       | <div class=chord>C </div>  | <div class=chord>F </div>  |     |     |     | <div class=chord>G </div>   |
-+----------+-----+-----+-----+-----+-----+------+
-| <div class=chord>Am </div>      |     |     | <div class=chord>G </div>  | <div class=chord>C </div>  | <div class=chord>F </div>  |      |
-+----------+-----+-----+-----+-----+-----+------+
-</span>
-
-</div>
-
-
-<br>
-<hr> <a name=TonewheelOrganSettings></a>
-<h3>Tonewheel Organ Settings</h3>
-<div id=organ class="chords col1 version" style="display:block">
-
-<span>   *           *     *           *                 *
-+-----------------------------------------------------+
-| 16' | 5&frac12;' |  8' |  4' | 2&frac23;' |  2' | 1&frac35;' | 1&frac13;' |  1' |
-+-----------------------------------------------------+
-|  I  |  V  |  I  |  I  |  V  |  I  | III |  V  |  I  |
-+-----------------------------------------------------+
-|  <div class=chord>C </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |  <div class=chord>C </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |  <div class=chord>E </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |
-+-----------------------------------------------------+
-</span>
-
-Classic     <div class=comment>88 8200 000</div>
-Reeds       <div class=comment>87 4246 000</div>
-</div>
-
-
 <br>
 <hr> <a name=Scales></a>
 <h3 id="theory.scales">Scales</h3>
@@ -253,7 +195,7 @@ Reeds       <div class=comment>87 4246 000</div>
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>C </div> |
 +---------------------------------------+
 
-  Do - Re - Mi - Fa - So - La - Ti - Do!
+  Do - Re - Mi - Fa - Sol- La - Ti - Do!
 
 
 
@@ -457,7 +399,7 @@ This is the Aeolian (natural minor) scale with a flattened 7th.
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>F#</div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>C </div> |
 +---------------------------------------+
 
-This is the Ionian (major) scale with raised fourth.
+This is the major scale with raised fourth.
 This forms a tritone above the tonic.
 
 
@@ -525,8 +467,8 @@ This forms a tritone above the tonic.
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
 +---------------------------------------+
 
-This is the Ionian (major) scale with a flattened 7th.
-
+This is the major scale with a flattened 7th.
+This is why the <div class=chord>C7</div> chord is called a dominant 7th.
 
 
     +-------------------------------+
@@ -593,7 +535,7 @@ This is the Ionian (major) scale with a flattened 7th.
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>Ab</div> | <div class=chord>Bb</div> | <div class=chord>C </div> |
 +---------------------------------------+
 
-This scale contains all the same notes as the relative major scale.
+This scale contains all the same notes as the relative major scale (<div class=chord>Eb</div>).
 
 
 
@@ -797,7 +739,7 @@ This is the Aeolian (natural minor) scale with a raised 7th.
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>F </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>C </div> |
 +---------------------------------------+
 
-This is the Ionian (major) scale with a flattened 3rd.
+This is the major scale with a flattened 3rd.
 Or the Aeolian (natural minor) scale with raised 6th and 7th.
 
 
@@ -955,22 +897,22 @@ Or the Aeolian (natural minor) scale with raised 6th and 7th.
 | <div class=chord>C </div> | <div class=chord>D </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>A </div> | <div class=chord>C </div> |
 +-----------------------------+
 
-This is the Ionian (major) scale without the 4th and 7th scale degrees. In <div class=chord>C</div> this means omitting the <div class=chord>F</div> and the <div class=chord>B</div>.
+This is the major scale without the 4th and 7th scale degrees. 
+In <div class=chord>C</div> this means omitting the <div class=chord>F</div> and the <div class=chord>B</div>.
 
 
-
-    +---------------------------------+
-    |       Harmonised Scale          |
-    +-----------+-----------+---------+
-    | Intervals | Notes     | Chord   |
-+---+-----------+-----------+---------+
-| 1 | 1  3  6   | <div class=chord>C </div> <div class=chord>E </div> <div class=chord>A </div>  | <div class=chord>Am/c    </div>|
-| 2 | 2  5  1   | <div class=chord>D </div> <div class=chord>G </div> <div class=chord>C </div>  | <div class=chord>Gsus4/d </div>|
-| 3 | 3  6  2   | <div class=chord>E </div> <div class=chord>A </div> <div class=chord>D </div>  | <div class=chord>Asus4/e </div>|
-| 4 | 5  1  3   | <div class=chord>G </div> <div class=chord>C </div> <div class=chord>E </div>  | <div class=chord>C/g     </div>|
-| 5 | 6  2  5   | <div class=chord>A </div> <div class=chord>D </div> <div class=chord>G </div>  | <div class=chord>Dsus4/a </div>|
-| 1 | 1  3  6   | <div class=chord>C </div> <div class=chord>E </div> <div class=chord>A </div>  | <div class=chord>Am/c    </div>|
-+---+-----------+-----------+---------+
+    +-----------------------------------+
+    |       Harmonised Scale            |
+    +-----------+-----------+-----------+
+    | Intervals | Notes     | Chord     |
++---+-----------+-----------+-----------+
+| 1 | 1  3  6   | <div class=chord>C </div> <div class=chord>E </div> <div class=chord>A </div>  | <div class=chord>Am/c     </div> |
+| 2 | 2  5  1   | <div class=chord>D </div> <div class=chord>G </div> <div class=chord>C </div>  | <div class=chord>Gsus4/d  </div> |
+| 3 | 3  6  2   | <div class=chord>E </div> <div class=chord>A </div> <div class=chord>D </div>  | <div class=chord>Asus4/e  </div> |
+| 4 | 5  1  3   | <div class=chord>G </div> <div class=chord>C </div> <div class=chord>E </div>  | <div class=chord>C/g      </div> |
+| 5 | 6  2  5   | <div class=chord>A </div> <div class=chord>D </div> <div class=chord>G </div>  | <div class=chord>Dsus4/a  </div> |
+| 1 | 1  3  6   | <div class=chord>C </div> <div class=chord>E </div> <div class=chord>A </div>  | <div class=chord>Am/c     </div> |
++---+-----------+-----------+-----------+
 </span>
 
 <span>1   <div class=tabline>|----|-8*-|----|----|----|</div> 
@@ -1025,18 +967,18 @@ This is the Aeolian (natural minor) scale without the 2nd and 6th scale degrees.
 In <div class=chord>C</div> this means omitting the <div class=chord>D</div> and the <div class=chord>A</div>.
 <!--On guitar, standard tuning (E-A-D-G-B-E) forms an Em pentatonic scale.-->
 
-    +----------------------------------+
-    |       Harmonised Scale           |
-    +-----------+-----------+----------+
-    | Intervals | Notes     | Chord    |
-+---+-----------+-----------+----------+
-| 1 | 1  4  b7  | <div class=chord>C </div>  <div class=chord>F </div> <div class=chord>Bb</div> | <div class=chord>Bbsus2/c</div> |
-| 2 | b3 5  1   | <div class=chord>Eb</div>  <div class=chord>G </div> <div class=chord>C </div> | <div class=chord>Cm/eb   </div> |
-| 3 | 4  b7 b3  | <div class=chord>F </div>  <div class=chord>Bb</div> <div class=chord>Eb</div> | <div class=chord>Ebsus2/f</div> |
-| 4 | 5  1  4   | <div class=chord>G </div>  <div class=chord>C </div> <div class=chord>F </div> | <div class=chord>Csus4/g </div> |
-| 5 | b7 b3 5   | <div class=chord>Bb</div>  <div class=chord>Eb</div> <div class=chord>G </div> | <div class=chord>Eb/bb   </div> |
-| 1 | 1  4  b7  | <div class=chord>C </div>  <div class=chord>F </div> <div class=chord>Bb</div> | <div class=chord>Bbsus2/c</div> |
-+---+-----------+-----------+----------+
+    +-----------------------------------+
+    |       Harmonised Scale            |
+    +-----------+-----------+-----------+
+    | Intervals | Notes     | Chord     |
++---+-----------+-----------+-----------+
+| 1 | 1  4  b7  | <div class=chord>C </div>  <div class=chord>F </div> <div class=chord>Bb</div> | <div class=chord>Bbsus2/c </div> |
+| 2 | b3 5  1   | <div class=chord>Eb</div>  <div class=chord>G </div> <div class=chord>C </div> | <div class=chord>Cm/eb    </div> |
+| 3 | 4  b7 b3  | <div class=chord>F </div>  <div class=chord>Bb</div> <div class=chord>Eb</div> | <div class=chord>Ebsus2/f </div> |
+| 4 | 5  1  4   | <div class=chord>G </div>  <div class=chord>C </div> <div class=chord>F </div> | <div class=chord>Csus4/g  </div> |
+| 5 | b7 b3 5   | <div class=chord>Bb</div>  <div class=chord>Eb</div> <div class=chord>G </div> | <div class=chord>Eb/bb    </div> |
+| 1 | 1  4  b7  | <div class=chord>C </div>  <div class=chord>F </div> <div class=chord>Bb</div> | <div class=chord>Bbsus2/c </div> |
++---+-----------+-----------+-----------+
 </span>
 
 <span>1   <div class=tabline>|-8--|----|----|----|----|</div> 
@@ -1091,19 +1033,19 @@ This is a minor pentatonic scale with an added b5.
 
 
 
-    +---------------------------------+
-    |       Harmonised Scale          |
-    +-----------+-----------+---------+
-    | Intervals | Notes     | Chord   |
-+---+-----------+-----------+---------+
-| 1 | 1  4  5   | <div class=chord>C </div> <div class=chord>F </div> <div class=chord>G </div>  | <div class=chord>Fsus2/c </div>|
-| 2 | b3 b5 b7  | <div class=chord>Eb</div> <div class=chord>Gb</div> <div class=chord>Bb</div>  | <div class=chord>Ebm     </div>|
-| 3 | 4  5  1   | <div class=chord>F </div> <div class=chord>G </div> <div class=chord>C </div>  | <div class=chord>Fsus2   </div>|
-| 4 | b5 b7 b3  | <div class=chord>Gb</div> <div class=chord>Bb</div> <div class=chord>Eb</div>  | <div class=chord>Ebm/gb  </div>|
-| 5 | 5  1  4   | <div class=chord>G </div> <div class=chord>C </div> <div class=chord>F </div>  | <div class=chord>Fsus2/g </div>|
-| 6 | b7 b3 b5  | <div class=chord>Bb</div> <div class=chord>Eb</div> <div class=chord>Gb</div>  | <div class=chord>Ebm/bb  </div>|
-| 7 | 1  4  5   | <div class=chord>C </div> <div class=chord>F </div> <div class=chord>G </div>  | <div class=chord>Fsus2/c </div>|
-+---+-----------+-----------+---------+
+    +-----------------------------------+
+    |       Harmonised Scale            |
+    +-----------+-----------+-----------+
+    | Intervals | Notes     | Chord     |
++---+-----------+-----------+-----------+
+| 1 | 1  4  5   | <div class=chord>C </div> <div class=chord>F </div> <div class=chord>G </div>  | <div class=chord>Fsus2/c  </div> |
+| 2 | b3 b5 b7  | <div class=chord>Eb</div> <div class=chord>Gb</div> <div class=chord>Bb</div>  | <div class=chord>Ebm      </div> |
+| 3 | 4  5  1   | <div class=chord>F </div> <div class=chord>G </div> <div class=chord>C </div>  | <div class=chord>Fsus2    </div> |
+| 4 | b5 b7 b3  | <div class=chord>Gb</div> <div class=chord>Bb</div> <div class=chord>Eb</div>  | <div class=chord>Ebm/gb   </div> |
+| 5 | 5  1  4   | <div class=chord>G </div> <div class=chord>C </div> <div class=chord>F </div>  | <div class=chord>Fsus2/g  </div> |
+| 6 | b7 b3 b5  | <div class=chord>Bb</div> <div class=chord>Eb</div> <div class=chord>Gb</div>  | <div class=chord>Ebm/bb   </div> |
+| 7 | 1  4  5   | <div class=chord>C </div> <div class=chord>F </div> <div class=chord>G </div>  | <div class=chord>Fsus2/c  </div> |
++---+-----------+-----------+-----------+
 </span>
 
 <span>1   <div class=tabline>|----|-8--|----|----|----|</div> 
@@ -1143,8 +1085,138 @@ This is a minor pentatonic scale with an added b5.
 </span>
 </div>
 <br>
+
+<hr> <a name=NonDiatonic></a>
+<h3 id="theory.nondiatonic">Non-Diatonic Chords</h3>
+<div id=theory.nondiatonic class="chords col1 version" style=display:block>
+<!-- Are borrowed chords strictly from the parallel major/minor key? -->
+Key: <div class=chord>C</div>
+
+Secondary dominants
++----+--------+
+| <div class=chord>A </div> | V/ii   |
+| <div class=chord>B </div> | V/iii  |
+| <div class=chord>C </div> | V/iv   | = I
+| <div class=chord>D </div> | V/v    |
+| <div class=chord>E </div> | V/vi   |
+| <div class=chord>F#</div> | V/vii  |
++----+--------+
+
+Secondary subdominants
++----+--------+
+| <div class=chord>G </div> | IV/ii  | = V
+| <div class=chord>A </div> | IV/iii |
+| <div class=chord>Bb</div> | IV/iv  |
+| <div class=chord>C </div> | IV/v   | = I
+| <div class=chord>D </div> | IV/vi  |
+| <div class=chord>E </div> | IV/vii |
++----+--------+
+
+</div>
+<br>
+<hr> <a name=Fretboards></a>
+<h3 id="theory.fretboards">Fretboard Layouts</h3>
+<div id=theory.fretboards class="chords col1 version" style=display:block>
+
+Most fretted stringed instruments are chromatic, meaning there are frets at
+each semitone interval. The guitar octave below will work for any of these.
+
+However, the dulcimer is fretted diatonically, meaning that only the diatonic
+scale is available (and maybe the flattened seventh, if there is a 6+ fret).
+
+
+               +----+----+----+----+----+----+----+----+----+----+----+----+
+               | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 | 11 | 12 |
+          +----+----+----+----+----+----+----+----+----+----+----+----+----+
+Guitar    | <div class=chord>C </div> | <div class=chord>Db</div> | <div class=chord>D </div> | <div class=chord>Eb</div> | <div class=chord>E </div> | <div class=chord>F </div> | <div class=chord>Gb</div> | <div class=chord>G </div> | <div class=chord>Ab</div> | <div class=chord>A </div> | <div class=chord>Bb</div> | <div class=chord>B </div> | <div class=chord>C </div> |
+          +----+---------+---------+----+---------+---------+----+---------+
+               |         |         |    |         |         |    |         |
+               |         |         |    |         |         |    |         |
+               +---------+---------+----+---------+---------+----+----+----+
+               |      1  |      2  | 3  |      4  |      5  | 6  | 6+ | 7  |
+          +----+---------+---------+----+---------+---------+----+----+----+
+Dulcimer  | <div class=chord>C </div> |      <div class=chord>D </div> |      <div class=chord>E </div> | <div class=chord>F </div> |      <div class=chord>G </div> |      <div class=chord>A </div> | <div class=chord>Bb</div> | <div class=chord>B </div> | <div class=chord>C </div> |
+          +----+---------+---------+----+---------+---------+----+----+----+
+
+
+
+</div>
+
+<hr> <a name=DiatonicHarmonicaPositions></a>
+<h3>Diatonic Harmonica Positions</h3>
+<div id=harmonica class="chords col2 version" style="display:block">
+<span>Notes on a <div class=chord>C </div> harp:                                  +----+
+(omitting overblows/overdraws)                       | <div class=chord>Bb</div> |
+                                           +--------------+
+                                           | <div class=chord>Eb</div> | <div class=chord>F#</div> | <div class=chord>B </div> |
+        +-------------------------------------------------+
+        | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> | <div class=chord>E </div> | <div class=chord>G </div> | <div class=chord>C </div> |
+blow &uarr;  +-------------------------------------------------+
+        | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 |
+draw &darr;  +-------------------------------------------------+
+        | <div class=chord>D </div> | <div class=chord>G </div> | <div class=chord>B </div> | <div class=chord>D </div> | <div class=chord>F </div> | <div class=chord>A </div> | <div class=chord>B </div> | <div class=chord>D </div> | <div class=chord>F </div> | <div class=chord>A </div> |
+        +-------------------------------------------------+
+        | <div class=chord>Db</div> | <div class=chord>F#</div> | <div class=chord>Bb</div> | <div class=chord>Db</div> |    | <div class=chord>Ab</div> |
+        +-------------------+    +----+
+             | <div class=chord>F </div> | <div class=chord>A </div> |
+             +---------+
+                  | <div class=chord>Ab</div> |
+                  +----+
+</span>
+<span>
++------------------+----------+-----------------+--------+---------------------------------------+
+| <div class=chord>C </div> harp position | Song key | Interval (Mode) | Root   | Song example                          |
++------------------+----------+-----------------+--------+---------------------------------------+                             
+| 1st (straight)   | <div class=chord>C </div>       | 1 (Ionian)      | 1 blow | Mr Tambourine Man                     |
+| 2nd (cross)      | <div class=chord>G </div>       | 5 (Mixolydian)  | 2 draw | Don't Think Twice, It's All Right     |
+| 3rd (slant)      | <div class=chord>Dm </div>      | 2 (Dorian)      | 1 draw | The River                             |
+| 4th              | <div class=chord>Am </div>      | 6 (Aeolian)     | 6 draw | All Along the Watchower               |
+| 5th              | <div class=chord>Em </div>      | 3 (Phrygian)    | 2 blow | As I Went Out One Morning             |
+| 12th             | <div class=chord>F </div>       | 4 (Lydian)      | 5 draw | Lily, Rosemary and the Jack of Hearts |
++------------------+----------+-----------------+--------+---------------------------------------+
+</span>
+<span>
+           +------------------------------------+
+           |           Harp Position            |
++----------+-----+-----+-----+-----+-----+------+
+| Song key | 1st | 2nd | 3rd | 4th | 5th | 12th |
++----------+-----+-----+-----+-----+-----+------+
+| <div class=chord>C </div>       | <div class=chord>C </div>  | <div class=chord>F </div>  |     |     |     | <div class=chord>G </div>   |
++----------+-----+-----+-----+-----+-----+------+
+| <div class=chord>Am </div>      |     |     | <div class=chord>G </div>  | <div class=chord>C </div>  | <div class=chord>F </div>  |      |
++----------+-----+-----+-----+-----+-----+------+
+</span>
+
+</div>
+
+
+<br>
+<hr> <a name=TonewheelOrganSettings></a>
+<h3>Tonewheel Organ Settings</h3>
+<div id=organ class="chords col1 version" style="display:block">
+
+<span>   *           *     *           *                 *
++-----------------------------------------------------+
+| 16' | 5&frac12;' |  8' |  4' | 2&frac23;' |  2' | 1&frac35;' | 1&frac13;' |  1' |
++-----------------------------------------------------+
+|  I  |  V  |  I  |  I  |  V  |  I  | III |  V  |  I  |
++-----------------------------------------------------+
+|  <div class=chord>C </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |  <div class=chord>C </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |  <div class=chord>E </div> |  <div class=chord>G </div> |  <div class=chord>C </div> |
++-----------------------------------------------------+
+</span>
+
+Classic     <div class=comment>88 8200 000</div>
+Reeds       <div class=comment>87 4246 000</div>
+</div>
+
+
+
 <hr>
 
+<br> <br> <br> <br> <br>
+<br> <br> <br> <br> <br>
+<br> <br> <br> <br> <br>
+<br> <br> <br> <br> <br>
 <br> <br> <br> <br> <br>
 <br> <br> <br> <br> <br>
 

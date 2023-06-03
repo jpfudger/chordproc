@@ -19,9 +19,11 @@ select {
     }
 
 @media print { 
-    hr { visibility: hidden; } /* don't print <hr>s... we use page breaks */
+    /* hide some items when printing */
+    hr { visibility: hidden; } /* use page breaks instead of hrs */
     select { visibility: hidden; }
     button { visibility: hidden; }
+    .settings-icon { visibility: hidden; }
     }
 
 span {
@@ -33,12 +35,18 @@ span {
 a:link, a:visited, a:active {
     text-decoration: none;
     color: blue;
+    text-decoration: bold;
     }
 
 /* cover divs and a.cover links should be the same */
 .cover, .cover a:link, .cover a:visited, .cover a:active,
 a.cover:link, a.cover:visited, a.cover:active {
     color: green;
+    }
+
+.highlight {
+    color: red;
+    display: inline;
     }
 
 h2 a:link, h2 a:visited, h2 a:active {
@@ -77,6 +85,13 @@ h3 {
     border-bottom-right-radius: 25px;
     }
 
+#t_l:hover {
+    background: red;
+    opacity: 0.5;
+    }
+
+/*
+
 #b_l {
     bottom: 0;
     left: 0;
@@ -85,6 +100,11 @@ h3 {
     position: fixed;
     opacity: 0;
     border-top-right-radius: 25px;
+    }
+
+#b_l:hover {
+    background: red;
+    opacity: 0.5;
     }
 
 #t_r {
@@ -97,6 +117,11 @@ h3 {
     border-bottom-left-radius: 25px;
     }
 
+#t_r:hover {
+    background: red;
+    opacity: 0.5;
+    }
+
 #b_r {
     bottom: 0;
     right: 0;
@@ -107,25 +132,12 @@ h3 {
     border-top-left-radius: 25px;
     }
 
-#b_l:hover {
-    background: red;
-    opacity: 0.5;
-    }
-
-#t_l:hover {
-    background: red;
-    opacity: 0.5;
-    }
-
 #b_r:hover {
     background: red;
     opacity: 0.5;
     }
 
-#t_r:hover {
-    background: red;
-    opacity: 0.5;
-    }
+*/
 
 .dummy {
     color: lightgrey;
@@ -248,14 +260,16 @@ td, tr {
     position: fixed;
     display: block;
     top: 50px;
-    right: 0;
+    left: 20px;
     }
 
 .settings-icon {
     /* opacity: 0; */
     position: fixed;
-    top: 10px;
-    right: 20px;
+    top: 12px;
+    left: 10px;
+    width: 20px;
+    /* opacity: 0; */
     }
 
 .settings-menu {
@@ -272,7 +286,7 @@ td, tr {
     /* styles links in the menu */
     display: block;
     color: black;
-    padding: 7px 7px;
+    padding: 5px 5px;
     user-select: none;
     }
 
@@ -280,3 +294,6 @@ td, tr {
 /* .settings-icon:hover { opacity: 1; } */
 .settings-menu a:hover { background-color: #ddd; }
 
+#allsongs {
+    display: none;
+    }
