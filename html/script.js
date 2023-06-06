@@ -748,6 +748,18 @@ function theory_popup(harp=false)
     }
 //}}}
 
+//{{{ function: next_or_previous
+function next_or_previous(next)
+    {
+    var element = null;
+    if ( next ) 
+        { element = document.getElementById("next"); }
+    else        
+        { element = document.getElementById("prev"); }
+    window.location.href = element.href;
+    }
+//}}}
+
 //{{{ function: assign_shortcuts
 function assign_shortcuts()
     {
@@ -758,7 +770,7 @@ function assign_shortcuts()
     shortcut.add("k",function() { transpose_topmost_song(true)  });
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
     shortcut.add("v",function() { cycle_versions(topmost_song().id, true) });
-    shortcut.add("n",function() { nashville_system()  });
+    //shortcut.add("n",function() { nashville_system()  });
     shortcut.add("p",function() { play_current_song()  });
     shortcut.add("o",function() { play_current_song(true)  });
     shortcut.add("u",function() { navigate_up()  });
@@ -766,6 +778,8 @@ function assign_shortcuts()
     //shortcut.add("t",function() { theory_popup(true) });
     shortcut.add("z",function() { lyrics_only() });
     shortcut.add("f",function() { redirect_to_search() });
+    shortcut.add(",",function() { next_or_previous(false) }); // <
+    shortcut.add(".",function() { next_or_previous(true) });  // >
 
     var ss = get_style_cookie();
     if ( ss ) { cycle_styles(ss); }
@@ -873,17 +887,23 @@ function toggle_sort()
 function handle_horizontal_swipe() 
     {
     var tolerance = 100;
-    if ( touchstartX - touchendX > tolerance )
+    // alert(["X:", touchstartX, touchendX]);
+    // alert(["Y:", touchstartY, touchendY]);
+
+    var top_of_screen = touchstartY < 200 && touchendY < 200;
+    var swiped_left = touchstartX - touchendX > tolerance;
+    var swiped_right = touchendX - touchstartX > tolerance;
+
+    if ( top_of_screen )
         {
-        // alert('swiped left!')
-        var song = topmost_song();
-        cycle_versions(song.id, true);
+        if ( swiped_left )  { next_or_previous(true); }
+        if ( swiped_right ) { next_or_previous(false);  }
         }
-    if ( touchendX - touchstartX > tolerance ) 
+    else
         {
-        // alert('swiped right!')
         var song = topmost_song();
-        cycle_versions(song.id, false);
+        if ( swiped_left )  { cycle_versions(song.id, true);  }
+        if ( swiped_right ) { cycle_versions(song.id, false); }
         }
     }
 //}}}
@@ -949,13 +969,17 @@ function redirect_to_search()
 
 let touchstartX = 0
 let touchendX = 0
+let touchstartY = 0
+let touchendY = 0
 
 document.addEventListener('touchstart', e => {
     touchstartX = e.changedTouches[0].screenX
+    touchstartY = e.changedTouches[0].screenY
     })
 
 document.addEventListener('touchend', e => {
     touchendX = e.changedTouches[0].screenX
+    touchendY = e.changedTouches[0].screenY
     handle_horizontal_swipe()
     })
 

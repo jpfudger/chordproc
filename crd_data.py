@@ -146,7 +146,6 @@ def song_search_page(allsongs):
     lines += [ '</body>', '</html>' ]
     return lines
 
-
 class CRD_artist():
     def __init__(self,name,index=0,data=None):
         self.name = name.strip()
@@ -156,6 +155,7 @@ class CRD_artist():
         self.index = index
         self.player = None
         self.stock_tunings = None
+        self.data = data
         if data:
             self.player = data.player
             self.stock_tunings = data.stock_tunings
@@ -183,11 +183,35 @@ class CRD_artist():
                 allsongs.append(song)
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
+    def next_and_previous_links(self):
+        n = None
+        p = None
+
+        index = self.data.artists.index(self)
+
+        if index < len(self.data.artists)-1:
+            n = self.data.artists[index+1]
+            n = '<a href=%s id=next title="%s" style="display:none;">&gt;</a>' % (n.fname,n.name)
+        if index > 0:
+            p = self.data.artists[index-1]
+            p = '<a href=%s id=prev title="%s" style="display:none;">&lt;</a>' % (p.fname,p.name)
+
+        if n and p:
+            return [n,p]
+        elif n:
+            return [n]
+        elif p:
+            return [p]
+        
+        return []
     def html(self,add_artist=False):
         lines  = [ '<html>' ]
         lines += html_header(self.name)
         lines += [ '<body>', '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
+
+        lines += self.next_and_previous_links()
+
         c_origs, c_covers = self.song_counts()
         if c_covers:
             count_string = "(%d) (%d originals)" % (c_origs + c_covers, c_origs)
@@ -404,6 +428,27 @@ class CRD_album():
         self.songs.append(new_song)
         new_song.album = self
         return new_song
+    def next_and_previous_links(self):
+        n = None
+        p = None
+
+        index = self.artist.albums.index(self)
+
+        if index < len(self.artist.albums)-1:
+            n = self.artist.albums[index+1]
+            n = '<a href=%s id=next title="%s" style="display:none;">&gt;</a>' % (n.fname,n.title)
+        if index > 0:
+            p = self.artist.albums[index-1]
+            p = '<a href=%s id=prev title="%s" style="display:none;">&lt;</a>' % (p.fname,p.title)
+
+        if n and p:
+            return [n,p]
+        elif n:
+            return [n]
+        elif p:
+            return [p]
+        
+        return []
     def html(self):
         title = self.artist.name + ' : ' + self.title
 
@@ -416,6 +461,9 @@ class CRD_album():
         lines += html_header(title, chords=True)
         lines += [ '<body>', '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
         #lines += [ self.get_playlist_link() ]
+
+        lines += self.next_and_previous_links()
+
         lines += [ '<hr>', '<ol>' ]
         songs_body = []
         for song in self.songs:
