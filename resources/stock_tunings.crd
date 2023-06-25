@@ -412,6 +412,13 @@ G       x2020
 G7      x2023
 
 }}}
+{{{ tuning: GCGCEb    [Banjo: Open Cm]
+
+# [Banjo: Double Cm] (minor variant of Double C)
+
+Cm x0000
+
+}}}
 {{{ tuning: GCGCE     [Banjo: Open C]
 
 C   x0000
