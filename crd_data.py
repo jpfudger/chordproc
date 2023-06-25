@@ -1388,10 +1388,14 @@ class CRD_song():
                     versions.append( '<option value=%d>%s</option>' % (i+1, version.title))
                 versions.append('</select>')
 
+            year = ""
+            if self.date and self.album and "Misc" in self.album.title:
+                year = " <div class=count>%d</div>" % self.date.year
+
             style = ' style="display:block"'
             lines += [ '<hr> <a name=%s></a>' % self.link ] 
             name = (' (%s)' % self.artist.name) if add_artist else ''
-            lines += [ '<h3 id=%s>%s</h3>' % (self.index, self.title + name) ]
+            lines += [ '<h3 id=%s>%s%s</h3>' % (self.index, self.title + name, year) ]
 
             # Buttons for versions and transposing:
 
