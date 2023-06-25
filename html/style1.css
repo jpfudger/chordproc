@@ -202,6 +202,10 @@ h3 {
     font-weight: bold;
     }
 
+.alt { /* used for overblows/overdraws */
+    color: green;
+    }
+
 .key {
     display: none;
     }
@@ -237,6 +241,7 @@ h3 {
     font-family: monospace;
     min-width: 75;
     font-weight: normal;
+    font-size: small;
     }
 
 img.cover {

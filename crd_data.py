@@ -71,6 +71,7 @@ def html_context_menu(index=False, chords=False, folk=False):
 
     lines.append("    <a onclick=\"toggle_multicolumn();\">Toggle multicolumn</a>")
     lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
+    lines.append("    <a onclick=\"prompt_for_search();\">Find song (f)</a>")
     #lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
 
     lines.append("  </div>")
@@ -126,23 +127,6 @@ def html_song_index(allsongs, artist=None):
         lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, album ) )
     
     lines += [ '</div>', '<br>' ]
-    lines += [ '</body>', '</html>' ]
-    return lines
-
-def song_search_page(allsongs):
-    lines  = [ '<html>' ]
-    lines += html_header("Song Search")
-    lines += [ '<body>', '<hr>' ]
-    lines += [ '<div id="allsongs">' ]
-
-    for song in allsongs:
-        s_link = song.album.fname + '#' + song.link
-        s_class = ' class=cover' if song.cover else ''
-        album = song.album.artist.name + ", " + song.album.title
-        lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, album ) )
-    
-    lines += [ '</div>' ]
-    lines += [ '<div id=results></div>' ]
     lines += [ '</body>', '</html>' ]
     return lines
 
@@ -2097,9 +2081,7 @@ class CRD_data():
             with open(self.opts["html_root"] + 'songs.html', 'w') as f:
                 for l in html_song_index(allsongs):
                     f.write('\n' + l)
-            with open(self.opts["html_root"] + 'search.html', 'w') as f:
-                for l in song_search_page(allsongs):
-                    f.write('\n' + l)
+
         artists_summary, artists_links, misc_links = self.make_artists_index()
         tunings_summary = self.make_tuning_index()
         folk_summary = self.make_folk_index()

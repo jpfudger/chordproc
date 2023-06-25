@@ -777,7 +777,7 @@ function assign_shortcuts()
     shortcut.add("s",function() { toggle_sort() });
     //shortcut.add("t",function() { theory_popup(true) });
     shortcut.add("z",function() { lyrics_only() });
-    shortcut.add("f",function() { redirect_to_search() });
+    shortcut.add("f",function() { prompt_for_search() });
     shortcut.add(",",function() { next_or_previous(false) }); // <
     shortcut.add(".",function() { next_or_previous(true) });  // >
 
@@ -799,9 +799,9 @@ function assign_shortcuts()
         set_version_selector(song_id, version);
         }
 
-    if ( window.location.pathname.includes("search.html") )
+    if ( window.location.pathname.includes("songs.html") )
         {
-        search();
+        do_search();
         }
 
     }
@@ -928,21 +928,24 @@ function hide_settings_menu()
     }
 //}}}
 
-//{{{ function: search
-function search(pattern)
+//{{{ function: prompt_for_search
+function prompt_for_search()
     {
-
-    if ( !pattern )
-        {
-        pattern = prompt("Search pattern");
-        }
-
+    var pattern = prompt("Enter search pattern (searches artist, song and album names):");
+    window.location.href = "songs.html?search=" + pattern.replace(" ", "+");
+    }
+//}}}
+//{{{ function: do_search
+function do_search()
+    {
+    var pattern = window.location.href.match(/\?search=([A-Za-z0-9+]+)/);
     if ( pattern )
         {
-        var div = document.getElementById("allsongs");
-        var res = document.getElementById("results");
+        pattern = pattern[1]
+        pattern = pattern.replace("+", " ");
+        pattern = pattern.trim()
 
-        var lines = div.innerHTML.split(/\r?\n|\r|\n/g);
+        var lines = document.body.innerHTML.split(/\r?\n|\r|\n/g);
         var matches = [];
 
         for ( var i=0; i<lines.length; i++ )
@@ -953,19 +956,32 @@ function search(pattern)
                 }
             }
 
-        res.innerHTML = matches.join("\n<br>");
-        
+        if ( matches.length == 0 )
+            {
+            prompt_for_search();
+            }
+        else if ( matches.length == 1 )
+            {
+            // jump to single match
+            var url = matches[0].match( RegExp( "(\\w+\\.html#\\w+)" ) )
+            window.location.href = url[0];
+            }
+        else
+            {
+            // replace body with matches
+
+            var header = "<h2>";
+            header += "<a href=index.html>Song Search Results</a> "
+            header += "<a href=songs.html>(Clear)</a>";
+            header += "</h2><hr>";
+
+            matches.unshift(header);
+
+            document.body.innerHTML = matches.join("\n<br>");
+            }
         }
-
     }
 //}}}
-//{{{ function: redirect_to_search
-function redirect_to_search()
-    {
-    window.location.href = "search.html";
-    }
-//}}}
-
 
 let touchstartX = 0
 let touchendX = 0
