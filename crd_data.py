@@ -1389,7 +1389,7 @@ class CRD_song():
                 versions.append('</select>')
 
             year = ""
-            if self.date and self.album and "Misc" in self.album.title:
+            if self.date and not self.album.date:
                 year = " <div class=count>%d</div>" % self.date.year
 
             style = ' style="display:block"'
