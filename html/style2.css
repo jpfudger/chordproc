@@ -18,14 +18,6 @@ select {
     float: right;
     }
 
-@media print { 
-    /* hide some items when printing */
-    hr { visibility: hidden; } /* use page breaks instead of hrs */
-    select { visibility: hidden; }
-    button { visibility: hidden; }
-    .settings-icon { visibility: hidden; }
-    }
-
 span {
     overflow: hidden;
     break-inside: avoid-column;
@@ -161,6 +153,15 @@ h3 {
     white-space: pre;
     font-family: monospace;
     padding-left: 50px;
+    }
+
+@media print { 
+    /* hide some items when printing: this section needs to be after the original definitions */
+    hr { visibility: hidden; } /* use page breaks instead of hrs */
+    select { visibility: hidden; }
+    button { visibility: hidden; }
+    .chords { padding-left: 0px; }
+    .settings-icon { visibility: hidden; }
     }
 
 .tuning_map {
