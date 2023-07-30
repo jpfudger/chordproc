@@ -945,12 +945,14 @@ function prompt_for_search()
 //{{{ function: do_search
 function do_search()
     {
-    var pattern = window.location.href.match(/\?search=([A-Za-z0-9+]+)/);
+    var pattern = window.location.href.match(/\?search=(.*)/);
     var random  = window.location.href.match(/\?random=1/);
     if ( pattern )
         {
-        pattern = pattern[1]
-        pattern = pattern.replace(/\+/g, " ");
+        pattern = pattern[1];
+        pattern = pattern.replace(/\+/g, " ");   // +   -> space
+        pattern = pattern.replace(/\%22/g, '"'); // %22 -> "
+        pattern = pattern.replace(/\%27/g, "'"); // %27 -> '
         pattern = pattern.trim()
 
         var results = document.getElementById("results");
@@ -979,9 +981,7 @@ function do_search()
             {
             // update title and body
             var h2 = document.getElementsByTagName('h2')[0];
-            var new_title = "<a href=index.html>Song Search Results</a> "
-            var clear_link = "<a href=songs.html>(Clear)</a>";
-            h2.innerHTML = new_title + clear_link;
+            h2.innerHTML = "<a href=songs.html>Song Search Results</a>";
 
             if ( matches.length > 50 )
                 {
