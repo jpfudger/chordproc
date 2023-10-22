@@ -2009,37 +2009,41 @@ class CRD_data():
 
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
     def make_tuning_map(self):
-        path = self.resource_root() + 'tuning_map.txt'
-        raw_lines = []
-
-        with open(path) as f:
-            raw_lines = f.readlines()[:]
-
         lines = []
+        lines.append("<div class=tuning-map>")
+        lines.append("<img class=img-tuning-map src=\"tuning_map.png\" usemap=#tuning-link-map>")
+        lines.append("</div>")
 
-        for line in raw_lines:
-            line = line.rstrip()
-            tunings = re.findall('[ABCDEFG#b]{5,}', line)
-            for t in tunings:
-                offset = None
-                name = None
-                for tartist in self.group_songs_by_tunings():
-                    tt = tartist.albums[0].songs[0].tuning
-                    if tt.tuning.lower() == t.lower():
-                        offset = tartist.tuning.offset()
-                        if tt.names:
-                            name = tt.names[0]
-                        break
-                #print(t, offset, name)
-
-                if offset:
-                    link = "<a href=#%s title=\"%s\">%s</a>" % ( offset, name, t)
-                    line = re.sub( r"\b" + t + r"\b", link, line)
-
-            # highlight connections between tunings
-            line = re.sub( r"(=[ =]+=)", r"<div class=highlight>\1</div>", line )
-
-            lines.append(line)
+        lines.append("<div id=image-map>")
+        lines.append("<map name=tuning-link-map>")
+        lines.append('    <area shape=rect coords="" href=#75545  alt="DADGBE">')
+        lines.append('    <area shape=rect coords="" href=#55543  alt="EADGBD">')
+        lines.append('    <area shape=rect coords="" href=#75543  alt="DADGBD">')
+        lines.append('    <area shape=rect coords="" href=#55455  alt="EADF#BE">')
+        lines.append('    <area shape=rect coords="" href=#95545  alt="CADGBE">')
+        lines.append('    <area shape=rect coords="" href=#77545  alt="CGDGBE">')
+        lines.append('    <area shape=rect coords="" href=#75525  alt="DADGAD">')
+        lines.append('    <area shape=rect coords="" href=#75435  alt="DADF#AD">')
+        lines.append('    <area shape=rect coords="" href=#75345  alt="DADFAD">')
+        lines.append('    <area shape=rect coords="" href=#75255  alt="DADEAD">')
+        lines.append('    <area shape=rect coords="" href=#75075  alt="DADDAD">')
+        lines.append('    <area shape=rect coords="" href=#7543   alt="GDGBD">')
+        lines.append('    <area shape=rect coords="" href=#7552   alt="GDGCD">')
+        lines.append('    <area shape=rect coords="" href=#5743   alt="GCGBD">')
+        lines.append('    <area shape=rect coords="" href=#7534   alt="GDGBbD">')
+        lines.append('    <area shape=rect coords="" href=#9552   alt="FDGCD">')
+        lines.append('    <area shape=rect coords="" href=#5752   alt="GCGCD">')
+        lines.append('    <area shape=rect coords="" href=#5750   alt="GCGCC">')
+        lines.append('    <area shape=rect coords="" href=#5754   alt="GCGCE">')
+        lines.append('    <area shape=rect coords="" href=#57543  alt="DGDGBD">')
+        lines.append('    <area shape=rect coords="" href=#57534  alt="DGDGBbD">')
+        lines.append('    <area shape=rect coords="" href=#75709  alt="CGCGGE">')
+        lines.append('    <area shape=rect coords="" href=#75754  alt="CGCGCE">')
+        lines.append('    <area shape=rect coords="" href=#75752  alt="CGCGCD">')
+        lines.append('    <area shape=rect coords="" href=#75574  alt="CGCFCE">')
+        lines.append('    <area shape=rect coords="" href=#77374  alt="CGDFCE">')
+        lines.append("</map>")
+        lines.append("</div>")
 
         return lines
     def make_tuning_index(self):
@@ -2140,9 +2144,7 @@ class CRD_data():
             body.append( '<br>' )
 
         lines += [ '</ul>', '<br>' ]
-        lines += [ "<div class=tuning_map>" ]
         lines += self.make_tuning_map()
-        lines += [ "</div>" ]
 
         lines += body
         lines += [ '<br>' * 50, '</body>', '</html>' ]
