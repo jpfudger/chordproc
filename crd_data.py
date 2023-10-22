@@ -715,9 +715,10 @@ class CRD_chord():
             self.bass = None
             return False
 
-        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain', 'ocaine!', 'um', 'o', 'abe', 'ig', 'XP' ]:
+        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain', 'ocaine!', 'um', 'o', 'abe', 'ig', 'XP', 'aa' ]:
             # Come  (Pissing in a River)
             # Ba    (Looking at Tomorrow)
+            # Baa   (Mr Sheep
             # Bip   (Looking at Tomorrow)
             # Doo   (Til I Die)
             # Again (Crumb Begging Baghead)
