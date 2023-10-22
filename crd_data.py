@@ -26,14 +26,14 @@ IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
 
 
 def html_header(title, chords=False, index_page=False, folk=False):
-    lines = [
-    '<head>',
-    '    <title>%s</title>' % title,
-    '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
-    '    <link rel="stylesheet" type="text/css" href="style1.css" id="style">',
-    '    <script src="script.js"></script>',
-    #'    <a onclick="cycle_styles();" title="Cycle Styles"><div id=t_r></div></a>',
-    ]
+    lines = [ '<head>',
+        '    <title>%s</title>' % title,
+        '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
+        '    <link rel="stylesheet" type="text/css" href="style1.css" id="style">',
+        '    <script src="script.js"></script>',
+        ]
+
+    
     # if chords:
     #     lines += [
     #     '<a onclick="transpose_topmost_song(true);" title="Transpose Up"><div id=t_l></div></a>',
@@ -71,7 +71,9 @@ def html_context_menu(index=False, chords=False, folk=False):
 
     lines.append("    <a onclick=\"toggle_multicolumn();\">Toggle multicolumn</a>")
     lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
-    lines.append("    <a onclick=\"prompt_for_search();\">Find song (f)</a>")
+    lines.append("    <a onclick=\"prompt_for_song_search();\">Find song (f)</a>")
+    lines.append("    <a onclick=\"prompt_for_tuning_search();\">Find tuning (n)</a>")
+    lines.append("    <a onclick=\"random_song();\">Random song (r)</a>")
     #lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
 
     lines.append("  </div>")
@@ -83,9 +85,9 @@ def html_song_index(allsongs, artist=None):
     lines  = [ '<html>' ]
 
     if artist:
-        lines += html_header("Song Index: " + artist.name)
+        lines += html_header(artist.name + " : Song Index")
         lines += ["<body>"]
-        title_link = "<a href=%s>%s Song Index</a>" % ( artist.fname, artist.name )
+        title_link = "<a href=%s>%s : Song Index</a>" % ( artist.fname, artist.name )
         lines += [ '<h2 title="%s">%s</h2>' % ( artist.index, title_link ) ]
     else:
         lines += html_header("ChordProc: Song Index")
@@ -93,7 +95,7 @@ def html_song_index(allsongs, artist=None):
         title_link = "<a href=index.html>Song Index</a>"
         lines += [ '<h2>%s</h2>' % title_link ]
 
-    lines += [ '<hr>' ]
+    lines += [ '<hr>', '<div id=results>' ]
 
     # long lists of songs warrant alphabet links
     add_letter_links = len(allsongs) > 100
@@ -126,7 +128,7 @@ def html_song_index(allsongs, artist=None):
         album = song.album.title if artist else (song.album.artist.name + ", " + song.album.title)
         lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, album ) )
     
-    lines += [ '</div>', '<br>' ]
+    lines += [ '</div>', '</div>', '<br>' ]
     lines += [ '</body>', '</html>' ]
     return lines
 
@@ -201,9 +203,14 @@ class CRD_artist():
         c_origs, c_covers = self.song_counts()
         if c_covers:
             count_string = "(%d) (%d originals)" % (c_origs + c_covers, c_origs)
+            count_string = "<div class=count>%d/%d</div>" % (c_origs, c_origs + c_covers)
         else:
             count_string = "(%d)" % (c_origs + c_covers)
-        lines += [ '<hr>', '<a href="%s">Song Index %s</a>' % ( self.index_fname, count_string ) ]
+            count_string = "<div class=count>%d</div>" % (c_origs + c_covers)
+
+        lines += [ '<hr>' ]
+        lines += [ '<a href="%s">Song Index</a> %s' % ( self.index_fname, count_string ) ]
+
         if n_artist_tunings > 0:
             lines += [ '<br>' ]
             count_string = "<div class=count>%d/%d</div>" % ( n_artist_tuning_songs, n_artist_tunings )
@@ -2108,7 +2115,7 @@ class CRD_data():
                     if tartist.tuning.names:
                         tname += " (%s)" % (", ".join(tartist.tuning.names))
                     fingerings_lines.append( "<hr>" )
-                    fingerings_lines.append( "<a name=%s>" % tartist.tuning.offset())
+                    fingerings_lines.append( "<a name=%s></a>" % tartist.tuning.offset())
                     fingerings_lines.append( "<h3>%s</h3>" % tname)
                     fingerings_lines.append( "<div class=\"chords col1\">" )
 
