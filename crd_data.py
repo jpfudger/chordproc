@@ -1460,13 +1460,13 @@ class CRD_song():
                     self.cover = top_version.cover
 
             if self.versions:
-                default = "Default"
+                default = "Lyrics and Chords"
                 if top_version:
                     default = top_version.title
                 elif self.album and self.album.date:
                     default = str(self.album.date.year) + " " + self.album.title
                 elif self.date:
-                    default = str(self.date.year) + " Default"
+                    default = str(self.date.year) + " Lyrics and Chords"
 
                 versions = [ '<select id="%s.select" onchange="update_song_version(%s);">' % ( self.index, qindex ) ]
                 versions.append( '<option value=0>%s</option>' % default )
