@@ -8,6 +8,11 @@ G   000000
 {{{ tuning: DGDGBD    [Open G]
 G   000000
 }}}
+{{{ tuning: DGDGCD    [Open Gsus4] [Sawmill/D]
+# This is Sawmill with a low D. 
+# Or Orkney with a low D.
+# Used a lot by Martin Simpson.
+}}}
 {{{ tuning: EAC#EAE   [Open A]
 # Sometimes "Open A" is used to EAEAC#E, which is Open G two steps up.
 }}}
@@ -63,7 +68,7 @@ E       222100
 Em      222000
 F       3x321x
 F#m     444222
-G       5xx003 
+G       5xx003
 G/d     020003
 G/b     x20033
 }}}
@@ -111,7 +116,7 @@ Edim7   xx2323
 Fdim7   xx3434 / 123131
 Gdim7   xx5656 / 345353
 Adim7   xx7878 / 567575
-Bdim7   xx9A9A / 789797
+Bdim7   xx0101 / xx9A9A / 789797
 
 A       x02220
 A/e     002220
@@ -161,7 +166,7 @@ Ebm     668876
 
 E       022100
 Em      022000
-E7      020100, 022130
+E7      020100 / 022130
 Emaj7   021100
 
 F       133211
@@ -196,6 +201,9 @@ G#m7    464444
 {{{ tuning: CGCFAD    [Metal Drop C]
 # This is Drop D, down two steps.
 }}}
+{{{ tuning: CGCFCD    [Martin Simpson]
+# Open Csus4add9
+}}}
 {{{ tuning: EBEGBE    [Open Em]
 }}}
 {{{ tuning: DADGAD    [Open Dsus4]
@@ -204,10 +212,10 @@ G#m7    464444
 }}}
 {{{ tuning: DADEAD    [Open Dsus2]
 }}}
-{{{ tuning: CGDGCD    [Orkney] [Sawmill]
+{{{ tuning: CGDGCD    [Orkney] [Sawmill/C]
 # This is DADGAD with Capo V and the strings moved over.
 
-C5      055005, 00A00A
+C5      055005 / 00A00A
 Cmaj    055045
 Cm      055035
 C7      055305 (no3)
@@ -225,7 +233,7 @@ Fm      xx3103
 F7      xx3201
 Fmaj7   xx3202
 
-G       x00025, x00420
+G       x00025 / x00420
 Gm      x00320
 G5      x00020
 G7      x00023
@@ -236,7 +244,7 @@ Am7     x22002
 Bm      xx0424
 
 }}}
-{{{ tuning: CGCFCE    [Open Cadd4]
+{{{ tuning: CGCFCE    [Open Cadd4] [Nick Drake]
 }}}
 {{{ tuning: CGCGBE    [Open Cmaj7]
 }}}
@@ -342,7 +350,7 @@ B7      x1204
 Gm      x0000
 G       x0010
 }}}
-{{{ tuning: GCGBD     [Banjo: Drop C] 
+{{{ tuning: GCGBD     [Banjo: Drop C]
 # [Banjo: Standard C]
 C       00012
 C7      00312
@@ -360,7 +368,7 @@ Am7     0x212
 
 E       x4456
 Em      04002
-Em7     04000    
+Em7     04000
 
 D       x2234
 D7      x2210
@@ -375,13 +383,12 @@ Bm      xx434
 {{{ tuning: GCGCD     [Banjo: Double C]
 
 A       xx212
-A7      x1012
-A7      xx677
+A7      x1012 / xx677
 Am      x0202
 
 Bb      xx323
 
-B       x3431  
+B       x3431
 Bm      x2420
 B7      x3231
 
@@ -390,21 +397,16 @@ C       x0002
 C7      x0302
 Cm      x0001
 
-D       xx323
-D7      x2200
-D       x2224
+D       xx323 / x2224
+D7      x2200 / x0254
 Dm      x2223
-D7      x0254
 
-E       x4445
-E       x4142
-E7      xx233
-E7      x2420
+E       x4445 / x4142
+E7      xx233 / x2420
 Em      x4445
 
-F       x0203
-F7      x0233
-F7      x0201
+F       x0203 / x5557
+F7      x0201 / x0233
 Fm      x0103
 F6      x0223
 
@@ -445,7 +447,10 @@ F       x3203
 Bb      x3323
 C       x3003
 }}}
-{{{ tuning: FDGCD     [Banjo: F-tuning] [Old G]
+{{{ tuning: GDGDE     [Banjo: Old G]
+# [Banjo: Sandy River Belle]
+}}}
+{{{ tuning: FDGCD     [Banjo: F-tuning] [Banjo: Sawmill/F]
 # [Banjo: Cumberland Gap]
 
 # This is Sawmill tuning with the 5th string dropped to F.
@@ -460,15 +465,44 @@ G       x0020
 
 }}}
 {{{ tuning: F#DGAD    [Banjo: Dock Boggs]
-# Used in Danville Girl 
+# Used in Danville Girl
 }}}
 
+{{{ tuning: GCEA      [Ukulele: Standard]
+
+A       2100
+A7      0100
+Am      2000
+E7      1202
+C       0003
+C7      0001
+Cm      0333
+
+F       2010
+F7      2310
+Fm      1013
+
+D       2225
+D7      2223
+Dm      2210
+
+E       4442
+E7      1202
+Em      0432
+Em7     0202
+
+G       0232
+G7      0212
+Gm      x231
+Gmaj7   x222
+
+}}}
 {{{ tuning: GDAE      [Mandolin: Standard]
 
 C       0230
 C+      5678
 C6      5500
-C7      5576
+C7      5576 / 0210
 Cm      5563
 Cm7     5566
 
@@ -476,16 +510,18 @@ D       2002
 D+      x012
 D7      x032
 Dmaj7   x042
-Dm      x001
+Dm      x001 / 2001
 Dm7     x031
+Dsus2   7000
 
 E       x224
 E+      x234
 E7      x254
-Em      0220
+Em      0220 / 1020
 Em7     x253
 
 F       5301
+Fmaj7   2300
 
 G       0023
 G+      0123
@@ -495,12 +531,17 @@ Gmaj7   0022
 Gm      0013
 Gm7     5566
 
-A       2240
+A5      2200
+Asus2   2220
+A       2240 / 9700
 A+      2345
 A6      2242
-A7      2243
-Am      2235
+A7      2243 / 6500
+Am      2235 / 5200
 Am7     2233
+
+Bb      3011 / 3356
+Bbm     3346
 
 B       4122
 B+      4567
@@ -508,6 +549,7 @@ B6      4464
 B7      4465
 Bmaj7   4466
 Bm      4022
+Bm11    4000
 Bm7     4455
 
 }}}
