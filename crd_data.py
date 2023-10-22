@@ -838,6 +838,7 @@ class CRD_song():
         self.version_index = 0
         self.versions = []
         self.version_of = None
+        self.capo = False
         self.tuning = None
         self.album = None
         self.fingerings = {}
@@ -1046,6 +1047,8 @@ class CRD_song():
                 chord = CRD_chord(hkey)
                 if chord.is_chord():
                     formatted = chord.format(transpose,prefer_sharp)
+                    title = "title=\"Relative to chords\"" if self.capo else ""
+                    splits[0] = "<div class=comment %s>%s</div>" % (title, splits[0])
                     splits[1] = "<div class=chord>%s</div>" % formatted
                     comline = " ".join(splits)
                     comtype = "comment"
@@ -1063,6 +1066,7 @@ class CRD_song():
 
                 if capo_position:
                     comline = "Capo: <div class=capo>%s</div> " % capo_position
+                    self.capo = True
                     comtype = "comment"
                     if chord and chord.is_chord():
                         formatted = chord.format(transpose, prefer_sharp)
