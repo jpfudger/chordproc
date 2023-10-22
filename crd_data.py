@@ -149,6 +149,7 @@ class CRD_artist():
         self.fname = alphaname + '.html'
         self.index_fname = alphaname + '_songs.html'
         self.words_fname = alphaname + '_words.html'
+        self.tunings_fname = alphaname + '_tunings.html'
         self.tuning = None
         self.words = {}
     def add_album(self,title):
@@ -195,6 +196,7 @@ class CRD_artist():
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
 
         lines += self.next_and_previous_links()
+        n_artist_tunings, n_artist_tuning_songs = self.make_tuning_index()
 
         c_origs, c_covers = self.song_counts()
         if c_covers:
@@ -202,6 +204,10 @@ class CRD_artist():
         else:
             count_string = "(%d)" % (c_origs + c_covers)
         lines += [ '<hr>', '<a href="%s">Song Index %s</a>' % ( self.index_fname, count_string ) ]
+        if n_artist_tunings > 0:
+            lines += [ '<br>' ]
+            count_string = "<div class=count>%d/%d</div>" % ( n_artist_tuning_songs, n_artist_tunings )
+            lines += [ '<a href="%s">Tuning Index</a> %s' % (self.tunings_fname, count_string) ]
 
         if DO_WORDLISTS and self.name in DO_WORDLISTS:
             lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
@@ -367,6 +373,74 @@ class CRD_artist():
                     origs += 1
 
         return (origs, covers)
+    def make_tuning_index(self):
+        all_tunings = self.data.group_songs_by_tunings()
+        n_artist_tunings = 0
+        n_artist_tuning_songs = 0
+        artist_tunings = {}
+        for tuning in all_tunings:
+            if tuning.tuning.standard(): continue
+            artist_tuning_songs = []
+            for song in tuning.all_songs():
+                if song.artist.name == self.name:
+                    artist_tuning_songs.append(song)
+
+            if artist_tuning_songs:
+                artist_tunings[tuning] = artist_tuning_songs
+                n_artist_tunings += 1
+                n_artist_tuning_songs += len(artist_tuning_songs)
+
+        if n_artist_tunings > 0:
+            with open(self.data.opts["html_root"] + self.tunings_fname, 'w') as f:
+                title = "<a href=%s>%s : Tuning Index</a>" % ( self.fname, self.name )
+
+                lines = [ "<html>" ]
+                lines += html_header(self.name + " : Tuning Index")
+                lines += [ "<body>", "<h2>%s</h2>" % title ]
+                lines += [ "<hr>" ]
+
+                body_lines = []
+
+                tunings = list(artist_tunings.keys())
+                tunings.sort(key=lambda t: (-len(artist_tunings[t]), t.tuning.offset()))
+
+                lines += [ "<ul>" ]
+
+                for tuning in tunings:
+                    songs = artist_tunings[tuning]
+                    full_name = tuning.tuning.name()
+                    fingering_link = "fingerings.html#" + tuning.tuning.offset()
+
+                    tuning_name = tuning.name.ljust(34,"-")
+                    section_name = tuning.name
+
+                    if full_name:
+                        tuning_name = tuning.name.ljust(12,"-") + full_name.ljust(22,"-")
+                        section_name = "%s (%s)" % (full_name, tuning.name)
+
+                    count = "<div class=count>%d</div>" % len(songs)
+                    link = "<a class=tuning href=#%s>%s</a>" % ( tuning.tuning.offset(), tuning_name )
+                    lines += [ "    <li> %s %s </li>" % (link, count) ]
+
+                    body_lines += [ "<hr>" ]
+                    body_lines += [ "<a name=%s></a>" % tuning.tuning.offset() ]
+                    body_lines += [ "<h2><a href=%s>%s</a></h2>" % (fingering_link, section_name) ]
+                    body_lines += [ "<ol>" ]
+                    for song in songs:
+                        link = song.get_link(mark_covers=True)
+                        body_lines.append( '<li> %s (%s)' % (link, song.album.title) )
+
+                    body_lines += [ "</ol>", "<br>" ]
+
+                lines += [ "</ul>" ]
+                lines += body_lines
+                lines += [ "</body>", "</html>" ]
+                lines += [ "<br>" ] * 30
+
+                for l in lines:
+                    f.write(l + '\n')
+
+        return n_artist_tunings, n_artist_tuning_songs
 
 def set_title_and_date(title):
     date = None
