@@ -164,14 +164,17 @@ h3 {
     .settings-icon { visibility: hidden; }
     }
 
-.tuning_map {
-    page-break-before: always; /* print on own page */
+img.tuning_map {
+    width: 80%;
+    /*
+    page-break-before: always;
     display: block;
     top: 20%;
     right: 10%;
     position: static;
     white-space: pre;
     font-family: monospace;
+    */
     }
 
 
