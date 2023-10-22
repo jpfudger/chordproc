@@ -2332,27 +2332,31 @@ class CRD_data():
         for song in all_songs:
             for version in song.get_all_versions():
                 for link in version.comment_links:
-                    matching_songs = [ s for s in all_songs if s.title.lower() == link["song"].lower() ]
+                    #print(link["song"])
+                    #print("====================")
 
-                    # If these ambiguity warnings get triggered, we can narrow down the search
-                    # using the artist|album|song information.
+                    matching_songs = []
+
+                    for s in all_songs:
+                        if link["song"].lower() != s.title.lower():
+                            continue
+                        if link["artist"] and link["artist"].lower() != s.artist.name.lower():
+                            continue
+                        if link["album"] and link["album"].lower() != s.album.title.lower():
+                            continue
+
+                        matching_songs.append(s)
 
                     if len(matching_songs) == 0:
                         print("No song matching comment_link: " + link["song"])
                     elif len(matching_songs) > 1:
-                        new_matching = []
-                        if "artist" in link:
-                            for ms in matching_songs:
-                                if ms.artist.name == link["artist"]:
-                                    new_matching.append(ms)
-                        matching_songs = new_matching
-
-                        if len(matching_songs):
-                            print("Ambiguous song comment_link: " + link["song"])
-
+                        print("Ambiguous song comment_link: " + link["song"])
+                        for ms in matching_songs:
+                            print( "  ", ms.album.fname + "#" + ms.link )
 
                     for ms in matching_songs:
                         url = ms.album.fname + "#" + ms.link
-                        s_link = "<a href=%s class=cover>%s</a>" % (url, link["song"])
+                        title = ms.artist.name + " | " + ms.album.title + " | " + ms.title
+                        s_link = "<a href=%s class=cover title=\"%s\">%s</a>" % (url, title, link["song"])
                         link["link"] = s_link
 
