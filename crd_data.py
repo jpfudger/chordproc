@@ -753,6 +753,7 @@ class CRD_tuning():
         tmp_strings = self.tuning.replace("#","")
         tmp_strings = tmp_strings.replace("b","")
         self.n_strings = len(tmp_strings)
+        self.songs = [] # much better than using a dummy CRD_artist! Could even be a dictionary of artists?
     def get_fingering(self,crd_string,as_title=False):
         crd_string = crd_string.strip()
         fingering = ''
@@ -1387,7 +1388,7 @@ class CRD_song():
 
                 splits = link.split("|")
                 link_dict["song"] = splits[-1]
-                link_dict["artist"] = self.artist.name # default to current artist
+                #link_dict["artist"] = self.artist.name # default to current artist
                 if len(splits) > 1:
                     link_dict["artist"] = splits[0]
                 if len(splits) > 2:
@@ -1407,6 +1408,11 @@ class CRD_song():
                 elif self.tuning.tuning.lower() not in line.lower():
                     pass
                     #print("Wrong tuning?", line, "=>", self.tuning.tuning)
+
+                # set tuning of main song to tuning of first version
+                # (this is required for filtering in group_songs_by_tunings)
+                if self.version_index == 1 and self.version_of and not self.version_of.tuning:
+                    self.version_of.tuning = self.tuning
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
@@ -2099,11 +2105,12 @@ class CRD_data():
                     if name not in names:
                         names.append(name)
 
-            names_string = "-".join('(' + name + ')' for name in names)
-            name_fw = tartist.tuning.tuning.ljust(10,'-') + \
-                    ('[' + offset + ']').ljust(10,'-') + \
-                    names_string.ljust(39,'-')
-            name = re.sub("-+", " ", name_fw)
+            spacer = "-"
+            names_string = spacer.join('(' + name + ')' for name in names)
+            name_fw = tartist.tuning.tuning.ljust(10,spacer) + \
+                    names_string.ljust(39,spacer)
+                    #('[' + offset + ']').ljust(10,spacer) + \
+            name = re.sub(spacer + "+", " ", name_fw)
             
             splits = name.split(" ", maxsplit=1)
             name = '<a href=fingerings.html#%s>%s</a> ' % (offset, splits[0])
