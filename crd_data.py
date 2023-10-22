@@ -1574,6 +1574,22 @@ class CRD_song():
                 else:
                     words[word] = [self]
         return
+    def get_link(self, mark_covers=False):
+        s_link = self.album.fname + '#' + self.link
+        s_title = self.title
+        if self.version_of:
+            s_title = "%s (%s)" % ( self.version_of.title, self.title )
+            s_link = self.album.fname
+            if self.version_index > 0:
+                s_link += '?v=' + str(self.version_index) # pass index by url
+            s_link += '#' + self.version_of.link
+
+        s_class = ""
+        if mark_covers and self.cover:
+            s_class = "class=cover "
+
+        link = '<a %shref="%s">%s</a>' % ( s_class, s_link, s_title )
+        return link
 
 class CRD_data():
     def __init__(self,opts,lines=None):
@@ -2117,15 +2133,8 @@ class CRD_data():
             body.append( '<ol>' )
 
             for song in tartist.all_songs():
-                s_link = song.album.fname + '#' + song.link
-                s_title = song.title
-                if song.version_of:
-                    s_title = "%s (%s)" % ( song.version_of.title, song.title )
-                    s_link = song.album.fname
-                    if song.version_index > 0:
-                        s_link += '?v=' + str(song.version_index) # pass index by url
-                    s_link += '#' + song.version_of.link
-                body.append( '<li> <a href="%s">%s</a> (%s)' % ( s_link, s_title, song.artist.name ) )
+                link = song.get_link()
+                body.append( '<li> %s (%s)' % ( link, song.artist.name ) )
 
             body.append( '</ol>' )
             body.append( '<br>' )
