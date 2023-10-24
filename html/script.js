@@ -714,7 +714,7 @@ function lyrics_only() {
                 }
             }
 
-        if ( keep && line.trim() == "" && newlines.length == 0 )
+        if ( keep && newlines.length == 0 && ( line.trim() == "" || line.includes("span>") ) )
             {
             // ignore whitespace at the top
             keep = false;
@@ -722,11 +722,18 @@ function lyrics_only() {
 
         if ( keep )
             { 
+            var unindented = line.replace(/^\s+/, '');
+
+            if ( line.length - unindented.length < 4 )
+                {
+                line = unindented;
+                }
+
             newlines.push(line);
             }
         }
 
-    div.innerHTML = newlines.join("\n");
+    div.innerHTML = "<br>" + newlines.join("\n");
     }
 //}}}
 //{{{ function: theory_popup
