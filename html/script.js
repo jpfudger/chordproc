@@ -736,6 +736,63 @@ function lyrics_only() {
     div.innerHTML = "<br>" + newlines.join("\n");
     }
 //}}}
+//{{{ function: cancel_modulation
+function cancel_modulation() {
+    var div = topmost_song();
+
+    if ( div.hasOwnProperty("modulation_cancelled") )
+        {
+        div.innerHTML = div.raw;
+        delete div.modulation_cancelled;
+        return;
+        }
+
+    div.modulation_cancelled = true;
+
+    var chords = div.getElementsByClassName("chord");
+    var key = null;
+    var original_key = null;
+    var new_key = null;
+
+    var interval = 0;
+    var up = true;
+
+    for ( var i=0; i<chords.length; i++ )
+        {
+        var chord = chords[i];
+
+        if ( chord.classList.contains("key") )
+            {
+            new_key = chord.innerHTML;
+
+            if ( key )
+                {
+                var notes = get_notes(key);
+                interval += notes.indexOf(new_key) - notes.indexOf(key);
+                chord.innerHTML = original_key;
+                }
+            else
+                {
+                original_key = new_key;
+                }
+
+            up = Math.sign(interval) == -1;
+            interval = Math.abs(interval);
+
+            key = new_key;
+            }
+        else if ( interval != 0 )
+            {
+            // alert(chord.innerHTML + " increment " + interval.toString() + up.toString());
+
+            for ( var j=0; j<interval; j++ )
+                {
+                cycle_chord_div(chord, up);
+                }
+            }
+        }
+    }
+//}}}
 //{{{ function: theory_popup
 function theory_popup(harp=false) 
     {
@@ -788,6 +845,7 @@ function assign_shortcuts()
     shortcut.add("r",function() { random_song() });
     shortcut.add(",",function() { next_or_previous(false) }); // <
     shortcut.add(".",function() { next_or_previous(true) });  // >
+    shortcut.add("m",function() { cancel_modulation() });
 
     var ss = get_style_cookie();
     if ( ss ) { cycle_styles(ss); }

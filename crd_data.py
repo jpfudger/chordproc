@@ -62,6 +62,7 @@ def html_context_menu(index=False, chords=False, folk=False):
         #lines.append("    <a onclick=\"theory_popup();\">Theory popup (t)</a>")
         #lines.append("    <a onclick=\"nashville_system();\">Toggle Nashville chords (n)</a>")
         lines.append("    <a onclick=\"lyrics_only();\">Toggle lyrics only (z)</a>")
+        lines.append("    <a onclick=\"cancel_modulation();\">Toggle modulation (m)</a>")
 
     if index:
         lines.append("    <a onclick=\"toggle_sort();\">Toggle artist sort (s) </a>")
@@ -1080,7 +1081,7 @@ class CRD_song():
                 key_line = "<div class=comment>Key:</div>"
                 if self.current_key and key != self.current_key:
                     key_line = "<div class=comment>Modulate to:</div>"
-                key_line += " <div class=chord>%s</div>" % key
+                key_line += " <div class=\"chord key\">%s</div>" % key
                 self.current_key = key
 
                 if DO_KEY_DIVS:
