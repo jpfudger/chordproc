@@ -755,7 +755,6 @@ function cancel_modulation() {
     var new_key = null;
 
     var interval = 0;
-    var up = true;
 
     for ( var i=0; i<chords.length; i++ )
         {
@@ -776,16 +775,16 @@ function cancel_modulation() {
                 original_key = new_key;
                 }
 
-            up = Math.sign(interval) == -1;
-            interval = Math.abs(interval);
-
             key = new_key;
             }
         else if ( interval != 0 )
             {
-            // alert(chord.innerHTML + " increment " + interval.toString() + up.toString());
+            // alert(chord.innerHTML + " increment " + interval.toString() );
 
-            for ( var j=0; j<interval; j++ )
+            var up = Math.sign(interval) == -1;
+            var abs_interval = Math.abs(interval);
+
+            for ( var j=0; j<abs_interval; j++ )
                 {
                 cycle_chord_div(chord, up);
                 }
