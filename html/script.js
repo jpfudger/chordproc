@@ -840,7 +840,7 @@ function assign_shortcuts()
     shortcut.add("s",function() { toggle_sort() });
     //shortcut.add("t",function() { theory_popup(true) });
     shortcut.add("z",function() { lyrics_only() });
-    shortcut.add("f",function() { prompt_for_search() });
+    shortcut.add("f",function() { prompt_for_song_search() });
     shortcut.add("r",function() { random_song() });
     shortcut.add(",",function() { next_or_previous(false) }); // <
     shortcut.add(".",function() { next_or_previous(true) });  // >
@@ -866,7 +866,7 @@ function assign_shortcuts()
 
     if ( window.location.pathname.includes("songs.html") )
         {
-        do_search();
+        do_song_search();
         }
 
     }
@@ -999,15 +999,15 @@ function random_song()
     window.location.href = "songs.html?random=1";
     }
 //}}}
-//{{{ function: prompt_for_search
-function prompt_for_search()
+//{{{ function: prompt_for_song_search
+function prompt_for_song_search()
     {
     var pattern = prompt("Enter search pattern (searches artist, song and album names):");
     window.location.href = "songs.html?search=" + pattern.replace(/ /g, "+");
     }
 //}}}
-//{{{ function: do_search
-function do_search()
+//{{{ function: do_song_search
+function do_song_search()
     {
     var pattern = window.location.href.match(/\?search=(.*)/);
     var random  = window.location.href.match(/\?random=1/);
@@ -1033,7 +1033,7 @@ function do_search()
 
         if ( matches.length == 0 )
             {
-            prompt_for_search();
+            prompt_for_song_search();
             }
         else if ( matches.length == 1 )
             {
