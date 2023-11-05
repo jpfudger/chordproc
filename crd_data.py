@@ -433,12 +433,12 @@ class CRD_artist():
                     body_lines += [ "<hr>" ]
                     body_lines += [ "<a name=%s></a>" % tuning.tuning.offset() ]
                     body_lines += [ "<h2><a href=%s>%s</a></h2>" % (fingering_link, section_name) ]
-                    body_lines += [ "<ol>" ]
+                    body_lines += [ "<ul>" ]
                     for song in songs:
                         link = song.get_link(mark_covers=True)
                         body_lines.append( '<li> %s (%s)' % (link, song.album.title) )
 
-                    body_lines += [ "</ol>", "<br>" ]
+                    body_lines += [ "</ul>", "<br>" ]
 
                 lines += [ "</ul>" ]
                 lines += body_lines
