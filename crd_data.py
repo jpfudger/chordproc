@@ -1053,6 +1053,8 @@ class CRD_song():
                     splits[0] = "<div class=comment %s>%s</div>" % (title, splits[0])
                     splits[1] = "<div class=chord>%s</div>" % formatted
                     comline = " ".join(splits)
+                    if "@" in comline:
+                        comline = self.markup_comment_chords(comline)
                     comtype = "comment"
             elif comtype == "capo":
                 # format capo position and sounding key
