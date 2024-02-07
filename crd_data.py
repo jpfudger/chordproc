@@ -853,8 +853,8 @@ class CRD_song():
         self.cover = None
         self.cover_title = None # if the original song has a different name
         self.cover_link = None
-        self.roud = 0
-        self.child = 0
+        self.roud = None
+        self.child = None
         self.comment_links = []
         self.current_key = None # last encountered key set by song
         self.wordlist = []
@@ -1362,13 +1362,13 @@ class CRD_song():
                 self.cover = splits[0].strip()
                 self.cover_title = splits[1].strip()
 
-            m_roud = re.search('roud (\d+)', line.lower())
-            m_child = re.search('child (\d+)', line.lower())
+            m_roud = re.search('roud\s+(\w+)', line.lower())
+            m_child = re.search('child\s+(\w+)', line.lower())
             if m_roud: 
-                self.roud = int(m_roud.group(1))
+                self.roud = m_roud.group(1)
             if m_child: 
-                self.child = int(m_child.group(1))
-
+                self.child = m_child.group(1)
+            
             if self.version_of and not self.version_of.cover:
                 # back-fill the main song, if it isn't already
                 self.version_of.cover = self.cover
@@ -2287,12 +2287,12 @@ class CRD_data():
             child = ""
 
             if song.roud:
-                url = "https://www.vwml.org/roudnumber/%d" % song.roud
-                roud = "<a href=%s target=_blank>Roud %d</a>" % ( url, song.roud )
+                url = "https://www.vwml.org/roudnumber/%s" % song.roud
+                roud = "<a href=%s target=_blank>Roud %s</a>" % ( url, song.roud )
 
             if song.child:
-                url = "https://www.childballadrecordings.com/all?ballad_id=%d" % song.child
-                child = "<a href=%s target=_blank>Child %d</a>" % ( url, song.child )
+                url = "https://www.childballadrecordings.com/all?ballad_id=%s" % song.child
+                child = "<a href=%s target=_blank>Child %s</a>" % ( url, song.child )
         
             line += "<td> %s </td>" % child
             line += "<td> %s </td>" % roud
