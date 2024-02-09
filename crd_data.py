@@ -2275,6 +2275,7 @@ class CRD_data():
         trad_songs.sort(key=lambda s: s.title_sort)
 
         for song in trad_songs:
+            # one row per song
             line = "<tr>"
 
             s_link = song.album.fname + '#' + song.link
@@ -2297,7 +2298,7 @@ class CRD_data():
             line += "<td> %s </td>" % child
             line += "<td> %s </td>" % roud
 
-            line += "<tr>"
+            line += "</tr>"
 
             html_lines.append(line)
 
