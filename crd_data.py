@@ -1544,10 +1544,15 @@ class CRD_song():
                     a_lines.append(line)
                 a_lines.append('</select>')
 
-            if v_lines:
-                lines += v_lines
-            if a_lines:
-                lines += a_lines
+            if v_lines or a_lines:
+                lines += [ "<div class=selectors>" ]
+
+                if v_lines:
+                    lines += v_lines
+                if a_lines:
+                    lines += a_lines
+
+                lines += [ "</div>" ]
 
         n_lines = len(self.lines)
 
