@@ -451,7 +451,9 @@ class CRD_artist():
         return n_artist_tunings, n_artist_tuning_songs
 
 def set_title_and_date(title):
+    # also extracts misc artist (in square brackets)
     date = None
+    artist = None
     
     regex_date = "\s*<(\d\d\d\d)-(\d\d)-(\d\d)>\s*$"
     m_date = re.search(regex_date, title)
@@ -467,14 +469,23 @@ def set_title_and_date(title):
             title = re.sub(regex_year, "", title)
             date = datetime.date(int(m_year.group(1)), 1, 1)
 
+    regex_artist = "\[\s*([^]]+)\s*\]"
+    m_artist = re.search(regex_artist, title)
+
+    if m_artist:
+        title = re.sub(regex_artist, "", title)
+        title = title.strip()
+        artist = m_artist.group(1)
+        artist = artist.strip()
+
     # if date: print(date)
     title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
 
-    return title, date
+    return title, date, artist
 
 class CRD_album():
     def __init__(self,title,artist,index,player):
-        self.title, self.date = set_title_and_date(title)
+        self.title, self.date, self.misc_artist = set_title_and_date(title)
         self.artist = artist
         self.index  = index
         self.player = player
@@ -830,7 +841,7 @@ class CRD_tuning():
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
-        self.title, self.date = set_title_and_date(title)
+        self.title, self.date, self.misc_artist = set_title_and_date(title)
         self.artist = artist
         self.dummy = True
         self.fpath = fpath
@@ -1490,8 +1501,13 @@ class CRD_song():
 
             style = ' style="display:block"'
             lines += [ '<hr> <a name=%s></a>' % self.link ] 
-            name = (' (%s)' % self.artist.name) if add_artist else ''
-            lines += [ '<h3 id=%s>%s%s</h3>' % (self.index, self.title + name, year) ]
+            name = self.title
+            if self.misc_artist:
+                name += f" [{self.misc_artist}]"
+            if add_artist:
+                name += f" ({self.artist.name})"
+
+            lines += [ '<h3 id=%s>%s%s</h3>' % (self.index, name, year) ]
 
             # Buttons for versions and transposing:
 
@@ -1515,18 +1531,23 @@ class CRD_song():
                 lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % cname ]
 
             if self.songs_with_same_name:
-                #n_sls = len(self.songs_with_same_name)
-                #songstrings = [ f"{s.title}, {s.album.title}, {s.artist.name}" for s in self.songs_with_same_name ]
-                #hover_text = "\n".join(songstrings)
-                #line = "<div class=cover title=\"%s\">%d matching songtitles</div>" % (hover_text, n_sls)
-
+                self.songs_with_same_name.sort(key=lambda s: s.artist.name)
                 s_lines = [ '<select id="%s.same_names" onchange="jump_to_same_name(%s);">' % (self.index, qindex) ]
-                default_msg = "%d alternate versions by other artist(s)..." % len(self.songs_with_same_name)
+                default_msg = "%d alternate version(s) by other artist(s)..." % len(self.songs_with_same_name)
                 s_lines.append( '<option value=0 selected hidden>%s</option>' % default_msg )
                 for i, s in enumerate(self.songs_with_same_name):
-                    string = f"{s.artist.name} ({s.album.title})"
+                    artist_name = s.artist.name
+                    album_name = s.album.title
+
+                    if s.misc_artist:
+                        artist_name = s.misc_artist
+                        album_name = s.artist.name + " | " + s.album.title
+
+                    string = f"{artist_name} ({album_name})"
                     s_lines.append( '<option value=%d data-link="%s">%s</option>' % (i+1, s.get_link(), string))
                 s_lines.append('</select>')
+
+                print(">>> %s (%d)" % ( self.title, len(self.songs_with_same_name)))
 
                 lines += s_lines
 
@@ -1707,45 +1728,42 @@ class CRD_data():
         if not self.song_titles:
             # build dictionary of unique song titles
             for song in self.all_songs():
-                title = re.sub("\[[^]]+\]", "", song.title)
-                title = title.strip()
-                if title not in self.song_titles:
-                    self.song_titles[title] = []
-                self.song_titles[title].append(song)
+                # title = re.sub("\[[^]]+\]", "", song.title)
+                # title = title.strip()
+                if song.title not in self.song_titles:
+                    self.song_titles[song.title] = []
+                self.song_titles[song.title].append(song)
 
             # attach list of songs with the same name to the song object
-            n_songs_with_duplicate_names = 0
             for title, songs in self.song_titles.items():
                 if len(songs) == 1:
                     continue
                 if len(songs) > 2:
                     print("%d duplicates: %s" % (len(songs), title))
-                n_songs_with_duplicate_names += 1
-                for song in songs:
-                    for s in songs:
-                        keep = True
-
-                        if s == song:
+                for song1 in songs:
+                    for song2 in songs:
+                        if song2 == song1:
                             continue
 
-                        if False:
-                            # this code restricts matches to cases where
-                            # the song artist matches with the cover artist,
-                            # but this only makes sense if misc [artists]
-                            # are handled properly
+                        # this code restricts matches to cases where
+                        # the song artist matches with the cover artist,
+                        # but this only makes sense if misc [artists]
+                        # are handled properly
 
-                            keep = False
-                            if s.cover and s.cover == song.cover:
-                                keep = True
-                            if song.cover == s.artist.name: 
-                                keep = True
-                            if s.cover == song.artist.name:
-                                keep = True
+                        keep = False
+                        if song2.cover and song2.cover == song1.cover:
+                            keep = True
+                        if song2.cover and song2.cover == song1.misc_artist:
+                            keep = True
+                        if song1.cover and song1.cover == song2.misc_artist:
+                            keep = True
+                        if song1.cover == song2.artist.name: 
+                            keep = True
+                        if song2.cover == song1.artist.name:
+                            keep = True
 
                         if keep:
-                            song.songs_with_same_name.append(s)
-
-            print("%d sets of clashing song titles" % n_songs_with_duplicate_names)
+                            song1.songs_with_same_name.append(song2)
 
         return self.song_titles
     def all_dummy_songs(self):
