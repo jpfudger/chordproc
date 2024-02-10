@@ -1494,8 +1494,8 @@ class CRD_song():
                 n_vers = 1 + len(self.versions)
                 js_index = "%s.version" % self.index
                 js_call = "update_song_version('%s');" % self.index
-                v_lines = [ '<select id="%s" onchange="%s">' % ( js_index, js_call ) ]
-                v_lines.append( '<option value=0>Version 1/%d: %s</option>' % ( n_vers, default) )
+                v_lines = ['<select class=versions id="%s" onchange="%s">' % (js_index, js_call)]
+                v_lines.append( '<option value=0>Version 1/%d: %s</option>' % (n_vers, default))
                 for i, version in enumerate(self.versions):
                     label = "Version %d/%d: %s" % (i+2, n_vers, version.title)
                     v_lines.append( '<option value=%d>%s</option>' % (i+1, label))
@@ -1524,7 +1524,7 @@ class CRD_song():
             if self.songs_with_same_name:
                 js_index = "%s.same_names" % self.index
                 js_call = "jump_to_same_name('%s');" % self.index
-                a_lines = [ '<select id="%s" onchange="%s">' % (js_index, js_call) ]
+                a_lines = ['<select class=same_names id="%s" onchange="%s">' % (js_index, js_call)]
 
                 inc_self = self.songs_with_same_name[:] + [ self ]
                 inc_self.sort(key=lambda s: s.artist.name)
