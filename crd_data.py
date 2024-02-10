@@ -1489,10 +1489,11 @@ class CRD_song():
                 elif self.date:
                     default = str(self.date.year) + " Lyrics and Chords"
 
-                versions = [ '<select id="%s.select" onchange="update_song_version(%s);">' % ( self.index, qindex ) ]
-                versions.append( '<option value=0>%s</option>' % default )
+                n_versions = 1 + len(self.versions)
+                versions = [ '<select id="%s.version" onchange="update_song_version(%s);">' % ( self.index, qindex ) ]
+                versions.append( '<option value=0>Version 1/%d: %s</option>' % ( n_versions, default) )
                 for i, version in enumerate(self.versions):
-                    versions.append( '<option value=%d>%s</option>' % (i+1, version.title))
+                    versions.append( '<option value=%d>Version %d/%d: %s</option>' % (i+1, i+2, n_versions, version.title))
                 versions.append('</select>')
 
             year = ""
@@ -1531,23 +1532,20 @@ class CRD_song():
                 lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % cname ]
 
             if self.songs_with_same_name:
-                self.songs_with_same_name.sort(key=lambda s: s.artist.name)
                 s_lines = [ '<select id="%s.same_names" onchange="jump_to_same_name(%s);">' % (self.index, qindex) ]
-                default_msg = "%d alternate version(s) by other artist(s)..." % len(self.songs_with_same_name)
-                s_lines.append( '<option value=0 selected hidden>%s</option>' % default_msg )
-                for i, s in enumerate(self.songs_with_same_name):
-                    artist_name = s.artist.name
-                    album_name = s.album.title
 
-                    if s.misc_artist:
-                        artist_name = s.misc_artist
-                        album_name = s.artist.name + " | " + s.album.title
+                inc_self = self.songs_with_same_name[:] + [ self ]
+                inc_self.sort(key=lambda s: s.artist.name)
+
+                for i, s in enumerate(inc_self):
+                    artist_name = s.misc_artist if s.misc_artist else s.artist.name
+                    album_name = s.artist.name + " | " + s.album.title if s.misc_artist else s.album.title
 
                     string = f"{artist_name} ({album_name})"
-                    s_lines.append( '<option value=%d data-link="%s">%s</option>' % (i+1, s.get_link(), string))
+                    string = "Artist version %d/%d: %s" % (i+1, len(inc_self), artist_name)
+                    selected = " selected" if s == self else ""
+                    s_lines.append( '<option value=%d data-link="%s"%s>%s</option>' % (i, s.get_link(), selected, string))
                 s_lines.append('</select>')
-
-                print(">>> %s (%d)" % ( self.title, len(self.songs_with_same_name)))
 
                 lines += s_lines
 

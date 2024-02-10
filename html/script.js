@@ -354,7 +354,7 @@ function set_version_of_song(song_index,version_index)
 //{{{ function: update_song_version
 function update_song_version(song_index)
     {
-    var selector = document.getElementById( song_index + ".select")
+    var selector = document.getElementById( song_index + ".version")
     var value = selector.options[selector.selectedIndex].value;
     set_version_of_song(song_index, value);
     }
@@ -373,15 +373,33 @@ function reset_version_selectors()
     var selectors = document.getElementsByTagName("select");
     for ( var i=0; i<selectors.length; i++ )
         {
-        selectors[i].value = 0;
+        // must distinguish between .version and .name_name selectors
+        if ( selectors[i].id.endsWith(".version") )
+            {
+            selectors[i].value = 0;
+            }
         }
     }
 //}}}
 //{{{ function: set_version_selector
 function set_version_selector(song_id, index)
     {
-    var selector = document.getElementById(song_id + ".select");
+    var selector = document.getElementById(song_id + ".version");
     selector.value = index;
+    }
+//}}}
+
+//{{{ function: jump_to_song_link
+function jump_to_same_name(song_index)
+    {
+    // get selector for song_index
+    // get current option value
+    // follow its url (data-link)
+    var selector = document.getElementById( song_index + ".same_names");
+    var option = selector.options[selector.selectedIndex];
+    var url = option.dataset.link;
+    window.location.href = url;
+    return;
     }
 //}}}
 
@@ -598,8 +616,8 @@ function get_artist_album_song()
     var all_divs = document.getElementsByTagName("title");
     var page_title = all_divs[0].innerHTML;
     var splits = page_title.split(":");
-    var artist = splits[1].trim();
-    var album = splits[2].trim();
+    var artist = splits[0].trim();
+    var album = splits[1].trim();
 
     return [ artist, album, song_title ];
     }
