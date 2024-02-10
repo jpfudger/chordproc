@@ -1466,6 +1466,8 @@ class CRD_song():
         formatted_song_lines = self.format_song_lines(transpose,prefer_sharp)
 
         lines = []
+        v_lines = [] # lines for version selector, for adding later
+        a_lines = [] # lines for other artists songlines, for adding later
 
         if not self.version_of:
             # case: top level
@@ -1489,12 +1491,15 @@ class CRD_song():
                 elif self.date:
                     default = str(self.date.year) + " Lyrics and Chords"
 
-                n_versions = 1 + len(self.versions)
-                versions = [ '<select id="%s.version" onchange="update_song_version(%s);">' % ( self.index, qindex ) ]
-                versions.append( '<option value=0>Version 1/%d: %s</option>' % ( n_versions, default) )
+                n_vers = 1 + len(self.versions)
+                js_index = "%s.version" % self.index
+                js_call = "update_song_version('%s');" % self.index
+                v_lines = [ '<select id="%s" onchange="%s">' % ( js_index, js_call ) ]
+                v_lines.append( '<option value=0>Version 1/%d: %s</option>' % ( n_vers, default) )
                 for i, version in enumerate(self.versions):
-                    versions.append( '<option value=%d>Version %d/%d: %s</option>' % (i+1, i+2, n_versions, version.title))
-                versions.append('</select>')
+                    label = "Version %d/%d: %s" % (i+2, n_vers, version.title)
+                    v_lines.append( '<option value=%d>%s</option>' % (i+1, label))
+                v_lines.append('</select>')
 
             year = ""
             if self.date and not self.album.date:
@@ -1510,21 +1515,6 @@ class CRD_song():
 
             lines += [ '<h3 id=%s>%s%s</h3>' % (self.index, name, year) ]
 
-            # Buttons for versions and transposing:
-
-            # button_trans_1 = '<input type="button" title="Transpose down" value="&flat;" ' \
-            #                  'onclick="transpose_song(%s,false);">' % qindex
-            # button_trans_2 = '<input type="button" title=Transpose up"" value="&sharp;" ' \
-            #                  'onclick="transpose_song(%s,true);">' % qindex
-            # button_cycle_1 = '<input type="button" title="Cycle versions" value="&lt;" ' \
-            #                  'onclick="cycle_versions(%s,false);">' % qindex
-            # button_cycle_2 = '<input type="button" title="Cycle versions" value="&gt;" ' \
-            #                  'onclick="cycle_versions(%s,true);">' % qindex
-
-            # lines += [ button_trans_1, button_trans_2 ]
-            # if self.versions:
-            #     lines += [ button_cycle_1, button_cycle_2 ]
-
             if self.cover:
                 cname = self.cover
                 if self.cover_link:
@@ -1532,26 +1522,32 @@ class CRD_song():
                 lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % cname ]
 
             if self.songs_with_same_name:
-                s_lines = [ '<select id="%s.same_names" onchange="jump_to_same_name(%s);">' % (self.index, qindex) ]
+                js_index = "%s.same_names" % self.index
+                js_call = "jump_to_same_name('%s');" % self.index
+                a_lines = [ '<select id="%s" onchange="%s">' % (js_index, js_call) ]
 
                 inc_self = self.songs_with_same_name[:] + [ self ]
                 inc_self.sort(key=lambda s: s.artist.name)
 
                 for i, s in enumerate(inc_self):
-                    artist_name = s.misc_artist if s.misc_artist else s.artist.name
-                    album_name = s.artist.name + " | " + s.album.title if s.misc_artist else s.album.title
+                    artist_name = s.artist.name
+                    album_name = s.album.title
 
-                    string = f"{artist_name} ({album_name})"
-                    string = "Artist version %d/%d: %s" % (i+1, len(inc_self), artist_name)
+                    if s.misc_artist:
+                        artist_name = s.misc_artist
+                        album_name = s.artist.name + " | " + s.album.title
+
+                    label = "Artist %d/%d: %s" % (i+1, len(inc_self), artist_name)
                     selected = " selected" if s == self else ""
-                    s_lines.append( '<option value=%d data-link="%s"%s>%s</option>' % (i, s.get_link(), selected, string))
-                s_lines.append('</select>')
+                    line = '<option value=%d data-link="%s"%s>%s</option>' \
+                                % (i, s.get_link(), selected, label)
+                    a_lines.append(line)
+                a_lines.append('</select>')
 
-                lines += s_lines
-
-            # lines += [ button_trans_1, button_trans_2 ]
-            if self.versions:
-                lines += versions
+            if v_lines:
+                lines += v_lines
+            if a_lines:
+                lines += a_lines
 
         n_lines = len(self.lines)
 
