@@ -17,7 +17,12 @@ html,body {
     }
 
 select {
-    float: right;
+    display: block;
+    min-width: 400px;
+    }
+
+.selectors {
+    position: absolute;
     }
 
 span {
@@ -66,6 +71,7 @@ a:hover, a.cover:hover {
 
 a.tuning {
     font-family: monospace;
+    font-size: large;
     }
 
 h3 {
@@ -169,16 +175,11 @@ h3 {
     .settings-icon { visibility: hidden; }
     }
 
-.tuning_map {
-    page-break-before: always; /* print on own page */
-    display: block;
-    top: 20%;
-    right: 10%;
-    position: static;
-    white-space: pre;
-    font-family: monospace;
+img.img-tuning-map {
+    filter: invert(1);
+    display: inline;
+    width: 70%;
     }
-
 
 @media only screen and (min-width: 1281px) {
     /* Only allow 4 columns on large screens (desktops) */
@@ -188,18 +189,28 @@ h3 {
     .col3 { column-count: 3; }
     .col4 { column-count: 4; }
 
-    .tuning_map {
+    img.img-tuning-map {
+        filter: invert(1);
         display: block;
+        position: absolute;
+        width: 50%;
         top: 20%;
         right: 10%;
+        }
+
+    select {
+        display: block;
+        min-width: 400px;
+        }
+
+    .selectors {
         position: absolute;
-        white-space: pre;
-        font-family: monospace;
+        right: 20px;
         }
 
     }
 
-.chord {
+.chord, .key {
     display: inline;
     color: #C9BE62; /* yellow */
     font-weight: bold;
@@ -207,10 +218,6 @@ h3 {
 
 .alt { /* used for overblows/overdraws */
     color: green;
-    }
-
-.key {
-    display: none;
     }
 
 .comment {
@@ -243,7 +250,6 @@ h3 {
     display: inline-block;
     font-family: monospace;
     min-width: 75;
-    font-weight: normal;
     font-size: small;
     }
 

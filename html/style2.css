@@ -17,7 +17,12 @@ html,body {
     }
 
 select {
-    float: right;
+    display: block;
+    min-width: 400px;
+    }
+
+.selectors {
+    position: block;
     }
 
 span {
@@ -66,6 +71,7 @@ a:hover, a.cover:hover {
 
 a.tuning {
     font-family: monospace;
+    font-size: large;
     }
 
 h3 {
@@ -149,9 +155,9 @@ h3 {
     white-space: pre-line;
     }
 
-.col1 { column-count: 1; } 
-.col2 { column-count: 2; } 
-.col3 { column-count: 3; } 
+.col1 { column-count: 1; }
+.col2 { column-count: 2; }
+.col3 { column-count: 3; }
 .col4 { column-count: 4; }
 
 .chords {
@@ -170,37 +176,27 @@ h3 {
     .settings-icon { visibility: hidden; }
     }
 
-.tuning_map {
-    page-break-before: always; /* print on own page */
-    display: block;
-    top: 20%;
-    right: 10%;
-    position: absolute;
-    white-space: pre;
-    font-family: monospace;
+img.img-tuning-map {
+    display: inline;
+    width: 70%;
     }
-
 
 @media only screen and (min-width: 1281px) {
     /* Only allow multi-column on large screens (desktops) */
 
-    .col1 { column-count: 1; } 
-    .col2 { column-count: 1; } 
-    .col3 { column-count: 1; } 
+    .col1 { column-count: 1; }
+    .col2 { column-count: 1; }
+    .col3 { column-count: 1; }
     .col4 { column-count: 1; }
 
-    .tuning_map {
-        display: block;
-        top: 20%;
-        right: 10%;
-        position: static;
-        white-space: pre;
-        font-family: monospace;
+    img.img-tuning-map {
+        display: inline;
+        width: 50%;
         }
 
     }
 
-.chord {
+.chord, .key {
     display: inline;
     color: red;
     font-weight: bold;
@@ -208,10 +204,6 @@ h3 {
 
 .alt { /* used for overblows/overdraws */
     color: green;
-    }
-
-.key {
-    display: none;
     }
 
 .comment {
@@ -244,7 +236,6 @@ h3 {
     display: inline-block;
     font-family: monospace;
     min-width: 75;
-    font-weight: normal;
     font-size: small;
     }
 

@@ -18,6 +18,11 @@ html,body {
 
 select {
     display: block;
+    min-width: 400px;
+    }
+
+.selectors {
+    position: absolute;
     }
 
 span {
@@ -66,6 +71,7 @@ a:hover, a.cover:hover {
 
 a.tuning {
     font-family: monospace;
+    font-size: large;
     }
 
 h3 {
@@ -170,19 +176,10 @@ h3 {
     .settings-icon { visibility: hidden; }
     }
 
-img.tuning_map {
-    width: 80%;
-    /*
-    page-break-before: always;
-    display: block;
-    top: 20%;
-    right: 10%;
-    position: static;
-    white-space: pre;
-    font-family: monospace;
-    */
+img.img-tuning-map {
+    display: inline;
+    width: 70%;
     }
-
 
 @media only screen and (min-width: 1281px) {
     /* Only allow multi-column on large screens (desktops) */
@@ -191,22 +188,27 @@ img.tuning_map {
     .col3 { column-count: 3; }
     .col4 { column-count: 4; }
 
-    .tuning_map {
+    img.img-tuning-map {
         display: block;
+        position: absolute;
+        width: 50%;
         top: 20%;
         right: 10%;
-        position: absolute;
-        white-space: pre;
-        font-family: monospace;
         }
 
     select {
-        float: right;
+        display: block;
+        min-width: 400px;
+        }
+
+    .selectors {
+        position: absolute;
+        right: 20px;
         }
 
     }
 
-.chord {
+.chord, .key {
     display: inline;
     color: red;
     font-weight: bold;
@@ -214,10 +216,6 @@ img.tuning_map {
 
 .alt { /* used for overblows/overdraws */
     color: green;
-    }
-
-.key {
-    display: none;
     }
 
 .comment {
@@ -250,7 +248,6 @@ img.tuning_map {
     display: inline-block;
     font-family: monospace;
     min-width: 75;
-    font-weight: normal;
     font-size: small;
     }
 
