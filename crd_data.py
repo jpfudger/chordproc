@@ -435,7 +435,7 @@ class CRD_artist():
                     body_lines += [ "<h2><a href=%s>%s</a></h2>" % (fingering_link, section_name) ]
                     body_lines += [ "<ul>" ]
                     for song in songs:
-                        link = song.get_link(mark_covers=True)
+                        link = song.get_html_link(mark_covers=True)
                         body_lines.append( '<li> %s (%s)' % (link, song.album.title) )
 
                     body_lines += [ "</ul>", "<br>" ]
@@ -858,6 +858,7 @@ class CRD_song():
         self.comment_links = []
         self.current_key = None # last encountered key set by song
         self.wordlist = []
+        self.songs_with_same_name = []
     def add_fingering(self,chord,fingering):
         chord_string = chord.format().strip()
         self.fingerings[ chord_string ] = fingering.lower()
@@ -1513,6 +1514,22 @@ class CRD_song():
                     cname = "<a class=cover href=%s>%s</a>" % (self.cover_link, self.cover)
                 lines += [ '<div class=cover style="font-size:x-small">&lt;%s&gt;</div>' % cname ]
 
+            if self.songs_with_same_name:
+                #n_sls = len(self.songs_with_same_name)
+                #songstrings = [ f"{s.title}, {s.album.title}, {s.artist.name}" for s in self.songs_with_same_name ]
+                #hover_text = "\n".join(songstrings)
+                #line = "<div class=cover title=\"%s\">%d matching songtitles</div>" % (hover_text, n_sls)
+
+                s_lines = [ '<select id="%s.same_names" onchange="jump_to_same_name(%s);">' % (self.index, qindex) ]
+                default_msg = "%d alternate versions by other artist(s)..." % len(self.songs_with_same_name)
+                s_lines.append( '<option value=0 selected hidden>%s</option>' % default_msg )
+                for i, s in enumerate(self.songs_with_same_name):
+                    string = f"{s.artist.name} ({s.album.title})"
+                    s_lines.append( '<option value=%d data-link="%s">%s</option>' % (i+1, s.get_link(), string))
+                s_lines.append('</select>')
+
+                lines += s_lines
+
             # lines += [ button_trans_1, button_trans_2 ]
             if self.versions:
                 lines += versions
@@ -1595,15 +1612,20 @@ class CRD_song():
                 else:
                     words[word] = [self]
         return
-    def get_link(self, mark_covers=False):
+    def get_link(self):
         s_link = self.album.fname + '#' + self.link
-        s_title = self.title
         if self.version_of:
-            s_title = "%s (%s)" % ( self.version_of.title, self.title )
             s_link = self.album.fname
             if self.version_index > 0:
                 s_link += '?v=' + str(self.version_index) # pass index by url
             s_link += '#' + self.version_of.link
+        return s_link
+    def get_html_link(self, mark_covers=False):
+        s_link = self.get_link()
+
+        s_title = self.title
+        if self.version_of:
+            s_title = "%s (%s)" % ( self.version_of.title, self.title )
 
         s_class = ""
         if mark_covers and self.cover:
@@ -1620,6 +1642,7 @@ class CRD_data():
         self.n_artists = 0
         self.albums = []
         self.songs = []
+        self.song_titles = {}
         self.dummy_songs = []
         self.collections = []
         self.player = opts.get('player')
@@ -1656,6 +1679,7 @@ class CRD_data():
         print( "songs:   %d" % len(self.all_songs() ) )
         print( "dummies: %d" % len(self.all_dummy_songs() ) )
         print( "tunings: %d" % len(self.tunings) )
+        print( "usongs:  %d" % len(self.all_song_titles() )) # sets "songs_with_same_name"
 
         artists = self.artists[:]
         artists.sort(key=lambda x: len(x.albums))
@@ -1679,6 +1703,51 @@ class CRD_data():
                     self.songs.append(song)
             self.songs.sort( key=lambda x: x.title_sort.lower() )
         return self.songs
+    def all_song_titles(self):
+        if not self.song_titles:
+            # build dictionary of unique song titles
+            for song in self.all_songs():
+                title = re.sub("\[[^]]+\]", "", song.title)
+                title = title.strip()
+                if title not in self.song_titles:
+                    self.song_titles[title] = []
+                self.song_titles[title].append(song)
+
+            # attach list of songs with the same name to the song object
+            n_songs_with_duplicate_names = 0
+            for title, songs in self.song_titles.items():
+                if len(songs) == 1:
+                    continue
+                if len(songs) > 2:
+                    print("%d duplicates: %s" % (len(songs), title))
+                n_songs_with_duplicate_names += 1
+                for song in songs:
+                    for s in songs:
+                        keep = True
+
+                        if s == song:
+                            continue
+
+                        if False:
+                            # this code restricts matches to cases where
+                            # the song artist matches with the cover artist,
+                            # but this only makes sense if misc [artists]
+                            # are handled properly
+
+                            keep = False
+                            if s.cover and s.cover == song.cover:
+                                keep = True
+                            if song.cover == s.artist.name: 
+                                keep = True
+                            if s.cover == song.artist.name:
+                                keep = True
+
+                        if keep:
+                            song.songs_with_same_name.append(s)
+
+            print("%d sets of clashing song titles" % n_songs_with_duplicate_names)
+
+        return self.song_titles
     def all_dummy_songs(self):
         if len(self.dummy_songs) == 0:
             for album in self.all_albums():
@@ -2159,7 +2228,7 @@ class CRD_data():
             body.append( '<ol>' )
 
             for song in tartist.all_songs():
-                link = song.get_link()
+                link = song.get_html_link()
                 body.append( '<li> %s (%s)' % ( link, song.artist.name ) )
 
             body.append( '</ol>' )
@@ -2341,7 +2410,10 @@ class CRD_data():
                             csong.cover_link = song.album.fname + '#' + song.link
                             break
                     if not found:
-                        print("Artist but no song! %s / %s" % ( artist.name, csong.title ))
+                        print("Cover version has original artist but no song: %s / %s" % \
+                                ( artist.name, csong.title ))
+            #else:
+                #print("Cover version original artist not found: %s" % covered_artist )
 
             # If the covered artist exists, but the song doesn't, we could 
             # add the song to a new album. But this would lead to overcounting
