@@ -127,7 +127,10 @@ def html_song_index(allsongs, artist=None):
         s_link = song.album.fname + '#' + song.link
         s_class = ' class=cover' if song.cover else ''
         album = song.album.title if artist else (song.album.artist.name + ", " + song.album.title)
-        lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, song.title, album ) )
+        title = song.title
+        if song.misc_artist:
+            title += f" [{song.misc_artist}]"
+        lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, title, album ) )
     
     lines += [ '</div>', '</div>', '<br>' ]
     lines += [ '</body>', '</html>' ]
@@ -2367,7 +2370,13 @@ class CRD_data():
             s_link = song.album.fname + '#' + song.link
             line += "<td> <a name=%s> <a href=%s>%s</a> </td>" % (song.link, s_link, song.title)
 
-            a_name = "" if song.artist.name.startswith("Misc:") else song.artist.name
+            a_name = "" 
+            if song.artist.name.startswith("Misc:"):
+                if song.misc_artist:
+                    a_name = song.misc_artist
+            else:
+                a_name = song.artist.name
+
             line += "<td> %s </td>" % a_name
 
             roud = ""
