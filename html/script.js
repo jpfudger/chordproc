@@ -464,7 +464,16 @@ function get_divs_of_song(song_index, classes=[])
 //}}}
 //{{{ function: transpose_song
 function transpose_song(song_index, up)
-    {
+    {  
+    var song = get_divs_of_song(song_index, ["chords"])[0];
+
+    // add capo line if not present
+    if ( !song.innerHTML.includes("Capo:") )
+        {
+        newline = "<br><div class=comment>Capo: <div class=capo>0</div> </div><br>";
+        song.innerHTML = newline + song.innerHTML;
+        }
+
     var chords = get_divs_of_song(song_index, ["chord"]);
     var capos = get_divs_of_song(song_index, ["capo"]);
 
@@ -644,8 +653,10 @@ function play_current_song(bootlegs=false)
         if ( artist == "Misc" )
             {
             var artist = "";
-            if ( song.includes("(") )
-                { song = song.replace(/\([^)]+\)$/, ""); }
+            if ( song.includes("[") )
+                { 
+                song = song.replace(/\[[^)]+\]$/, "");
+                }
             }
 
         var artist = artist.replace(" ", "%20");
@@ -765,8 +776,6 @@ function cancel_modulation() {
         return;
         }
 
-    div.modulation_cancelled = true;
-
     var chords = div.getElementsByClassName("chord");
     var key = null;
     var original_key = null;
@@ -808,6 +817,10 @@ function cancel_modulation() {
                 }
             }
         }
+
+    // do this at the end in case something breaks
+    div.modulation_cancelled = true;
+
     }
 //}}}
 //{{{ function: theory_popup
