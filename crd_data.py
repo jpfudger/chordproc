@@ -1090,7 +1090,7 @@ class CRD_song():
                     if chord and chord.is_chord():
                         formatted = chord.format(transpose, prefer_sharp)
                         comline += "(sounding key: <div class=chord>%s</div>)" % formatted 
-                    comline += (" ".join(splits[2:]))
+                    #comline += (" ".join(splits[2:]))
             elif comtype == "cover":
                 return ""
             elif comtype == "key":
