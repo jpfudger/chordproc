@@ -2337,7 +2337,7 @@ class CRD_data():
         lines += [ '<h2 title="%s">Chords</h2>' % timestamp ]
         lines += [ '<hr>' ]
         lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
-        lines += [ '<br> <a href=folk_index.html>Folk Index</a> <div class=count>%s</div>' % folk_summary ]
+        lines += [ '<br> <a href=folk.html>Folk Index</a> <div class=count>%s</div>' % folk_summary ]
         lines += [ '<br> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
         lines += [ '<br> <a href=theory.html>Chords and Scales</a>' ]
         lines += [ '<hr>' ]
@@ -2444,7 +2444,7 @@ class CRD_data():
         html_lines += [ "</table>", "</body>", "</html>" ]
         html_lines += [ "<br> <br> <br> <br> <br>" ]
 
-        with open(self.opts["html_root"] + 'folk_index.html', 'w') as f:
+        with open(self.opts["html_root"] + 'folk.html', 'w') as f:
             for l in html_lines:
                 f.write('\n' + l)
 
@@ -2459,7 +2459,7 @@ class CRD_data():
             # collect cover songs; set cover_link for trad
             if song.cover:
                 if song.cover.startswith("Trad"):
-                    song.cover_link = "folk_index.html" + "#" + song.link
+                    song.cover_link = "folk.html" + "#" + song.link
                     continue
                 if song.cover not in cover_artists_songs:
                     cover_artists_songs[song.cover] = []
