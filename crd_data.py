@@ -23,7 +23,19 @@ FIXED_WIDTH_CHORDS = True
 DO_KEY_DIVS = False
 WRITE_FINGERINGS = True
 IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
-
+ARTIST_BAND_LINKS = {
+    "Babyshambles" :        [ "Pete Doherty" ],
+    "Band" :                [ "Bob Dylan" ],
+    "Beach Boys" :          [ "Brian Wilson", "Carl Wilson", "Dennis Wilson" ],
+    "Beatles" :             [ "Paul McCartney", "John Lennon", "George Harrison" ],
+    "Buffalo Springfield" : [ "Neil Young" ],
+    "Lou Reed" :            [ "David Bowie" ],
+    "Libertines" :          [ "Pete Doherty" ],
+    "Traveling Wilburys" : [ "Bob Dylan", "George Harrison", "Tom Petty" ],
+    "Crosby, Stills, Nash & Young" : [ "Neil Young", "Buffalo Springfield" ],
+    "Byrds" : [ "Buffalo Springfield", "Crosby, Stills, Nash & Young", "Gram Parsons" ],
+    "Velvet Underground" : [ "John Cale", "Lou Reed" ],
+    }
 
 def html_header(title, chords=False, index_page=False, folk=False):
     lines = [ '<head>',
@@ -165,6 +177,25 @@ class CRD_artist():
         if len(self.albums) > 30:
             self.too_many_albums = True
         return new_album
+    def get_artist_links(self):
+        artists = []
+
+        for key, values in ARTIST_BAND_LINKS.items():
+            if key.strip() == self.name:
+                # add artists linked to band
+                artists += values[:]
+            else:
+                for value in values:
+                    if value == self.name:
+                        # add artist's band
+                        artists.append(key)
+
+                        # but NOT the bandmates:
+                        #artists += [ v for v in values if v != value ]
+
+        artists = list(set(artists))
+        artists.sort()
+        return artists
     def all_songs(self):
         allsongs = []
         for album in self.albums:
@@ -222,6 +253,19 @@ class CRD_artist():
 
         if DO_WORDLISTS and self.name in DO_WORDLISTS:
             lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
+
+        related = self.get_artist_links()
+        if related:
+            links = []
+            for aname in related:
+                a = self.data.get_artist(aname)
+                if not a:
+                    raise ValueError("Error: no artist object for: " + aname)
+                link = "<a href=%s>%s</a>" % (a.fname, aname)
+                links.append(link)
+                
+            link_list_string = ", ".join(links)
+            lines += [ '<br>Related artists: ' + link_list_string ]
 
         col_class = "col2" if self.too_many_albums else "col1"
         lines += [ '<hr>' ]
