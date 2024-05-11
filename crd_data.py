@@ -71,8 +71,7 @@ def html_context_menu(index=False, chords=False, folk=False):
         lines.append("    <a onclick=\"transpose_topmost_song(true);\">Transpose up (k)</a>")
         lines.append("    <a onclick=\"transpose_topmost_song(false);\">Transpose down (j)</a>")
         lines.append("    <a onclick=\"cycle_topmost_song(true);\">Cycle song versions (v)</a>")
-        #lines.append("    <a onclick=\"theory_popup();\">Theory popup (t)</a>")
-        #lines.append("    <a onclick=\"nashville_system();\">Toggle Nashville chords (n)</a>")
+        lines.append("    <a onclick=\"nashville_system();\">Toggle Nashville chords (n)</a>")
         lines.append("    <a onclick=\"lyrics_only();\">Toggle lyrics only (z)</a>")
         lines.append("    <a onclick=\"cancel_modulation();\">Toggle modulation (m)</a>")
 
@@ -81,6 +80,14 @@ def html_context_menu(index=False, chords=False, folk=False):
 
     if folk:
         lines.append("    <a onclick=\"toggle_sort();\">Toggle index sort (s) </a>")
+
+    lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
+    lines.append("    <a onclick=\"jump_to_page('index.html');\">Jump to artists index (i)</a>")
+    lines.append("    <a onclick=\"jump_to_page('songs.html');\">Jump to song index</a>")
+    lines.append("    <a onclick=\"jump_to_page('tunings.html');\">Jump to tunings index</a>")
+    lines.append("    <a onclick=\"jump_to_page('folk.html');\">Jump to folk index</a>")
+    lines.append("    <a onclick=\"jump_to_page('theory.html');\">Jump to theory page</a>")
+    lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
 
     lines.append("    <a onclick=\"toggle_multicolumn();\">Toggle multicolumn</a>")
     lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")

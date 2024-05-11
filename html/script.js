@@ -402,12 +402,11 @@ function jump_to_same_name(song_index)
     return;
     }
 //}}}
-
-//{{{ function: goto_dylan
-function goto_dylan()
+//{{{ function: jump_to_page
+function jump_to_page(page)
     {
     var url = window.location.pathname;
-    url = url.replace(RegExp("\\w+\\.html.*"), "bobdylan.html");
+    url = url.replace(RegExp("\\w+\\.html.*"), page);
     window.location.href = url;
     return;
     }
@@ -466,9 +465,10 @@ function get_divs_of_song(song_index, classes=[])
 function transpose_song(song_index, up)
     {  
     var song = get_divs_of_song(song_index, ["chords"])[0];
+    var theory = window.location.href.includes("/theory.html");
 
-    // add capo line if not present
-    if ( !song.innerHTML.includes("Capo:") )
+    // add capo line if not present (but not for the theory page)
+    if ( !theory && !song.innerHTML.includes("Capo:") )
         {
         newline = "<br><div class=comment>Capo: <div class=capo>0</div> </div><br>";
         song.innerHTML = newline + song.innerHTML;
@@ -546,11 +546,19 @@ function transpose_topmost_song(up)
 //}}}
 
 //{{{ function: get_scale
-function get_scale(key)
+function get_scale(key, for_note=null)
     {
     var scale = [ key ];
     var intervals = [ 2, 2, 1, 2, 2, 2, 1 ];
-    var notes = get_notes(key, key.includes("#"));
+
+    var prefer_sharp = key.includes("#");
+
+    if ( for_note )
+        {
+        prefer_sharp = for_note.includes("#");
+        }
+
+    var notes = get_notes(key, prefer_sharp);
     var index = notes.indexOf(key);
 
     for ( var i=0; i<intervals.length; i++ )
@@ -568,14 +576,46 @@ function get_scale(key)
 function nashville_chord(chord_div, key)
     {
     var root = get_root(chord_div.innerHTML);
-    var scale = get_scale(key);
+
+    if ( !root )
+        {
+        // e.g. a pure bass note: /b
+        return;
+        }
+
+    var scale = get_scale(key, root);
     var degree = scale.indexOf(root) + 1;
+    var accidental = "";
+
     if ( !degree )
         {
-        // alert("No " + root + " in " + key);
+        // alert(chord_div.innerHTML + ": can't find " + root + " in the " + key + " scale");
+        var tmp_root = root;
+        if ( root.endsWith("#") )
+            {
+            tmp_root = tmp_root.substring(0, tmp_root.length-1);
+            scale = get_scale(key, tmp_root);
+            degree = scale.indexOf(tmp_root) + 1;
+            accidental = "#"
+            }
+        else if ( tmp_root.endsWith("b") )
+            {
+            tmp_root = tmp_root.substring(0, tmp_root.length-1);
+            scale = get_scale(key, tmp_root);
+            degree = scale.indexOf(tmp_root) + 1;
+            accidental = "b"
+            }
+        else
+            {
+            tmp_root += "#"
+            scale = get_scale(key, tmp_root);
+            degree = scale.indexOf(tmp_root) + 1;
+            accidental = "#"
+            }
         }
-    var numeral = decimal_to_numeral(degree);
-    // alert("key " + key + " : " + root + " = " + degree + " = " + numeral);
+
+    var numeral = decimal_to_numeral(degree) + accidental;
+
     chord_div.innerHTML = chord_div.innerHTML.replace(RegExp("^" + root), numeral);
     }
 //}}}
@@ -858,8 +898,9 @@ function next_or_previous(next)
 function assign_shortcuts()
     {
     shortcut.add("a",function() { show_all_versions() });
-    shortcut.add("d",function() { goto_dylan() });
+    shortcut.add("d",function() { jump_to_page("bobdylan.html") });
     shortcut.add("h",function() { cycle_versions(topmost_song().id, false) });
+    shortcut.add("i",function() { jump_to_page("index.html") });
     shortcut.add("j",function() { transpose_topmost_song(false) });
     shortcut.add("k",function() { transpose_topmost_song(true)  });
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
@@ -869,9 +910,11 @@ function assign_shortcuts()
     shortcut.add("o",function() { play_current_song(true)  });
     shortcut.add("u",function() { navigate_up()  });
     shortcut.add("s",function() { toggle_sort() });
-    //shortcut.add("t",function() { theory_popup(true) });
     shortcut.add("z",function() { lyrics_only() });
     shortcut.add("f",function() { prompt_for_song_search() });
+    shortcut.add("n",function() { nashville_system() });
+    // shortcut.add("t",function() { prompt_for_tuning_search() }); # t-shortcut trigger on refresh!?
+    shortcut.add("w",function() { prompt_for_word_search() });
     shortcut.add("r",function() { random_song() });
     shortcut.add(",",function() { next_or_previous(false) }); // <
     shortcut.add(".",function() { next_or_previous(true) });  // >
@@ -899,6 +942,12 @@ function assign_shortcuts()
         {
         do_song_search();
         }
+
+    if ( window.location.pathname.includes("tunings.html") )
+        {
+        do_tuning_search();
+        }
+
 
     }
 //}}}
@@ -1037,11 +1086,19 @@ function prompt_for_song_search()
     window.location.href = "songs.html?search=" + pattern.replace(/ /g, "+");
     }
 //}}}
+//{{{ function: prompt_for_word_search
+function prompt_for_word_search()
+    {
+    var pattern = prompt("Enter word:");
+    window.location.href = "songs.html?word=" + pattern.replace(/ /g, "+");
+    }
+//}}}
 //{{{ function: do_song_search
 function do_song_search()
     {
     var pattern = window.location.href.match(/\?search=(.*)/);
     var random  = window.location.href.match(/\?random=1/);
+    var word  = window.location.href.match(/\?word=(.*)/);
     if ( pattern )
         {
         pattern = pattern[1];
@@ -1094,6 +1151,95 @@ function do_song_search()
         var url = random_line.match( RegExp( "(\\w+\\.html#\\w+)" ) )
         //alert(url[0]);
         window.location.href = url[0];
+        }
+    else if ( word )
+        {
+        word = word[1];
+        word = word.replace(/\+/g, " ");   // +   -> space
+        word = word.replace(/\%22/g, '"'); // %22 -> "
+        word = word.replace(/\%27/g, "'"); // %27 -> '
+        word = word.trim()
+
+        var words = get_concordance();
+        for ( var i=0; i<words.length; i++ )
+            {
+
+            if ( words[i].startsWith(word + " :") )
+                {
+                var matches = words[i].split(" : ")[1].split(" | ");
+
+                for ( var j=0; j<matches.length; j++ )
+                    {
+                    var song = matches[j];
+                    song = song.replace(/ /g, "+");   // +   -> space
+                    song = song.replace(/\%22/g, '"'); // %22 -> "
+                    song = "<a href=songs.html?search=" + song + ">" + matches[j] + "</a>";
+                    matches[j] = song;
+                    }
+
+                var results = document.getElementById("results");
+                results.innerHTML = matches.join("\n<br>");
+                }
+
+            }
+
+        }
+    }
+//}}}
+
+//{{{ function: prompt_for_tuning_search
+function prompt_for_tuning_search()
+    {
+    var input = prompt("Enter notes of tuning:");
+    window.location.href = "tunings.html?search=" + input.replace(/ /g, "+");
+    }
+//}}}
+//{{{ function: do_tuning_search
+function do_tuning_search()
+    {
+    var pattern = window.location.href.match(/\?search=(.*)/);
+    if ( pattern )
+        {
+        pattern = pattern[1];
+        pattern = pattern.replace(/\+/g, " ");   // +   -> space
+        pattern = pattern.replace(/\%22/g, '"'); // %22 -> "
+        pattern = pattern.replace(/\%27/g, "'"); // %27 -> '
+        pattern = pattern.trim()
+
+        var chars = pattern.split("");
+        var ivals = [];
+        var prev_index = 0;
+
+        for ( var i=0; i<chars.length; i++ )
+            {
+            var note = chars[i].toUpperCase();
+            var notes = get_notes(note);
+            var index = notes.indexOf(note);
+
+            if ( i > 0 )
+                {
+                var rel_index = index % 12;
+                if ( rel_index == 0 ) { rel_index = 12; }
+                rel_index = rel_index - prev_index;
+                ivals.push(rel_index);
+                }
+
+            prev_index = index;
+            }
+
+        //alert(chars);
+        //alert(ivals);
+
+        var anchor = "#";
+
+        for ( var i=0; i<ivals.length; i++ )
+            {
+            anchor = anchor.concat(ivals[i].toString());
+            }
+
+        //alert(anchor);
+
+        window.location.href = window.location.href.replace(/\?search=(.*)/g, anchor);
         }
     }
 //}}}
