@@ -12,7 +12,15 @@
     <a onclick="transpose_topmost_song(true);">Transpose up (k)</a>
     <a onclick="transpose_topmost_song(false);">Transpose down (j)</a>
     <a onclick="cycle_topmost_song(true);">Cycle song versions (v)</a>
-    <!--<a onclick="lyrics_only();">Toggle lyrics only (z)</a> -->
+    <!--<a onclick="lyrics_only();">Toggle lyrics only (z)</a>-->
+    <!--<a onclick="cancel_modulation();">Toggle modulation (m)</a>-->
+    <a class=narrow onclick="">-------------------------</a>
+    <a onclick="jump_to_page('index.html');">Jump to artists index</a>
+    <a onclick="jump_to_page('songs.html');">Jump to song index</a>
+    <a onclick="jump_to_page('tunings.html');">Jump to tunings index</a>
+    <a onclick="jump_to_page('folk.html');">Jump to folk index</a>
+    <a onclick="jump_to_page('theory.html');">Jump to theory index</a>
+    <a class=narrow onclick="">-------------------------</a>
     <a onclick="toggle_multicolumn();">Toggle multicolumn</a>
     <a onclick="toggle_dark_mode();">Toggle dark mode</a>
     <a onclick="prompt_for_search();">Find song (f)</a>
@@ -76,17 +84,16 @@
 <span>More Stacked 3rds
 =================
 </span>
-<span>9th  == 2nd on top
-11th == 4th on top
-13th == 6th on top
+<span>9th  == octave 2nd
+11th == octave 4th
+13th == octave 6th
 </span>
 <span>You may see +/- instead of #/b (e.g. 7b5 = 7-5, or 7#9 = 7+9).
 </span>
-
 <span>Diminished Chords
 =================
 
-Diminished 7th chords are constructed from four stacked minor thirds (1,m3,b5,bb7).
+The dim7 chord (o) is constructed from four stacked minor thirds (1,m3,b5,bb7).
 The bb7 in the dim7 chord is equivalent to the 6th degree of the scale.
 The inversions of these chords overlap, so there are only 3 unique dim7 chords:
 </span>
@@ -94,12 +101,11 @@ The inversions of these chords overlap, so there are only 3 unique dim7 chords:
     <div class=chord>C#dim7</div> = <div class=chord>Edim7 </div> = <div class=chord>Gdim7 </div> = <div class=chord>A#dim7</div> = <div class=fingering>xx2323</div>
     <div class=chord>Ddim7 </div> = <div class=chord>Fdim7 </div> = <div class=chord>G#dim7</div> = <div class=chord>Bdim7 </div> = <div class=fingering>xx3434</div>
 
-The m7b5 chord (&oslash;) is sometimes called "half-diminished" (because the seventh is not diminished).
-A half-diminised chord can be played as a minor triad (based on the minor 3rd) over the root note:
+The m7b5 chord (&oslash;) is sometimes called "half-diminished" due to the absence of the bb7.
+A half-diminished chord can be played as a minor triad (based on the minor 3rd) over the root:
 
     <div class=chord>Cm7b5</div>  = <div class=chord>Ebm/c</div>
 </span>
-
 <span>Augmented Chords
 ================
 
@@ -173,7 +179,8 @@ An augmented minor triad produces an inverted major triad based on the raised 5t
 <br>
 <hr> <a name=Scales></a>
 <h3 id="theory.scales">Scales</h3>
-<select id="theory.scales.select" onchange="update_song_version('theory.scales');">
+<div class=selectors>
+<select class=versions id="theory.scales.version" onchange="update_song_version('theory.scales');">
     <option value=0>1: Ionian Scale (Major)</option>
     <option value=1>2: Dorian Scale</option>
     <option value=2>3: Phrygian Scale</option>
@@ -190,6 +197,7 @@ An augmented minor triad produces an inverted major triad based on the raised 5t
     <option value=12>Minor Pentatonic Scale</option>
     <option value=13>Minor Blues Scale (m3, b5)</option>
 </select>
+</div>
 
 <div id=theory.scales class="chords col2 version" style=display:block>
 <b><div class=chord>C </div> Ionian Scale (Major)</b>
