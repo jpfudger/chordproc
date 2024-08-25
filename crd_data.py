@@ -22,6 +22,7 @@ ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 FIXED_WIDTH_CHORDS = True
 DO_KEY_DIVS = False
 WRITE_FINGERINGS = True
+HARP_LINK = "theory.html#DiatonicHarmonicaPositions"
 IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
 ARTIST_BAND_LINKS = {
     "Babyshambles" :        [ "Pete Doherty" ],
@@ -920,7 +921,7 @@ class CRD_song():
         self.version_index = 0
         self.versions = []
         self.version_of = None
-        self.capo = False
+        self.capo = 0
         self.tuning = None
         self.album = None
         self.fingerings = {}
@@ -1120,43 +1121,84 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
+    def parse_capo_position(self,input_string):
+        string = input_string.upper().strip()
+
+        capo_integer = None
+        capo_numeral = None
+        capo_negative = False
+
+        if string.startswith("-"):
+            capo_negative = True
+            string = string[1:]
+
+        NUMERALS = [ "0", "I", "II", "III", "IV", "V",
+                     "VI", "VII", "VIII", "IX", "X", "XI",
+                     "XII", "XIII", "XIV", "XV",
+                   ]
+
+        try:
+            capo_integer = int(string)
+            capo_numeral = NUMERALS[capo_integer]
+        except ValueError:
+            if string in NUMERALS:
+                capo_numeral = string
+                capo_integer = NUMERALS.index(capo_numeral)
+
+        if (capo_numeral is None) != ( capo_integer is None):
+            raise ValueError(f"Error parsing capo position {input_string}")
+
+        if capo_negative and capo_integer:
+            capo_integer = -capo_integer
+            capo_numeral = "-" + capo_numeral
+
+        return capo_integer, capo_numeral
     def markup_chord_line(self,line,transpose=0,prefer_sharp=False):
         comline, comtype = self.is_comment_line(line)
         if comline:
             if comtype == "harp":
                 # strip leading "Harp key:" and format key as chord
                 splits = comline.split()
-                hkey = splits[1]
-                chord = get_chord(hkey)
-                if chord.is_chord():
-                    formatted = chord.format(transpose,prefer_sharp)
-                    title = "title=\"Relative to chords\"" if self.capo else ""
-                    splits[0] = "<div class=comment %s>%s</div>" % (title, splits[0])
-                    splits[1] = "<div class=chord>%s</div>" % formatted
-                    comline = " ".join(splits)
-                    if "@" in comline:
-                        comline = self.markup_comment_chords(comline)
+                hchord = get_chord(splits[1])
+                if hchord.is_chord():
+                    formatted = hchord.format(transpose,prefer_sharp)
+                    hcomment = "<div class=chord>%s</div>" % formatted
+
+                    if self.capo != 0:
+                        formatted_nocapo = hchord.format(self.capo, prefer_sharp)
+                        hcomment += " (chords) / "
+                        hcomment += "<div class=\"chord fixed\">%s</div>" % formatted_nocapo
+                        hcomment += " (capo)"
+
+                    theory_link = "<a href=%s>Harp:</a>" % HARP_LINK
+
+                    comline = theory_link + " " + hcomment
+
+                    trailing = " ".join(splits[2:])
+                    if "@" in trailing:
+                        trailing = self.markup_comment_chords(trailing)
+                    if trailing:
+                        comline += " " + trailing
+
                     comtype = "comment"
             elif comtype == "capo":
                 # format capo position and sounding key
                 splits = comline.split()
-                capo_position = splits[1]
+                capo_integer, capo_numeral = self.parse_capo_position(splits[1])
 
-                chord = None
-                m = re.search("sounding key:?\s*([A-G#b]+)", comline)
-                if m:
-                    sounding_key = m.group(1)
-                    #print("Sounding key: " + sounding_key)
-                    chord = get_chord(sounding_key)
+                if capo_integer:
+                    self.capo = capo_integer
+                    comline = "<a class=capo_button onclick=\"cancel_capo(this);\">Capo</a>: "
+                    comline += "<div class=capo>%s</div>" % capo_numeral
 
-                if capo_position:
-                    comline = "Capo: <div class=capo>%s</div> " % capo_position
-                    self.capo = True
+                    trailing = " ".join(splits[2:])
+                    if trailing:
+                        trailing = " " + trailing
+                    if "@" in trailing:
+                        trailing = self.markup_comment_chords(trailing)
+                    comline += " " + trailing
+                    
                     comtype = "comment"
-                    if chord and chord.is_chord():
-                        formatted = chord.format(transpose, prefer_sharp)
-                        comline += "(sounding key: <div class=chord>%s</div>)" % formatted 
-                    #comline += (" ".join(splits[2:]))
             elif comtype == "cover":
                 return ""
             elif comtype == "key":
