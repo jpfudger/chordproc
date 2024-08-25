@@ -21,8 +21,19 @@ select {
     min-width: 400px;
     }
 
+select.same_names {
+    background-color: lightgreen;
+    }
+
+select.versions {
+    background-color: lightblue;
+    }
+
+/* overridden later for large screens */
 .selectors {
-    position: absolute;
+    position: static;
+    padding-top: 10px;
+    padding-left: 50px;
     }
 
 span {
@@ -39,6 +50,10 @@ a:link, a:visited, a:active {
     text-decoration: none;
     color: blue;
     text-decoration: bold;
+    }
+
+a.capo_button {
+    cursor: pointer;
     }
 
 /* cover divs and a.cover links should be the same */
@@ -155,6 +170,7 @@ h3 {
     white-space: pre-line;
     }
 
+/* overridden later for large screens */
 .col1 { column-count: 1; }
 .col2 { column-count: 1; }
 .col3 { column-count: 1; }
@@ -176,6 +192,7 @@ h3 {
     .settings-icon { visibility: hidden; }
     }
 
+/* overridden later for large screens */
 img.img-tuning-map {
     display: inline;
     width: 70%;
@@ -196,13 +213,9 @@ img.img-tuning-map {
         right: 10%;
         }
 
-    select {
-        display: block;
-        min-width: 400px;
-        }
-
     .selectors {
         position: absolute;
+        margin-top: -40px; /* move inline with the h3 (song title) div above */
         right: 20px;
         }
 
@@ -281,7 +294,7 @@ td, tr {
     position: fixed;
     top: 12px;
     left: 10px;
-    width: 20px;
+    width: 30px;
     /* opacity: 0; */
     }
 

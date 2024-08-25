@@ -21,8 +21,19 @@ select {
     min-width: 400px;
     }
 
+select.same_names {
+    background-color: lightgreen;
+    }
+
+select.versions {
+    background-color: lightblue;
+    }
+
+/* overridden later for large screens */
 .selectors {
-    position: block;
+    position: static;
+    padding-top: 10px;
+    padding-left: 50px;
     }
 
 span {
@@ -39,6 +50,10 @@ a:link, a:visited, a:active {
     text-decoration: none;
     color: blue;
     text-decoration: bold;
+    }
+
+a.capo_button {
+    cursor: pointer;
     }
 
 /* cover divs and a.cover links should be the same */
@@ -194,6 +209,12 @@ img.img-tuning-map {
         width: 50%;
         }
 
+    .selectors {
+        position: static;
+        padding-top: 10px;
+        padding-left: 50px;
+        }
+
     }
 
 .chord, .key {
@@ -269,7 +290,7 @@ td, tr {
     position: fixed;
     top: 12px;
     left: 10px;
-    width: 20px;
+    width: 30px;
     /* opacity: 0; */
     }
 
