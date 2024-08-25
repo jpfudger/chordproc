@@ -796,6 +796,21 @@ class CRD_chord():
 
         return True
 
+CHORD_CACHE = {}
+
+def get_chord(string):
+    global CHORD_CACHE
+
+    chord = None
+
+    if string in CHORD_CACHE:
+        chord = CHORD_CACHE[string]
+    else:
+        chord = CRD_chord(string)
+        CHORD_CACHE[string] = chord
+
+    return chord
+
 class CRD_tuning():
     def __init__(self,input_string,names=[],stock_tunings=None):
         self.input_string = input_string
@@ -1038,7 +1053,7 @@ class CRD_song():
                         chord = None
                         fingering = None
                 else:
-                    chord = CRD_chord(word)
+                    chord = get_chord(word)
 
             if "@" in line:
                 line = self.markup_comment_chords(line)
@@ -1112,7 +1127,7 @@ class CRD_song():
                 # strip leading "Harp key:" and format key as chord
                 splits = comline.split()
                 hkey = splits[1]
-                chord = CRD_chord(hkey)
+                chord = get_chord(hkey)
                 if chord.is_chord():
                     formatted = chord.format(transpose,prefer_sharp)
                     title = "title=\"Relative to chords\"" if self.capo else ""
@@ -1132,7 +1147,7 @@ class CRD_song():
                 if m:
                     sounding_key = m.group(1)
                     #print("Sounding key: " + sounding_key)
-                    chord = CRD_chord(sounding_key)
+                    chord = get_chord(sounding_key)
 
                 if capo_position:
                     comline = "Capo: <div class=capo>%s</div> " % capo_position
@@ -1237,7 +1252,7 @@ class CRD_song():
                 formatted += '<div class=comment>' + word + '</div>'
             else:
                 word, starter, ender = self.strip_delimeters(word)
-                chord = CRD_chord(word)
+                chord = get_chord(word)
                 if chord.is_chord():
                     if transpose == 0:
                         prefer_sharp = "#" in word
@@ -2275,11 +2290,11 @@ class CRD_data():
                     fingerings_lines.append( "<div class=\"chords col1\">" )
 
                     all_chords = list(fingerings.keys())
-                    all_chords.sort(key=lambda c: ( CRD_chord(c).root, c))
+                    all_chords.sort(key=lambda c: ( get_chord(c).root, c))
 
                     root = None
                     for chord in all_chords:
-                        this_root = CRD_chord(chord).root
+                        this_root = get_chord(chord).root
                         if root and root != this_root:
                             fingerings_lines.append("")
                         fings = list(set(fingerings[chord]))
