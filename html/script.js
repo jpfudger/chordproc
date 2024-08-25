@@ -59,6 +59,30 @@ function toggle_dark_mode()
     }
 //}}}
 
+//{{{ function: toggle_multicolumn_topmost_song
+function toggle_multicolumn_topmost_song()
+    {
+    var song_div = topmost_song();
+
+    // read the column-count from css
+    var n_cols = getComputedStyle(song_div).columnCount;
+
+    // then update it 
+    if ( n_cols == 1 )
+        {
+        song_div.style.columnCount = 2;
+        }
+    else if ( n_cols == 2 )
+        {
+        song_div.style.columnCount = 3;
+        }
+    else
+        {
+        song_div.style.columnCount = 1;
+        }
+    }
+//}}}
+
 //{{{ function: set_style_cookie
 function set_style_cookie(cs) 
     { 
@@ -176,6 +200,12 @@ function increment_note(note,up=true) {
 //}}}
 //{{{ function: cycle_chord_div
 function cycle_chord_div(d, up) {
+    if ( d.classList.contains("fixed") ) 
+        {
+        // currently this is only used for harp key w.r.t. capo
+        return;
+        }
+
     var orig_length = d.innerHTML.length;
     var root = get_root(d.innerHTML);
     var bass = get_bass(d.innerHTML);
@@ -202,6 +232,73 @@ function transpose_all_chords(up=true) {
     var divs = document.getElementsByClassName('chord');
     for ( var i=0; i<divs.length; i++) {
         cycle_chord_div(divs[i], up);
+        }
+    }
+//}}}
+//{{{ function: enharmonic_note
+function enharmonic_note(note) {
+    var upper_note = note[0].toUpperCase() + note[1];
+    var notes_sharp = get_notes("A", true);
+    var notes_flat = get_notes("A", false);
+
+    var index = notes_sharp.indexOf(upper_note);
+    var new_note = note;
+
+    if ( index != -1 )
+        {
+        new_note = notes_flat[index];
+        }
+    else
+        {
+        index = notes_flat.indexOf(upper_note);
+        new_note = notes_sharp[index];
+        }
+
+    if ( upper_note != note )
+        {
+        new_note = new_note.toLowerCase();
+        }
+
+    return new_note;
+    }
+//}}}
+//{{{ function: swap_enharmonics
+function swap_enharmonics() {
+    var song = topmost_song();
+    var divs = get_divs_of_song(song.id, ["chord", "key"]);
+
+    for ( var i=0; i<divs.length; i++) {
+        var chord = divs[i].innerHTML;
+        var root = get_root(chord);
+        var bass = get_bass(chord);
+
+        var new_root = null;
+        var new_bass = null;
+
+        // alert(chord + " (" + root + ") (" + bass + ")");
+
+        if ( root != null && root.length == 2 )
+            {
+            new_root = enharmonic_note(root);
+            // if ( root == new_root ) { new_root == null; }
+            }
+
+        if ( bass != null && bass.length == 2 )
+            {
+            new_bass = enharmonic_note(bass);
+            // if ( bass == new_bass ) { new_bass == null; }
+            }
+
+        if ( new_root != null || new_bass != null )
+            {
+            // alert("->" + new_root + ", " + new_bass);
+            var new_chord = chord;
+            if ( new_root != null ) { new_chord = new_chord.replace(RegExp("^" + root), new_root); }
+            if ( new_bass != null ) { new_chord = new_chord.replace(RegExp("/" + bass), "/" + new_bass); }
+            // alert(new_chord);
+            divs[i].innerHTML = new_chord;
+            }
+
         }
     }
 //}}}
@@ -262,6 +359,33 @@ function transpose_all_capos(up=true) {
         {
         cycle_capo_div(divs[i], up);
         } 
+    }
+//}}}
+//{{{ function: cancel_capo
+function cancel_capo(div) {
+    var comment_div = div.parentElement;
+    var song_div = comment_div.parentElement;
+    var capo_div = comment_div.parentElement.getElementsByClassName("capo")[0];
+    var capo_numeral = capo_div.innerHTML;
+    var capo_decimal = numeral_to_decimal(capo_numeral);
+    var capo_delta = capo_decimal;
+
+    if ( !song_div.hasOwnProperty("original_capo") )
+        {
+        song_div.original_capo = capo_decimal;
+        }
+
+    if ( capo_decimal == 0 && song_div.original_capo != capo_decimal )
+        {
+        capo_delta = -song_div.original_capo;
+        }
+
+    for ( var i=Math.abs(capo_delta); i>0; i-- ) 
+        {
+        transpose_song(song_div.id, capo_delta > 0);
+        }
+
+    // alert(capo_decimal);
     }
 //}}}
 //}}}
@@ -467,10 +591,13 @@ function transpose_song(song_index, up)
     var song = get_divs_of_song(song_index, ["chords"])[0];
     var theory = window.location.href.includes("/theory.html");
 
+    var capo_divs = get_divs_of_song(song_index, ["capo"]);
+    var capo_div = capo_divs.length == 1 ? capo_divs[0] : null;
+
     // add capo line if not present (but not for the theory page)
-    if ( !theory && !song.innerHTML.includes("Capo:") )
+    if ( !theory && !capo_div )
         {
-        newline = "<br><div class=comment>Capo: <div class=capo>0</div> </div><br>";
+        newline = "<br><div class=comment><a class=capo_button onclick='cancel_capo(this);'>Capo</a>: <div class=capo>0</div> </div><br>";
         song.innerHTML = newline + song.innerHTML;
         }
 
@@ -769,10 +896,14 @@ function lyrics_only() {
 
     ignore_divs = [ "chord", "capo", "tabline", "fingering", "tuning", "comment" ]
 
+    var last_line_empty = false;
+
     for ( var i=0; i<lines.length; i++ )
         {
         var line = lines[i];
+        line = line.replace(/<.?span>/, '');
         var keep = true;
+        var empty = line.trim() == "";
     
         for ( var j=0; j<ignore_divs.length && keep; j++ )
             {
@@ -783,10 +914,20 @@ function lyrics_only() {
                 }
             }
 
-        if ( keep && newlines.length == 0 && ( line.trim() == "" || line.includes("span>") ) )
+        if ( keep && newlines.length == 0 && empty )
             {
             // ignore whitespace at the top
             keep = false;
+            }
+
+        if ( last_line_empty && empty )
+            {
+            keep = false;
+            }
+
+        if ( !last_line_empty && empty )
+            {
+            line += "</span>";
             }
 
         if ( keep )
@@ -798,8 +939,18 @@ function lyrics_only() {
                 line = unindented;
                 }
 
+            // ensure only one space between words
+            line = line.replace(/(?<=\S)\s+/g, ' ');
+
+            if ( last_line_empty && !empty )
+                {
+                line = "<span>" + line;
+                }
+
             newlines.push(line);
             }
+
+        if ( keep ) { last_line_empty = empty; }
         }
 
     div.innerHTML = "<br>" + newlines.join("\n");
@@ -898,7 +1049,9 @@ function next_or_previous(next)
 function assign_shortcuts()
     {
     shortcut.add("a",function() { show_all_versions() });
+    shortcut.add("c",function() { toggle_multicolumn_topmost_song() });
     shortcut.add("d",function() { jump_to_page("bobdylan.html") });
+    shortcut.add("e",function() { swap_enharmonics() });
     shortcut.add("h",function() { cycle_versions(topmost_song().id, false) });
     shortcut.add("i",function() { jump_to_page("index.html") });
     shortcut.add("j",function() { transpose_topmost_song(false) });
