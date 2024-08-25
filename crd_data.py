@@ -611,7 +611,7 @@ class CRD_album():
                 s_year = ' title=%d' % song.date.year if song.date else ''
                 nv_sub = ""
                 if song.versions:
-                    nv_sub = " <div class=count>%d</div>" % len(song.versions)
+                    nv_sub = " <div class=count>+%d</div>" % len(song.versions)
                 lines.append( '<li><a href=#%s%s%s>%s</a>%s' % ( song.link, s_class, s_year, song.title, nv_sub ) )
         lines += [ '</ol>' ]
         lines += songs_body
