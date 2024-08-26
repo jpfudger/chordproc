@@ -363,10 +363,20 @@ function transpose_all_capos(up=true) {
 //}}}
 //{{{ function: cancel_capo
 function cancel_capo(capo_link_div) {
-    var comment_div = capo_link_div.parentElement;
-    var span_div = comment_div.parentElement;
-    var song_div = span_div.parentElement;
-    var capo_div = comment_div.parentElement.getElementsByClassName("capo")[0];
+
+    // The capo div is within a comment div and maybe a span.
+    // Because we don't know which, keep trying until we find a chords div.
+
+    var song_div = capo_link_div;
+
+    while ( !song_div.classList.contains("chords") )
+        {
+        song_div = song_div.parentElement;
+        }
+
+    // Remember the capo_link_div is not the same as the capo_div!
+
+    var capo_div = song_div.getElementsByClassName("capo")[0];
     var capo_numeral = capo_div.innerHTML;
     var capo_decimal = numeral_to_decimal(capo_numeral);
     var capo_delta = capo_decimal;
