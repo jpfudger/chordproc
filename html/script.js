@@ -362,9 +362,10 @@ function transpose_all_capos(up=true) {
     }
 //}}}
 //{{{ function: cancel_capo
-function cancel_capo(div) {
-    var comment_div = div.parentElement;
-    var song_div = comment_div.parentElement;
+function cancel_capo(capo_link_div) {
+    var comment_div = capo_link_div.parentElement;
+    var span_div = comment_div.parentElement;
+    var song_div = span_div.parentElement;
     var capo_div = comment_div.parentElement.getElementsByClassName("capo")[0];
     var capo_numeral = capo_div.innerHTML;
     var capo_decimal = numeral_to_decimal(capo_numeral);
