@@ -1204,10 +1204,12 @@ class CRD_song():
                 return ""
             elif comtype == "key":
                 key = comline
-                key_line = "<div class=comment>Key:</div>"
+                key_text = "Key:"
                 if self.current_key and key != self.current_key:
-                    key_line = "<div class=comment>Modulate to:</div>"
-                key_line += " <div class=\"chord key\">%s</div>" % key
+                    key_text = "Modulate to:"
+
+                key_chord = "<div class=\"key chord\">%s</div>" % key
+                key_line = "<div class=comment>%s %s</div>" % ( key_text, key_chord )
                 self.current_key = key
 
                 if DO_KEY_DIVS:

@@ -991,6 +991,12 @@ function cancel_modulation() {
 
         if ( chord.classList.contains("key") )
             {
+
+            if ( chord.parentElement.innerHTML.includes("Modulate to") )
+                {
+                chord.parentElement.style.textDecoration = "line-through";
+                }
+
             new_key = chord.innerHTML;
 
             if ( key )
@@ -1072,7 +1078,7 @@ function assign_shortcuts()
     //shortcut.add("n",function() { nashville_system()  });
     shortcut.add("p",function() { play_current_song()  });
     shortcut.add("o",function() { play_current_song(true)  });
-    shortcut.add("u",function() { navigate_up()  });
+    shortcut.add("u",function() { navigate_up() });
     shortcut.add("s",function() { toggle_sort() });
     shortcut.add("z",function() { lyrics_only() });
     shortcut.add("f",function() { prompt_for_song_search() });
