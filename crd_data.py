@@ -1166,9 +1166,11 @@ class CRD_song():
 
                     if self.capo != 0:
                         formatted_nocapo = hchord.format(self.capo, prefer_sharp)
-                        hcomment += " (chords) / "
-                        hcomment += "<div class=\"chord fixed\">%s</div>" % formatted_nocapo
-                        hcomment += " (capo)"
+                        nocapo_link = "<div class=\"chord fixed\">%s</div>" % formatted_nocapo
+
+                        #hcomment += f" (chords) / {nocapo_link} (capo)"
+                        hcomment += f" [or {nocapo_link} with capo]"
+
 
                     theory_link = "<a href=%s>Harp:</a>" % HARP_LINK
 
@@ -1191,12 +1193,11 @@ class CRD_song():
                     comline = "<a class=capo_button onclick=\"cancel_capo(this);\">Capo</a>: "
                     comline += "<div class=capo>%s</div>" % capo_numeral
 
-                    trailing = " ".join(splits[2:])
-                    if trailing:
-                        trailing = " " + trailing
-                    if "@" in trailing:
-                        trailing = self.markup_comment_chords(trailing)
-                    comline += " " + trailing
+                    if len(splits) > 2:
+                        trailing = " ".join(splits[2:])
+                        if "@" in trailing:
+                            trailing = self.markup_comment_chords(trailing)
+                        comline += "  " + trailing # two spaces, one to account for #/b
                     
                     comtype = "comment"
             elif comtype == "cover":
