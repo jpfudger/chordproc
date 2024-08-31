@@ -1939,7 +1939,9 @@ class CRD_data():
                     pass
                 elif len(title) >= 3 and title[0:3] == '---':
                     comment_level = level
-                    if this_album:
+                    if this_song:
+                        pass # don't let commented versions affect song gaps
+                    elif this_album:
                         if prev_song_close_line > 0 and prev_song_close_line != lnum - 1:
                             inherited_song_gap = True
                     elif this_artist:
