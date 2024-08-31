@@ -468,32 +468,50 @@ G       x0020
 # Used in Danville Girl
 }}}
 
+{{{ tuning: EADG      [Bass: Standard]
+}}}
 {{{ tuning: GCEA      [Ukulele: Standard]
 
 A       2100
 A7      0100
 Am      2000
-E7      1202
+Am7     0433
+Amaj7   1100
+
+B       4322
+B7      2322
+Bm      4222
+Bm7     2222
+Bmaj7   3322
+
 C       0003
 C7      0001
 Cm      0333
+Cm7     3333
+Cmaj7   0002
 
-F       2010
-F7      2310
-Fm      1013
-
-D       2225
-D7      2223
-Dm      2210
+D       2225 / 2220
+D7      2020 / 2223
+Dm      2210 / 2210
+Dm7     2213
+Dmaj7   2224
 
 E       4442
 E7      1202
 Em      0432
 Em7     0202
+Emaj7   1302
+
+F       2010
+F7      2310
+Fm      1013
+Fm7     1313
+Fmaj7   2413
 
 G       0232
 G7      0212
 Gm      x231
+Gm7     0211
 Gmaj7   x222
 
 }}}
@@ -553,6 +571,44 @@ Bm11    4000
 Bm7     4455
 
 }}}
+{{{ tuning: GDAD      [Bouzouki: Standard]
+
+A       2242
+Am      2232
+
+Bb      3013
+Bbm     3343
+
+B       4464
+Bm      4454
+
+C       0232
+Cm      5565
+
+Db      6686
+Dbm     6676
+D       2004 / 2000
+Dm      2003
+
+Eb      0111
+Ebm     8898
+
+E       1222
+Em      0222
+
+F       2333
+Fm      1333
+
+F#      3444
+F#m     2444
+
+G       0020
+Gm      0010
+
+Ab      1131
+Abm     1121
+
+}}}
 
 # Dulcimer tunings are labelled low-high (like guitar tunings) even though
 # dulcimers are held with the (double course) high melody strings the top.
@@ -597,5 +653,12 @@ C#dim   123
 
 }}}
 {{{ tuning: FCA       [Dulcimer: Open]
+}}}
+
+{{{ tuning: EEA       [Balalaika: Prima/Alto]
+}}}
+{{{ tuning: AAD       [Balalaika: Secunda]
+}}}
+{{{ tuning: EAD       [Balalaika: Bass]
 }}}
 
