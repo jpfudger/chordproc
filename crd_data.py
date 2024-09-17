@@ -263,7 +263,7 @@ class CRD_artist():
             lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
 
         related = self.get_artist_links()
-        if related:
+        if related and not DO_CRDFILES:
             links = []
             for aname in related:
                 a = self.data.get_artist(aname)
