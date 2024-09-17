@@ -490,7 +490,7 @@ class CRD_artist():
                     body_lines += [ "<h2><a href=%s>%s</a></h2>" % (fingering_link, section_name) ]
                     body_lines += [ "<ul>" ]
                     for song in songs:
-                        link = song.get_html_link(mark_covers=True)
+                        link = song.get_html_link(mark_covers=True, use_song_title_of_first_version=True)
                         body_lines.append( '<li> %s (%s)' % (link, song.album.title) )
 
                     body_lines += [ "</ul>", "<br>" ]
@@ -1540,8 +1540,8 @@ class CRD_song():
 
                 # set tuning of main song to tuning of first version
                 # (this is required for filtering in group_songs_by_tunings)
-                if self.version_index == 1 and self.version_of and not self.version_of.tuning:
-                    self.version_of.tuning = self.tuning
+                # if self.version_index == 1 and self.version_of and not self.version_of.tuning:
+                #     self.version_of.tuning = self.tuning
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
@@ -1754,15 +1754,18 @@ class CRD_song():
                 s_link += '?v=' + str(self.version_index) # pass index by url
             s_link += '#' + self.version_of.link
         return s_link
-    def get_html_link(self, mark_covers=False):
+    def get_html_link(self, mark_covers=False, use_song_title_of_first_version=False):
         s_link = self.get_link()
 
         s_title = self.title
         if self.version_of:
-            s_title = "%s (%s)" % ( self.version_of.title, self.title )
+            if use_song_title_of_first_version and self.version_index == 0:
+                s_title = self.version_of.title
+            else:
+                s_title = "%s (%s)" % ( self.version_of.title, self.title )
 
         s_class = ""
-        if mark_covers and self.cover:
+        if mark_covers and (self.cover or (self.version_of and self.version_of.cover)):
             s_class = "class=cover "
 
         link = '<a %shref="%s">%s</a>' % ( s_class, s_link, s_title )
@@ -2149,19 +2152,36 @@ class CRD_data():
         if not self.tunings:
             self.tunings = []
             for artist in self.artists:
+                #print("== " + artist.name)
                 for album in artist.albums:
-                    songs = album.songs[:]
+                    songs = []
                     for song in album.songs:
-                        for version in song.versions[:]:
-                            if version.tuning and version.version_of.tuning \
-                                and version.tuning.offset() == version.version_of.tuning.offset():
-                                #print("Ignoring version with same tuning as song: ")
-                                #print("   ", version.version_of.title, version.title)
-                                continue
+                        version_tunings = []
+                        for version in song.get_all_versions():
+                            if version.tuning:
+                                version_tunings.append(version.tuning.offset())
+                            else:
+                                version_tunings.append(None) # standard
 
-                            # set title_sort to include the version_of title
-                            version.title_sort = "%s (%s)" % ( version.version_of.title_sort, version.title)
-                            songs.append(version)
+                        uniq_version_tunings = list(set(version_tunings))
+
+                        if len(uniq_version_tunings) == 0:
+                            pass
+                        elif len(uniq_version_tunings) == 1:
+                            songs.append(song) # all versions same tuning => just add song
+                        else:
+                            #print(song.title)
+                            #print(uniq_version_tunings)
+                            for uvt in uniq_version_tunings:
+                                for version in song.get_all_versions():
+                                    if version.tuning and version.tuning.offset() == uvt:
+                                        # set title_sort to include the version_of title
+                                        if version.version_of:
+                                            version.title_sort = "%s (%s)" % ( version.version_of.title_sort, version.title)
+                                        songs.append(version)
+
+                                        break
+
                     for song in songs:
                         if song.tuning:
                             try:
@@ -2361,7 +2381,7 @@ class CRD_data():
             body.append( '<ol>' )
 
             for song in tartist.all_songs():
-                link = song.get_html_link()
+                link = song.get_html_link(use_song_title_of_first_version=True)
                 body.append( '<li> %s (%s)' % ( link, song.artist.name ) )
 
             body.append( '</ol>' )
