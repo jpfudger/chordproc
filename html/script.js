@@ -361,8 +361,8 @@ function transpose_all_capos(up=true) {
         } 
     }
 //}}}
-//{{{ function: cancel_capo
-function cancel_capo(capo_link_div) {
+//{{{ function: toggle_capo
+function toggle_capo(capo_link_div) {
 
     // The capo div is within a comment div and maybe a span.
     // Because we don't know which, keep trying until we find a chords div.
@@ -608,7 +608,7 @@ function transpose_song(song_index, up)
     // add capo line if not present (but not for the theory page)
     if ( !theory && !capo_div )
         {
-        newline = "<br><div class=comment><a class=capo_button onclick='cancel_capo(this);'>Capo</a>: <div class=capo>0</div> </div><br>";
+        newline = "<br><div class=comment><a class=capo_button onclick='toggle_capo(this);'>Capo</a>: <div class=capo>0</div> </div><br>";
         song.innerHTML = newline + song.innerHTML;
         }
 
@@ -967,8 +967,8 @@ function lyrics_only() {
     div.innerHTML = "<br>" + newlines.join("\n");
     }
 //}}}
-//{{{ function: cancel_modulation
-function cancel_modulation() {
+//{{{ function: toggle_modulation
+function toggle_modulation() {
     var div = topmost_song();
 
     if ( div.hasOwnProperty("modulation_cancelled") )
@@ -1088,7 +1088,7 @@ function assign_shortcuts()
     shortcut.add("r",function() { random_song() });
     shortcut.add(",",function() { next_or_previous(false) }); // <
     shortcut.add(".",function() { next_or_previous(true) });  // >
-    shortcut.add("m",function() { cancel_modulation() });
+    shortcut.add("m",function() { toggle_modulation() });
 
     var ss = get_style_cookie();
     if ( ss ) { cycle_styles(ss); }

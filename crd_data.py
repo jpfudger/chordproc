@@ -74,7 +74,7 @@ def html_context_menu(index=False, chords=False, folk=False):
         lines.append("    <a onclick=\"cycle_topmost_song(true);\">Cycle song versions (v)</a>")
         lines.append("    <a onclick=\"nashville_system();\">Toggle Nashville chords (n)</a>")
         lines.append("    <a onclick=\"lyrics_only();\">Toggle lyrics only (z)</a>")
-        lines.append("    <a onclick=\"cancel_modulation();\">Toggle modulation (m)</a>")
+        lines.append("    <a onclick=\"toggle_modulation();\">Toggle modulation (m)</a>")
 
     if index:
         lines.append("    <a onclick=\"toggle_sort();\">Toggle artist sort (s) </a>")
@@ -1173,7 +1173,6 @@ class CRD_song():
                         #hcomment += f" (chords) / {nocapo_link} (capo)"
                         hcomment += f" [or {nocapo_link} with capo]"
 
-
                     theory_link = "<a href=%s>Harp:</a>" % HARP_LINK
 
                     comline = theory_link + " " + hcomment
@@ -1192,7 +1191,7 @@ class CRD_song():
 
                 if capo_integer:
                     self.capo = capo_integer
-                    comline = "<a class=capo_button onclick=\"cancel_capo(this);\">Capo</a>: "
+                    comline = "<a class=capo_button onclick=\"toggle_capo(this);\">Capo</a>: "
                     comline += "<div class=capo>%s</div>" % capo_numeral
 
                     if len(splits) > 2:
