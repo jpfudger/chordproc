@@ -367,6 +367,15 @@ function toggle_capo(capo_link_div) {
     // The capo div is within a comment div and maybe a span.
     // Because we don't know which, keep trying until we find a chords div.
 
+    if ( capo_link_div.parentElement.style.textDecoration == "line-through" )
+        {
+        capo_link_div.parentElement.style.textDecoration = "none";
+        }
+    else
+        {
+        capo_link_div.parentElement.style.textDecoration = "line-through";
+        }
+
     var song_div = capo_link_div;
 
     while ( !song_div.classList.contains("chords") )
