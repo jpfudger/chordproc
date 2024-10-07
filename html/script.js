@@ -555,6 +555,18 @@ function jump_to_page(page)
     return;
     }
 //}}}
+//{{{ function: jump_to_artist_index
+function jump_to_artist_index()
+    {
+    var url = window.location.pathname;
+    var array = url.match( RegExp("\\w+\\.html") );
+    var artist = array[0].split("_")[0];
+
+    url = url.replace(RegExp("\\w+\\.html.*"), artist + ".html");
+    window.location.href = url;
+    return;
+    }
+//}}}
 
 //{{{ function: get_divs_of_song
 function get_divs_of_song(song_index, classes=[])
@@ -1080,6 +1092,7 @@ function assign_shortcuts()
     shortcut.add("e",function() { swap_enharmonics() });
     shortcut.add("h",function() { cycle_versions(topmost_song().id, false) });
     shortcut.add("i",function() { jump_to_page("index.html") });
+    shortcut.add("shift+i",function() { jump_to_artist_index() });
     shortcut.add("j",function() { transpose_topmost_song(false) });
     shortcut.add("k",function() { transpose_topmost_song(true)  });
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });

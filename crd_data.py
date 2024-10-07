@@ -85,6 +85,7 @@ def html_context_menu(index=False, chords=False, folk=False):
 
     lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
     lines.append("    <a onclick=\"jump_to_page('index.html');\">Jump to artists index (i)</a>")
+    lines.append("    <a onclick=\"jump_to_artist_index();\">Jump to current artists index (I)</a>")
     lines.append("    <a onclick=\"jump_to_page('songs.html');\">Jump to song index</a>")
     lines.append("    <a onclick=\"jump_to_page('tunings.html');\">Jump to tunings index</a>")
     lines.append("    <a onclick=\"jump_to_page('folk.html');\">Jump to folk index</a>")
