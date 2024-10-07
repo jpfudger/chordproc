@@ -1207,11 +1207,13 @@ class CRD_song():
                 key = comline
                 key_text = "Key:"
                 if self.current_key and key != self.current_key:
-                    key_text = "Modulate to:"
+                    key_text = "<a class=capo_button onclick=\"toggle_modulation();\">Modulate to:</a>"
 
                 key_chord = "<div class=\"key chord\">%s</div>" % key
-                key_line = "<div class=comment>%s %s</div>" % ( key_text, key_chord )
                 self.current_key = key
+
+                key_comment_text = key_text + " " + key_chord
+                key_line = "<div class=comment>%s</div>" % ( key_comment_text )
 
                 if DO_KEY_DIVS:
                     # Adds an invisible key div which can be read by the javascript
