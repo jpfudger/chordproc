@@ -843,26 +843,28 @@ function play_current_song(bootlegs=false)
     if ( y_offset == 0 )
         {
         // top of page => album
-        var artist = artist.replace(" ", "%20");
-        var album = album.replace(" ", "%20");
-        var song = null;
+        artist = artist.replace(" ", "%20");
+        album = album.replace(" ", "%20");
+        song = null;
         }
     else
         {
         if ( artist == "Misc" )
             {
-            var artist = "";
+            artist = "";
             if ( song.includes("[") )
                 { 
                 song = song.replace(/\[[^)]+\]$/, "");
                 }
             }
 
-        var artist = artist.replace(" ", "%20");
-        var album = album.replace(" ", "%20");
-        var song = song.replace(" ", "%20");
+        artist = artist.replace(" ", "%20");
+        album = album.replace(" ", "%20");
 
-        var album = null; /// CURRENTLY UNSUPPORTED BY LAUDABLE
+        song = song.split("<div")[0];
+        song = song.replace(" ", "%20");
+
+        album = null; /// CURRENTLY UNSUPPORTED BY LAUDABLE
         }
 
     var url = "http://127.0.0.1:5000/laudable"
@@ -1099,6 +1101,7 @@ function assign_shortcuts()
     shortcut.add("v",function() { cycle_versions(topmost_song().id, true) });
     //shortcut.add("n",function() { nashville_system()  });
     shortcut.add("p",function() { play_current_song()  });
+    shortcut.add("shift+p",function() { play_current_song(true)  }); // inc. bootlegs
     shortcut.add("o",function() { play_current_song(true)  });
     shortcut.add("u",function() { navigate_up() });
     shortcut.add("s",function() { toggle_sort() });
