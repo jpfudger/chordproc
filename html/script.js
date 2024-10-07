@@ -1092,30 +1092,29 @@ function assign_shortcuts()
     shortcut.add("c",function() { toggle_multicolumn_topmost_song() });
     shortcut.add("d",function() { jump_to_page("bobdylan.html") });
     shortcut.add("e",function() { swap_enharmonics() });
+    shortcut.add("f",function() { prompt_for_song_search() });
+    shortcut.add("shift+f",function() { prompt_for_song_search(true) }); // same artist
     shortcut.add("h",function() { cycle_versions(topmost_song().id, false) });
     shortcut.add("i",function() { jump_to_page("index.html") });
     shortcut.add("shift+i",function() { jump_to_artist_index() });
     shortcut.add("j",function() { transpose_topmost_song(false) });
     shortcut.add("k",function() { transpose_topmost_song(true)  });
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
-    shortcut.add("v",function() { cycle_versions(topmost_song().id, true) });
-    //shortcut.add("n",function() { nashville_system()  });
-    shortcut.add("p",function() { play_current_song()  });
-    shortcut.add("shift+p",function() { play_current_song(true)  }); // inc. bootlegs
-    shortcut.add("o",function() { play_current_song(true)  });
-    shortcut.add("u",function() { navigate_up() });
-    shortcut.add("s",function() { toggle_sort() });
-    shortcut.add("z",function() { lyrics_only() });
-    shortcut.add("f",function() { prompt_for_song_search() });
-    shortcut.add("shift+f",function() { prompt_for_song_search(true) }); // same artist
+    shortcut.add("m",function() { toggle_modulation() });
     shortcut.add("n",function() { nashville_system() });
-    // shortcut.add("t",function() { prompt_for_tuning_search() }); # t-shortcut trigger on refresh!?
-    shortcut.add("w",function() { prompt_for_word_search() });
+    shortcut.add("p",function() { play_current_song() });
+    shortcut.add("shift+p",function() { play_current_song(true)  }); // inc. bootlegs
     shortcut.add("r",function() { random_song() });
     shortcut.add("shift+r",function() { random_song(true) }); // same artist
+    shortcut.add("s",function() { toggle_sort() });
+    // shortcut.add("t",function() { prompt_for_tuning_search() }); // triggers on F5!?
+    shortcut.add("shift+t",function() { jump_to_page("theory.html") });
+    shortcut.add("u",function() { navigate_up() });
+    shortcut.add("v",function() { cycle_versions(topmost_song().id, true) });
+    shortcut.add("w",function() { prompt_for_word_search() });
+    shortcut.add("z",function() { lyrics_only() });
     shortcut.add(",",function() { next_or_previous(false) }); // <
     shortcut.add(".",function() { next_or_previous(true) });  // >
-    shortcut.add("m",function() { toggle_modulation() });
 
     var ss = get_style_cookie();
     if ( ss ) { cycle_styles(ss); }
