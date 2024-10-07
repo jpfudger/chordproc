@@ -21,6 +21,7 @@ DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 FIXED_WIDTH_CHORDS = True
 DO_KEY_DIVS = False
+DO_SOUNDING_KEY = False
 WRITE_FINGERINGS = True
 HARP_LINK = "theory.html#DiatonicHarmonicaPositions"
 IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
@@ -1211,8 +1212,17 @@ class CRD_song():
 
                 key_chord = "<div class=\"key chord\">%s</div>" % key
                 self.current_key = key
+                sounding_key_text = ""
 
-                key_comment_text = key_text + " " + key_chord
+                if DO_SOUNDING_KEY and self.capo != 0:
+                    # this only affects "key" and "modulate to" comments when there is a capo.
+                    key_crd = CRD_chord(key)
+                    if key_crd:
+                        key_nocapo = key_crd.format(self.capo, prefer_sharp)
+                        sounding_key_chord = "<div class=\"chord fixed\">%s</div>" % key_nocapo
+                        sounding_key_text = " (sounding %s)" % sounding_key_chord
+
+                key_comment_text = key_text + " " + key_chord + sounding_key_text
                 key_line = "<div class=comment>%s</div>" % ( key_comment_text )
 
                 if DO_KEY_DIVS:
