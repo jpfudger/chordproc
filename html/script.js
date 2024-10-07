@@ -1107,10 +1107,12 @@ function assign_shortcuts()
     shortcut.add("s",function() { toggle_sort() });
     shortcut.add("z",function() { lyrics_only() });
     shortcut.add("f",function() { prompt_for_song_search() });
+    shortcut.add("shift+f",function() { prompt_for_song_search(true) }); // same artist
     shortcut.add("n",function() { nashville_system() });
     // shortcut.add("t",function() { prompt_for_tuning_search() }); # t-shortcut trigger on refresh!?
     shortcut.add("w",function() { prompt_for_word_search() });
     shortcut.add("r",function() { random_song() });
+    shortcut.add("shift+r",function() { random_song(true) }); // same artist
     shortcut.add(",",function() { next_or_previous(false) }); // <
     shortcut.add(".",function() { next_or_previous(true) });  // >
     shortcut.add("m",function() { toggle_modulation() });
@@ -1268,17 +1270,75 @@ function hide_settings_menu()
     }
 //}}}
 
-//{{{ function: random_song
-function random_song()
+//{{{ function: get_artist_from_url
+function get_artist_from_url()
     {
-    window.location.href = "songs.html?random=1";
+    var ignore = [ "index", "songs", "folk", "tunings", "theory" ];
+
+    var artist = window.location.href.match(/([a-z0-9]+)_/);
+
+    if ( !artist )
+        {
+        // main artist page
+        artist = window.location.href.match(/([a-z0-9]+)\.html/);
+        }
+
+    if ( artist )
+        {
+        artist = artist[1];
+
+        if ( ignore.indexOf(artist) != -1 )
+            {
+            artist = null;
+            }
+
+        }
+
+    return artist;
+    }
+//}}}
+//{{{ function: random_song
+function random_song(same_artist=false)
+    {
+    var url = "songs.html?random=1";
+
+    if ( same_artist )
+        {
+
+        var artist = get_artist_from_url();
+
+        if ( artist )
+            {
+            url += "?artist=" + artist;
+            }
+
+        }
+
+    window.location.href = url;
     }
 //}}}
 //{{{ function: prompt_for_song_search
-function prompt_for_song_search()
+function prompt_for_song_search(same_artist=false)
     {
-    var pattern = prompt("Enter search pattern (searches artist, song and album names):");
-    window.location.href = "songs.html?search=" + pattern.replace(/ /g, "+");
+    var url = "songs.html";
+    var msg = "Enter search pattern (searches artists/albums/songs):";
+
+    if ( same_artist )
+        {
+        var artist = get_artist_from_url();
+
+        if ( artist )
+            {
+            url += "?artist=" + artist;
+            msg = "Enter search pattern (searches songs/albums for current artist):";
+            }
+        }
+
+    var pattern = prompt(msg);
+    pattern = pattern.replace(/ /g, "+");
+    url += "?search=" + pattern;
+
+    window.location.href = url;
     }
 //}}}
 //{{{ function: prompt_for_word_search
@@ -1291,9 +1351,10 @@ function prompt_for_word_search()
 //{{{ function: do_song_search
 function do_song_search()
     {
-    var pattern = window.location.href.match(/\?search=(.*)/);
+    var pattern = window.location.href.match(/\?search=([^?]*)/);
     var random  = window.location.href.match(/\?random=1/);
-    var word  = window.location.href.match(/\?word=(.*)/);
+    var artist  = window.location.href.match(/\?artist=([^?]*)/);
+    var word  = window.location.href.match(/\?word=([^?]*)/);
     if ( pattern )
         {
         pattern = pattern[1];
@@ -1304,6 +1365,13 @@ function do_song_search()
 
         var results = document.getElementById("results");
         var lines = results.innerHTML.split(/\r?\n|\r|\n/g);
+
+        if ( artist )
+            {
+            artist = artist[1];
+            lines = lines.filter((line) => line.match( RegExp(artist + "_") ) );
+            }
+
         var matches = [];
 
         for ( var i=0; i<lines.length; i++ )
@@ -1342,6 +1410,13 @@ function do_song_search()
         {
         var results = document.getElementById("results");
         var lines = results.innerHTML.split(/\r?\n|\r|\n/g);
+
+        if ( artist )
+            {
+            artist = artist[1];
+            lines = lines.filter((line) => line.match( RegExp(artist + "_") ) );
+            }
+
         var random_line = lines[Math.floor(Math.random() * lines.length)];
         var url = random_line.match( RegExp( "(\\w+\\.html#\\w+)" ) )
         //alert(url[0]);
@@ -1353,9 +1428,10 @@ function do_song_search()
         word = word.replace(/\+/g, " ");   // +   -> space
         word = word.replace(/\%22/g, '"'); // %22 -> "
         word = word.replace(/\%27/g, "'"); // %27 -> '
-        word = word.trim()
+        word = word.trim();
 
         var words = get_concordance();
+        
         for ( var i=0; i<words.length; i++ )
             {
 
