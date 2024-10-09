@@ -7,6 +7,7 @@ html,body {
     font-family: sans-serif;
     color: black;
     background: white;
+    text-size-adjust: none; /* prevents android chrome resizing text */
     }
 
 #body {
