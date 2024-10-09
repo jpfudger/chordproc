@@ -57,7 +57,20 @@ def html_header(title, chords=False, index_page=False, folk=False):
     lines += [ '</head>' ]
 
     lines += html_context_menu(index=index_page, chords=chords, folk=folk)
+    lines += search_boxes()
+    
+    return lines
 
+def search_boxes():
+    lines = []
+    lines.append("<div id=search-container onclick=\"hide_search_box();\">")
+    lines.append("<div id=search>Enter search term")
+    lines.append("(used for searching song and album titles and optionally artist names):<br><br>")
+    lines.append("<input type=text id=pattern><br><br>")
+    lines.append("<button onclick=\"do_button_search(false);\" type=button>Search All</button>")
+    lines.append("<button onclick=\"do_button_search(true);\" type=button>Search Current Artist</button>")
+    lines.append("</div>")
+    lines.append("</div>")
     return lines
 
 def html_context_menu(index=False, chords=False, folk=False):
@@ -95,8 +108,8 @@ def html_context_menu(index=False, chords=False, folk=False):
     lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
     lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
     lines.append("    <a onclick=\"prompt_for_song_search();\">Find song (f)</a>")
-    lines.append("    <a onclick=\"prompt_for_song_search(true);\">Find song (current artist) (F)</a>")
-    lines.append("    <a onclick=\"prompt_for_tuning_search();\">Find tuning (n)</a>")
+    #lines.append("    <a onclick=\"prompt_for_song_search(true);\">Find song (current artist) (F)</a>")
+    #lines.append("    <a onclick=\"prompt_for_tuning_search();\">Find tuning (n)</a>")
     lines.append("    <a onclick=\"random_song();\">Random song (r)</a>")
     lines.append("    <a onclick=\"random_song(true);\">Random song (current artist) (R)</a>")
     #lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")

@@ -16,6 +16,41 @@ html,body {
     background: transparent;
     }
 
+input {
+    /* Used for search box input */
+    width: 100%;
+    }
+
+#search {
+    /* Used for the visible box containing the search input */
+    position: fixed;
+    top: 30;
+    background-color: lightgreen;
+    padding: 10;
+    width: 20%;
+    /* box-shadow: 10px 10px 5px lightgrey; */
+
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+
+    border: 1px;
+    border-style: solid;
+    }
+
+#search-container {
+    /* Used for the full-page div to allow clicking to hide the search box */
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 5%;
+    z-index: 1001;
+    position: fixed; 
+    }
+
 select {
     display: block;
     min-width: 400px;

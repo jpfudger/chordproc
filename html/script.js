@@ -1101,33 +1101,35 @@ function next_or_previous(next)
 //{{{ function: assign_shortcuts
 function assign_shortcuts()
     {
-    shortcut.add("a",function() { show_all_versions() });
-    shortcut.add("c",function() { toggle_multicolumn_topmost_song() });
-    shortcut.add("d",function() { jump_to_page("bobdylan.html") });
-    shortcut.add("e",function() { swap_enharmonics() });
-    shortcut.add("f",function() { prompt_for_song_search() });
-    shortcut.add("shift+f",function() { prompt_for_song_search(true) }); // same artist
-    shortcut.add("h",function() { cycle_versions(topmost_song().id, false) });
-    shortcut.add("i",function() { jump_to_page("index.html") });
-    shortcut.add("shift+i",function() { jump_to_artist_index() });
-    shortcut.add("j",function() { transpose_topmost_song(false) });
-    shortcut.add("k",function() { transpose_topmost_song(true)  });
-    shortcut.add("l",function() { cycle_versions(topmost_song().id, true) });
-    shortcut.add("m",function() { toggle_modulation() });
-    shortcut.add("n",function() { nashville_system() });
-    shortcut.add("p",function() { play_current_song() });
-    shortcut.add("shift+p",function() { play_current_song(true)  }); // inc. bootlegs
-    shortcut.add("r",function() { random_song() });
-    shortcut.add("shift+r",function() { random_song(true) }); // same artist
-    shortcut.add("s",function() { toggle_sort() });
-    // shortcut.add("t",function() { prompt_for_tuning_search() }); // triggers on F5!?
-    shortcut.add("shift+t",function() { jump_to_page("theory.html") });
-    shortcut.add("u",function() { navigate_up() });
-    shortcut.add("v",function() { cycle_versions(topmost_song().id, true) });
-    shortcut.add("w",function() { prompt_for_word_search() });
-    shortcut.add("z",function() { lyrics_only() });
-    shortcut.add(",",function() { next_or_previous(false) }); // <
-    shortcut.add(".",function() { next_or_previous(true) });  // >
+    var opts = { "disable_in_input": true };
+    shortcut.add("a",function() { show_all_versions() }, opts);
+    shortcut.add("c",function() { toggle_multicolumn_topmost_song() }, opts);
+    shortcut.add("d",function() { jump_to_page("bobdylan.html") }, opts);
+    shortcut.add("e",function() { swap_enharmonics() }, opts);
+    shortcut.add("f",function() { prompt_for_song_search() }, opts);
+    // shortcut.add("shift+f",function() { prompt_for_song_search(true) }, opts); // same artist
+    shortcut.add("h",function() { cycle_versions(topmost_song().id, false) }, opts);
+    shortcut.add("i",function() { jump_to_page("index.html") }, opts);
+    shortcut.add("shift+i",function() { jump_to_artist_index() }, opts);
+    shortcut.add("j",function() { transpose_topmost_song(false) }, opts);
+    shortcut.add("k",function() { transpose_topmost_song(true)  }, opts);
+    shortcut.add("l",function() { cycle_versions(topmost_song().id, true) }, opts);
+    shortcut.add("m",function() { toggle_modulation() }, opts);
+    shortcut.add("n",function() { nashville_system() }, opts);
+    shortcut.add("p",function() { play_current_song() }, opts);
+    shortcut.add("shift+p",function() { play_current_song(true)  }, opts); // inc. bootlegs
+    shortcut.add("r",function() { random_song() }, opts);
+    shortcut.add("shift+r",function() { random_song(true) }, opts); // same artist
+    shortcut.add("s",function() { toggle_sort() }, opts);
+    // shortcut.add("t",function() { prompt_for_tuning_search() }, opts); // triggers on F5!?
+    shortcut.add("shift+t",function() { jump_to_page("theory.html") }, opts);
+    shortcut.add("u",function() { navigate_up() }, opts);
+    shortcut.add("v",function() { cycle_versions(topmost_song().id, true) }, opts);
+    shortcut.add("w",function() { prompt_for_word_search() }, opts);
+    shortcut.add("z",function() { lyrics_only() }, opts);
+    shortcut.add(",",function() { next_or_previous(false) }, opts); // <
+    shortcut.add(".",function() { next_or_previous(true) }, opts);  // >
+    shortcut.add("escape",function() { hide_search_box() }); // no opts, so it works in input box
 
     var ss = get_style_cookie();
     if ( ss ) { cycle_styles(ss); }
@@ -1332,25 +1334,32 @@ function random_song(same_artist=false)
 //{{{ function: prompt_for_song_search
 function prompt_for_song_search(same_artist=false)
     {
-    var url = "songs.html";
-    var msg = "Enter search pattern (searches artists/albums/songs):";
+    var search_container = document.getElementById("search-container");
+    var search_div = document.getElementById("search");
+    var search_pattern = document.getElementById("pattern");
 
-    if ( same_artist )
+    hide_settings_menu();
+
+    search_pattern.value = "";
+    search_container.style.display = "block";
+    search_pattern.focus();
+
+    search_pattern.addEventListener("keypress", function(event)
         {
-        var artist = get_artist_from_url();
-
-        if ( artist )
+        // alert(event.key);
+        if ( event.key === "Enter" )
             {
-            url += "?artist=" + artist;
-            msg = "Enter search pattern (searches songs/albums for current artist):";
+            if ( search_pattern.value.trim() != "" )
+                {
+                do_button_search(same_artist);
+                }
             }
-        }
+        else if ( event.key === "`" )
+            {
+            search_container.style.display = "none";
+            }
+        } );
 
-    var pattern = prompt(msg);
-    pattern = pattern.replace(/ /g, "+");
-    url += "?search=" + pattern;
-
-    window.location.href = url;
     }
 //}}}
 //{{{ function: prompt_for_word_search
@@ -1469,6 +1478,40 @@ function do_song_search()
         }
     }
 //}}}
+//{{{ function: do_button_search
+function do_button_search(same_artist=false)
+    {
+    var url = "songs.html";
+    var msg = "Enter search pattern (searches artists/albums/songs):";
+
+    if ( same_artist )
+        {
+        var artist = get_artist_from_url();
+
+        if ( artist )
+            {
+            url += "?artist=" + artist;
+            msg = "Enter search pattern (searches songs/albums for current artist):";
+            }
+        }
+
+    var search_div = document.getElementById("search");
+    var search_pattern = document.getElementById("pattern");
+
+    var pattern = search_pattern.value;
+    pattern = pattern.replace(/ /g, "+");
+    url += "?search=" + pattern;
+    window.location.href = url;
+    }
+//}}}
+//{{{ function: hide_search_box
+function hide_search_box()
+    {
+    var search_container = document.getElementById("search-container");
+    search_container.style.display = "none";
+    }
+//}}}
+
 
 //{{{ function: prompt_for_tuning_search
 function prompt_for_tuning_search()
