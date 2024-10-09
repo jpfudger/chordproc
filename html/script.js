@@ -550,7 +550,20 @@ function jump_to_same_name(song_index)
 function jump_to_page(page)
     {
     var url = window.location.pathname;
-    url = url.replace(RegExp("\\w+\\.html.*"), page);
+    
+    if ( url.endsWith("/") )
+        {
+        url += page;
+        }
+    else if ( url.endsWith(".html") )
+        {
+        url = url.replace(RegExp("\\w+\\.html.*"), page);
+        }
+    else 
+        {
+        alert("Cannot add page to url " + url);
+        }
+
     window.location.href = url;
     return;
     }
