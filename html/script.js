@@ -1598,3 +1598,36 @@ document.onclick = function(e) {
         { hide_settings_menu(); }
     }
 
+//{{{ function: is_mobile_or_tablet
+function is_mobile_or_tablet()
+    {
+    return true; // always show up arrow
+    
+    // var a = navigator.userAgent || navigator.vendor || window.opera;
+    // var mobile_or_tablet = ( window.innerWidth <= 800 ) && ( window.innerHeight <= 600 );
+    // alert(mobile_or_tablet);
+    // return mobile_or_tablet; 
+    }
+//}}}
+//{{{ function: display_up_arrow_on_scroll
+function display_up_arrow_on_scroll()
+    {
+    var arrow = document.getElementsByClassName("jump-to-top")[0];
+    var scrollPos = document.getElementsByTagName("body")[0].scrollTop;
+    
+    if ( scrollPos > 200 )
+        {
+        arrow.style.display = "block";
+        }
+    else
+        {
+        arrow.style.display = "none";
+        }
+    }
+//}}}
+
+if ( is_mobile_or_tablet() )
+    {
+    window.onscroll = display_up_arrow_on_scroll;
+    }
+

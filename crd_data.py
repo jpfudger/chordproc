@@ -57,15 +57,14 @@ def html_header(title, chords=False, index_page=False, folk=False):
     lines += [ '</head>' ]
 
     lines += html_context_menu(index=index_page, chords=chords, folk=folk)
-    lines += search_boxes()
+    lines += html_search_boxes()
     
     return lines
 
-def search_boxes():
+def html_search_boxes():
     lines = []
     lines.append("<div id=search-container onclick=\"hide_search_box();\">")
-    lines.append("<div id=search>Enter search term")
-    lines.append("(used for searching song and album titles and optionally artist names):<br><br>")
+    lines.append("<div id=search>Enter search term (used for searching song and album titles and optionally artist names):<br><br>")
     lines.append("<input type=text id=pattern><br><br>")
     lines.append("<button onclick=\"do_button_search(false);\" type=button>Search All</button>")
     lines.append("<button onclick=\"do_button_search(true);\" type=button>Search Current Artist</button>")
@@ -115,6 +114,7 @@ def html_context_menu(index=False, chords=False, folk=False):
     #lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
 
     lines.append("  </div>")
+    lines.append("  <img class=jump-to-top src=arrow.png onclick=\"navigate_up();\">")
     lines.append("</div>")
 
     return lines
