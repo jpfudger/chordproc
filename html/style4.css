@@ -224,7 +224,7 @@ h3 {
     select { visibility: hidden; }
     button { visibility: hidden; }
     .chords { padding-left: 0px; }
-    .settings-icon { visibility: hidden; }
+    img.settings-icon { visibility: hidden; }
     }
 
 img.img-tuning-map {
@@ -315,8 +315,9 @@ td, tr {
     border-width: 1px;
     }
 
-.jump-to-top {
+img.jump-to-top {
     /* only want to display this when the top of the page is not visible */
+    filter: invert(1);
     display: none;
     cursor: pointer;
     position: fixed;
@@ -332,7 +333,7 @@ td, tr {
     left: 20px;
     }
 
-.settings-icon {
+img.settings-icon {
     /* opacity: 0; */
     position: fixed;
     cursor: pointer;

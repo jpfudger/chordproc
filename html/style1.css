@@ -225,7 +225,7 @@ h3 {
     select { visibility: hidden; }
     button { visibility: hidden; }
     .chords { padding-left: 0px; }
-    .settings-icon { visibility: hidden; }
+    img.settings-icon { visibility: hidden; }
     }
 
 /* overridden later for large screens */
@@ -317,7 +317,7 @@ td, tr {
     border-width: 1px;
     }
 
-.jump-to-top {
+img.jump-to-top {
     /* only want to display this when the top of the page is not visible */
     display: none;
     cursor: pointer;
@@ -334,7 +334,7 @@ td, tr {
     left: 20px;
     }
 
-.settings-icon {
+img.settings-icon {
     /* opacity: 0; */
     position: fixed;
     cursor: pointer;
