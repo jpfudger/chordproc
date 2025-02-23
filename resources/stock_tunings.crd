@@ -436,6 +436,8 @@ Am  x0200
 Bb  xx321
 
 }}}
+{{{ tuning: GCGBbC    [Banjo: Karen Dalton]
+}}}
 {{{ tuning: GCGCC     [Banjo: Triple C]
 Cm  x0003
 G   x2022
@@ -445,7 +447,7 @@ G   x2022
 Gm      x0020
 F       x3203
 Bb      x3323
-C       x3003
+C       x2002
 }}}
 {{{ tuning: GDGDE     [Banjo: Old G]
 # [Banjo: Sandy River Belle]
