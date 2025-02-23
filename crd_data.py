@@ -55,6 +55,7 @@ def html_header(title, chords=False, index_page=False, folk=False):
     #     '<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>',
     #     #'<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>',
     #     ]
+
     lines += [ '</head>' ]
 
     lines += html_context_menu(index=index_page, chords=chords, folk=folk)
@@ -69,6 +70,11 @@ def html_search_boxes():
     lines.append("<input type=text id=pattern><br><br>")
     lines.append("<button onclick=\"do_button_search(false);\" type=button>Search All</button>")
     lines.append("<button onclick=\"do_button_search(true);\" type=button>Search Current Artist</button>")
+    lines.append("<br><br>")
+    lines.append("<button onclick=\"random_song();\" type=button>Random Song</button>")
+    lines.append("<button onclick=\"random_song(true);\" type=button>Random Song (current artist)</button>")
+    lines.append("<br><br>")
+    lines.append("<button onclick=\"jump_to_page('index.html');\" type=button>Artist Index</button>")
     lines.append("</div>")
     lines.append("</div>")
     return lines
@@ -97,14 +103,14 @@ def html_context_menu(index=False, chords=False, folk=False):
         lines.append("    <a onclick=\"toggle_sort();\">Toggle index sort (s) </a>")
 
     lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
-    lines.append("    <a onclick=\"jump_to_page('index.html');\">Jump to artists index (i)</a>")
-    lines.append("    <a onclick=\"jump_to_artist_index();\">Jump to current artists index (I)</a>")
-    lines.append("    <a onclick=\"jump_to_page('songs.html');\">Jump to song index</a>")
-    lines.append("    <a onclick=\"jump_to_page('tunings.html');\">Jump to tunings index</a>")
-    lines.append("    <a onclick=\"jump_to_page('folk.html');\">Jump to folk index</a>")
-    lines.append("    <a onclick=\"jump_to_page('theory.html');\">Jump to theory page</a>")
+    lines.append("    <a onclick=\"jump_to_page('index.html');\">Artist index (i)</a>")
+    lines.append("    <a onclick=\"jump_to_artist_index();\">Current artist index (I)</a>")
+    lines.append("    <a onclick=\"jump_to_page('songs.html');\">Song index</a>")
+    lines.append("    <a onclick=\"jump_to_page('tunings.html');\">Tuning index</a>")
+    lines.append("    <a onclick=\"jump_to_page('folk.html');\">Folk index</a>")
+    lines.append("    <a onclick=\"jump_to_page('theory.html');\">Theory help</a>")
     lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
-    lines.append("    <a onclick=\"toggle_multicolumn();\">Toggle multicolumn</a>")
+    lines.append("    <a onclick=\"toggle_multicolumn();\">Toggle multicolumn (c)</a>")
     lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
     lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
     lines.append("    <a onclick=\"prompt_for_song_search();\">Find song (f)</a>")
@@ -115,7 +121,14 @@ def html_context_menu(index=False, chords=False, folk=False):
     #lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
 
     lines.append("  </div>")
+    lines.append("  <img class=search-icon src=magnifying.png onclick=\"prompt_for_song_search();\">")
     lines.append("  <img class=jump-to-top src=arrow.png onclick=\"navigate_up();\">")
+    #lines.append("  <img id=random src=random.png onclick=\"random_song();\">")
+
+    if chords:
+        lines.append("  <img id=plus src=plus.png onclick=\"transpose_topmost_song(true);\">")
+        lines.append("  <img id=minus src=minus.png onclick=\"transpose_topmost_song(false);\">")
+
     lines.append("</div>")
 
     return lines
