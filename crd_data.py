@@ -535,6 +535,41 @@ class CRD_artist():
                     f.write(l + '\n')
 
         return n_artist_tunings, n_artist_tuning_songs
+    def write_json(self):
+        d = {}
+        d["artist"] = self.name
+        d["songs"] = []
+
+        lines = []
+
+        for song in self.all_songs():
+            if song.cover: 
+                continue
+
+            title = song.title
+            album = song.album.title
+            link = song.get_link()
+            year = 0
+
+            if song.date:
+                year = song.date.year
+            elif song.album.date:
+                year = song.album.date.year
+
+            s = { "title": title, "album": album, "year": year, "link": link }
+            d["songs"].append(s)
+
+            lines.append("|".join((title, album, str(year), link)))
+
+        fname = re.sub(r"\.html$", ".dat", self.index_fname)
+        with open(fname, "w") as f:
+            for line in lines:
+                f.write(line + "\n")
+
+        # json_fname = re.sub(r"\.html$", ".json", self.index_fname)
+        # import json
+        # with open(json_fname, "w") as f:
+        #     json.dump(d, f, indent=4)
 
 def set_title_and_date(title):
     # also extracts misc artist (in square brackets)
