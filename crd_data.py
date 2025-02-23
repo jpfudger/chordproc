@@ -1271,7 +1271,7 @@ class CRD_song():
                 key = comline
                 key_text = "Key:"
                 if self.current_key and key != self.current_key:
-                    key_text = "<a class=capo_button onclick=\"toggle_modulation();\">Modulate to:</a>"
+                    key_text = "<a class=capo_button onclick=\"toggle_modulation(this);\">Modulate to:</a>"
 
                 key_chord = "<div class=\"key chord\">%s</div>" % key
                 self.current_key = key
