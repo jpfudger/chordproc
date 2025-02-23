@@ -224,6 +224,7 @@ h3 {
     select { visibility: hidden; }
     button { visibility: hidden; }
     .chords { padding-left: 0px; }
+    .settings { visibility: hidden; }
     img.settings-icon { visibility: hidden; }
     }
 
@@ -289,7 +290,7 @@ img.img-tuning-map {
     color: blue;
     }
 
-.count {
+.count, .year {
     display: inline-block;
     font-family: monospace;
     min-width: 75;
@@ -313,13 +314,13 @@ td, tr {
     border-width: 1px;
     }
 
-img.jump-to-top {
+img.jump-to-top, img.search-icon, #plus, #minus {
     /* only want to display this when the top of the page is not visible */
-    display: none;
+    display: block;
     cursor: pointer;
-    position: fixed;
-    width: 25;
-    left: 12.5;
+    position: relative;
+    width: 29;
+    left: -8;
     }
 
 .settings {
