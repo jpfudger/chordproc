@@ -45,6 +45,7 @@ def html_header(title, chords=False, index_page=False, folk=False):
         '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
         '    <link rel="stylesheet" type="text/css" href="style1.css" id="style">',
         '    <script src="script.js"></script>',
+        '    <meta name="google" content="notranslate">',
         ]
 
     
