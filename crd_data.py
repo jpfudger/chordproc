@@ -652,7 +652,7 @@ class CRD_album():
 
         year_sub = ""
         if self.date and self.date.year:
-            year_sub = " <div class=count>%d</div>" % self.date.year
+            year_sub = " <div class=year>%d</div>" % self.date.year
 
         title_link = '<a href=%s>%s</a> : %s%s' % (self.artist.fname, self.artist.name, self.title, year_sub)
         lines  = [ '<html>' ]
@@ -1693,7 +1693,7 @@ class CRD_song():
 
             year = ""
             if self.date and not self.album.date:
-                year = " <div class=count>%d</div>" % self.date.year
+                year = " <div class=year>%d</div>" % self.date.year
 
             style = ' style="display:block"'
             lines += [ '<hr> <a name=%s></a>' % self.link ] 
