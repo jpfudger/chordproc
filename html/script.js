@@ -1160,11 +1160,28 @@ function assign_shortcuts()
     var ss = get_style_cookie();
     if ( ss ) { cycle_styles(ss); }
 
+    // old-style anchor (?v=2#SongName)
     var version_anchor = window.location.href.match(/\?v=(\d+)#(\w+)/);
     if ( version_anchor )
         {
-        var version = version_anchor[1];
+        var version = String(Number(version_anchor[1]-1)); // subtract 1!
         var anchor = version_anchor[2];
+
+        // jump to anchor
+        location.replace("#" + anchor)
+
+        // set version from url parameter
+        var song_id = topmost_song().id
+        set_version_of_song(song_id, version);
+        set_version_selector(song_id, version);
+        }
+
+    // new-style anchor (#SongName-v2)
+    var version_anchor = window.location.href.match(/#(\w+)-v(\d+)$/);
+    if ( version_anchor )
+        {
+        var version = String(Number(version_anchor[2]-1)); // subtract 1!
+        var anchor = version_anchor[1];
 
         // jump to anchor
         location.replace("#" + anchor)

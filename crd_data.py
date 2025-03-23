@@ -1826,9 +1826,11 @@ class CRD_song():
         s_link = self.album.fname + '#' + self.link
         if self.version_of:
             s_link = self.album.fname
-            if self.version_index > 0:
-                s_link += '?v=' + str(self.version_index) # pass index by url
             s_link += '#' + self.version_of.link
+            if self.version_index > 0:
+                # append version index
+                # note: we add 1 to the index so it matches the drop-down menu
+                s_link += "-v" + str(self.version_index+1)
         return s_link
     def get_html_link(self, mark_covers=False, use_song_title_of_first_version=False):
         s_link = self.get_link()
