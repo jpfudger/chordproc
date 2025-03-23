@@ -1004,17 +1004,40 @@ function lyrics_only() {
     }
 //}}}
 //{{{ function: toggle_modulation
-function toggle_modulation() {
-    var div = topmost_song();
+function toggle_modulation(link_div=null) {
 
-    if ( div.hasOwnProperty("modulation_cancelled") )
+    var song_div = null;
+
+    if ( link_div == null )
         {
-        div.innerHTML = div.raw;
-        delete div.modulation_cancelled;
+        song_div = topmost_song();
+        }
+    else
+        {
+        // The modulation div is within a comment div and maybe a span.
+        // Because we don't know which, keep trying until we find a chords div.
+
+        song_div = link_div;
+        while ( !song_div.classList.contains("chords") )
+            {
+            song_div = song_div.parentElement;
+            }
+        }
+
+    if ( song_div.hasOwnProperty("modulation_cancelled") )
+        {
+        song_div.innerHTML = song_div.raw;
+        delete song_div.modulation_cancelled;
         return;
         }
 
-    var chords = div.getElementsByClassName("chord");
+    if ( !song_div.hasOwnProperty("raw") )
+        {
+        // store default lines for easy restoring
+        song_div.raw = song_div.innerHTML;
+        }
+
+    var chords = song_div.getElementsByClassName("chord");
     var key = null;
     var original_key = null;
     var new_key = null;
@@ -1037,8 +1060,11 @@ function toggle_modulation() {
 
             if ( key )
                 {
-                var notes = get_notes(key);
-                interval += notes.indexOf(new_key) - notes.indexOf(key);
+                // need to extract the root notes (e.g. for minor keys)
+                var root = get_root(key);
+                var new_root = get_root(new_key);
+                var notes = get_notes(root);
+                interval += notes.indexOf(new_root) - notes.indexOf(root);
                 chord.innerHTML = original_key;
                 }
             else
@@ -1063,7 +1089,7 @@ function toggle_modulation() {
         }
 
     // do this at the end in case something breaks
-    div.modulation_cancelled = true;
+    song_div.modulation_cancelled = true;
 
     }
 //}}}
