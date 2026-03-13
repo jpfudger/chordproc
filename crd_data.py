@@ -50,14 +50,6 @@ def html_header(title, chords=False, index_page=False, folk=False):
         '    <meta name="google" content="notranslate">',
         ]
 
-    
-    # if chords:
-    #     lines += [
-    #     '<a onclick="transpose_topmost_song(true);" title="Transpose Up"><div id=t_l></div></a>',
-    #     '<a onclick="transpose_topmost_song(false);" title="Transpose Down"><div id=b_l></div></a>',
-    #     #'<a onclick="hide_chords();" title="Hide Chords"><div id=b_r></div></a>',
-    #     ]
-
     lines += [ '</head>' ]
 
     lines += html_context_menu(index=index_page, chords=chords, folk=folk)
@@ -171,7 +163,7 @@ def html_song_index(allsongs, artist=None):
         elif cur_letter and cur_letter != song.title_sort[0]:
             if add_letter_links:
                 lines.append('</div>')
-                lines.append('<a name="%s">' % song.title_sort[0])
+                lines.append('<a name="%s"></a>' % song.title_sort[0])
                 lines.append('<hr>')
                 lines.append('<div class="songindex col2">')
             else:
@@ -479,7 +471,7 @@ class CRD_artist():
                 lines.append('<br>')
             elif cur_letter != word[0]:
                 lines.append('</div>')
-                lines.append('<a name="%s">' % word[0])
+                lines.append('<a name="%s"></a>' % word[0])
                 lines.append('<br><hr>')
                 #lines.append('<h3>%s</h3>' % word[0])
                 lines.append('<div class="songindex col2">')
@@ -1087,10 +1079,10 @@ class CRD_song():
         return line
     def is_comment_line(self,line):
         if line.strip().startswith('[') and line.strip().endswith(']'):
-            m_ws = re.search('(^\s*)', line)
+            m_ws = re.search(r'(^\s*)', line)
             line = m_ws.group(1) + line.strip()[1:-1]
-            w_url = re.search('(https?:\S+)', line)
-            line = re.sub( '(https?:\S+)', '<a href="\\1">\\1</a>', line)
+            w_url = re.search(r'(https?:\S+)', line)
+            line = re.sub( r'(https?:\S+)', '<a href="\\1">\\1</a>', line)
 
             if "{" in line:
                 # extract comment links
@@ -1380,9 +1372,9 @@ class CRD_song():
                         else:
                             # remove padding to avoid symbols running together
                             formatted = trimmed + "</div>" + word
-                    elif re.search("\s+</div>\)$", formatted):
+                    elif re.search(r"\s+</div>\)$", formatted):
                         #print(formatted)
-                        m = re.search("(\s+)</div>\)$", formatted)
+                        m = re.search(r"(\s+)</div>\)$", formatted)
                         if m:
                             n_pre_ws = len(m.group(1))
                             n_word = len(word)
@@ -1402,18 +1394,18 @@ class CRD_song():
                 formatted += '...'
             elif word.lower() in [ 'n.c.', 'nc', 'n.c', 'n/c' ]:
                 formatted += len(word) * ' '
-            elif re.match( '\(?riff(\s*\d+)?\)?', word.lower() ):
+            elif re.match( r'\(?riff(\s*\d+)?\)?', word.lower() ):
                 formatted += '<div class=comment>' + word + '</div>'
-            elif re.match( '\[?intro\]?', word.lower() ):
+            elif re.match( r'\[?intro\]?', word.lower() ):
                 formatted += '<div class=comment>Intro</div>'
             elif re.match( finger_regex, word ):
                 formatted += '<div class=comment>' + word + '</div>'
-            elif re.match( '\$\d+', word ):
+            elif re.match( r'\$\d+', word ):
                 # $1 $2 etc used for links between sections
                 formatted += word
             elif word in valid_chordline_chards:
                 formatted += word
-            elif re.match( '\(?\s*[xX]?\s*\d+[xX]?\s*\)?', word ):
+            elif re.match( r'\(?\s*[xX]?\s*\d+[xX]?\s*\)?', word ):
                 # this is to match (x4) for repetition
                 formatted += '<div class=comment>' + word + '</div>'
             else:
@@ -1499,7 +1491,7 @@ class CRD_song():
 
         n_empty_leaders = 0
         for line in formatted_with_spans:
-            if re.search( "^\s*$", line): 
+            if re.search( r"^\s*$", line): 
                 n_empty_leaders += 1
             else:
                 break
@@ -1609,8 +1601,8 @@ class CRD_song():
                 self.cover = splits[0].strip()
                 self.cover_title = splits[1].strip()
 
-            m_roud = re.search('roud\s+(\w+)', line.lower())
-            m_child = re.search('child\s+(\w+)', line.lower())
+            m_roud = re.search(r'roud\s+(\w+)', line.lower())
+            m_child = re.search(r'child\s+(\w+)', line.lower())
             if m_roud: 
                 self.roud = m_roud.group(1)
             if m_child: 
@@ -1624,7 +1616,7 @@ class CRD_song():
                 self.version_of.roud = self.roud
                 self.version_of.child = self.child
         elif "{" in line and "}" in line:
-            links = re.findall('(\{[^}]+\})', line )
+            links = re.findall(r'(\{[^}]+\})', line )
             # store a link for later processing in add_comment_links
             for link in links:
                 link_dict = parse_song_link_line(link)
@@ -2068,10 +2060,10 @@ class CRD_data():
 
         for line in lines:
             lnum += 1
-            mopen = re.match('^\s*\{\{\{\s+(.*)',line)
-            mclose = re.match('^\s*\}\}\}',line)
-            mblank = re.match('^\s*$',line)
-            mc = re.match('^\s*\{\{\{\s*---',line)
+            mopen = re.match(r'^\s*\{\{\{\s+(.*)',line)
+            mclose = re.match(r'^\s*\}\}\}',line)
+            mblank = re.match(r'^\s*$',line)
+            mc = re.match(r'^\s*\{\{\{\s*---',line)
             if mopen:
                 level += 1
                 title = mopen.group(1)
@@ -2088,11 +2080,11 @@ class CRD_data():
                         if prev_album_close_line > 0 and prev_album_close_line != lnum - 1:
                             inherited_album_gap = True
                 elif len(title) > 6 and title[0:6] == 'artist':
-                    a_name = re.match( '.*artist:\s+(.*)', line ).group(1)
+                    a_name = re.match( r'.*artist:\s+(.*)', line ).group(1)
                     this_artist = self.get_artist(a_name, add=True)
                     level_artist = level
                 elif len(title) > 6 and title[0:5] == 'album':
-                    a_name = re.match( '.*album:\s+(.*)', line ).group(1)
+                    a_name = re.match( r'.*album:\s+(.*)', line ).group(1)
                     if not this_artist:
                         this_artist = self.get_artist('Misc', add=True)
                     this_album = this_artist.add_album(a_name)
@@ -2103,7 +2095,7 @@ class CRD_data():
                         this_album.gap_before = True
                         inherited_album_gap = False
                 elif len(title) > 4 and title[0:4] == 'song':
-                    s_name = re.match( '.*song:\s+(.*)', line ).group(1)
+                    s_name = re.match( r'.*song:\s+(.*)', line ).group(1)
                     if not this_artist:
                         this_artist = self.get_artist('Misc', add=True)
                     if not this_album:
@@ -2117,7 +2109,7 @@ class CRD_data():
                         this_song.gap_before = True
                         inherited_song_gap = False
                 elif len(title) > 9 and title[0:7] == 'version':
-                    v_name = re.match( '.*version:\s+(.*)', line ).group(1)
+                    v_name = re.match( r'.*version:\s+(.*)', line ).group(1)
                     if not this_artist:
                         print("No artist for version: " + v_name)
                     if not this_album:
@@ -2188,11 +2180,11 @@ class CRD_data():
         tunings = []
 
         for line in lines:
-            mopen = re.match('^\s*\{\{\{\s+(.*)',line)
-            mclose = re.match('^\s*\}\}\}',line)
-            mblank = re.match('^\s*$',line)
-            mcf = re.match('^\s*\{\{\{\s*---',line)
-            mcl = re.match('^\s*#',line)
+            mopen = re.match(r'^\s*\{\{\{\s+(.*)',line)
+            mclose = re.match(r'^\s*\}\}\}',line)
+            mblank = re.match(r'^\s*$',line)
+            mcf = re.match(r'^\s*\{\{\{\s*---',line)
+            mcl = re.match(r'^\s*#',line)
 
             if mblank or mcl:
                 pass
@@ -2205,7 +2197,7 @@ class CRD_data():
                     if splits[0] == 'tuning:':
                         notes = splits[1]
                         names_str = " ".join(splits[2:])
-                        names = re.findall('\[([^]]+)\]', names_str )
+                        names = re.findall(r'\[([^]]+)\]', names_str )
                         current_tuning = CRD_tuning( notes, names )
                         if len(names) == 0:
                             print("Tuning %s has no name" % notes)
@@ -2643,7 +2635,7 @@ class CRD_data():
             line = "<tr>"
 
             s_link = song.album.fname + '#' + song.link
-            line += "<td> <a name=%s> <a href=%s>%s</a> </td>" % (song.link, s_link, song.title)
+            line += "<td> <a name=%s></a> <a href=%s>%s</a> </td>" % (song.link, s_link, song.title)
 
             a_name = "" 
             if song.artist.name.startswith("Misc:"):
