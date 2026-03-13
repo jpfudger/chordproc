@@ -541,9 +541,12 @@ class CRD_artist():
                 body_lines = []
 
                 tunings = list(artist_tunings.keys())
-                tunings.sort(key=lambda t: (-len(artist_tunings[t]), t.tuning.offset()))
+                tunings.sort(key=lambda t: (-len(t.tuning.offset()), 
+                                            -len(artist_tunings[t]), 
+                                            t.tuning.offset()))
 
                 lines += [ "<ul>" ]
+                last_offset = []
 
                 for tuning in tunings:
                     songs = artist_tunings[tuning]
@@ -559,6 +562,13 @@ class CRD_artist():
 
                     count = "<div class=count>%d</div>" % len(songs)
                     link = "<a class=tuning href=#%s>%s</a>" % ( tuning.tuning.offset(), tuning_name )
+
+                    this_offset = tuning.tuning.offset()
+                    if last_offset and len(this_offset) != len(last_offset):
+                        # change in number of strings: add gap
+                        lines += [ "<br>" ]
+                    last_offset = this_offset
+
                     lines += [ "    <li> %s %s </li>" % (link, count) ]
 
                     body_lines += [ "<hr>" ]
