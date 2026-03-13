@@ -59,16 +59,16 @@ def html_header(title, chords=False, index_page=False, folk=False):
 
 def html_search_boxes():
     lines = []
-    lines.append("<div id=search-container onclick=\"hide_search_box();\">")
+    lines.append("<div id=search-container>")
     lines.append("<div id=search>Enter search term (used for searching song and album titles and optionally artist names):<br><br>")
     lines.append("<input type=text id=pattern><br><br>")
-    lines.append("<button onclick=\"do_button_search(false);\" type=button>Search All</button>")
-    lines.append("<button onclick=\"do_button_search(true);\" type=button>Search Current Artist</button>")
+    lines.append("<button id=search-all-artists type=button>Search All</button>")
+    lines.append("<button id=search-current-artist type=button>Search Current Artist</button>")
     lines.append("<br><br>")
-    lines.append("<button onclick=\"random_song();\" type=button>Random Song</button>")
-    lines.append("<button onclick=\"random_song(true);\" type=button>Random Song (current artist)</button>")
+    lines.append("<button id=search-random-song type=button>Random Song</button>")
+    lines.append("<button id=search-random-song-current-artist type=button>Random Song (current artist)</button>")
     lines.append("<br><br>")
-    lines.append("<button onclick=\"jump_to_page('index.html');\" type=button>Artist Index</button>")
+    lines.append("<button id=search-goto-index type=button>Artist Index</button>")
     lines.append("</div>")
     lines.append("</div>")
     return lines
@@ -78,50 +78,47 @@ def html_context_menu(index=False, chords=False, folk=False):
 
     lines.append("<div class=settings>")
     lines.append("  <img class=settings-icon src=menu.png>")
-    #lines.append("  <img class=settings-icon onclick=\"toggle_settings_menu();\" src=menu.png>")
-    #lines.append("  <div id=t_r></div></a>")
     lines.append("  <div class=settings-menu>")
 
     if chords:
-        lines.append("    <a onclick=\"transpose_topmost_song(true);\">Transpose up (k)</a>")
-        lines.append("    <a onclick=\"transpose_topmost_song(false);\">Transpose down (j)</a>")
-        lines.append("    <a onclick=\"cycle_topmost_song(true);\">Cycle song versions (v)</a>")
-        lines.append("    <a onclick=\"nashville_system();\">Toggle Nashville chords (n)</a>")
-        lines.append("    <a onclick=\"lyrics_only();\">Toggle lyrics only (z)</a>")
-        lines.append("    <a onclick=\"toggle_modulation();\">Toggle modulation (m)</a>")
-
-    if index:
-        lines.append("    <a onclick=\"toggle_sort();\">Toggle artist sort (s) </a>")
+        lines.append("    <a id=menu-transpose-up>Transpose up (k)</a>")
+        lines.append("    <a id=menu-transpose-down>Transpose down (j)</a>")
+        lines.append("    <a id=menu-cycle-versions>Cycle song versions (v)</a>")
+        lines.append("    <a id=menu-toggle-nashville>Toggle Nashville chords (n)</a>")
+        lines.append("    <a id=menu-toggle-lyrics-only>Toggle lyrics only (z)</a>")
+        lines.append("    <a id=menu-toggle-modulation>Toggle modulation (m)</a>")
 
     if folk:
-        lines.append("    <a onclick=\"toggle_sort();\">Toggle index sort (s) </a>")
+        lines.append("    <a id=menu-toggle-folk-sort>Toggle artist sort (s) </a>")
 
-    lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
-    lines.append("    <a onclick=\"jump_to_page('index.html');\">Artist index (i)</a>")
-    lines.append("    <a onclick=\"jump_to_artist_index();\">Current artist index (I)</a>")
-    lines.append("    <a onclick=\"jump_to_page('songs.html');\">Song index</a>")
-    lines.append("    <a onclick=\"jump_to_page('tunings.html');\">Tuning index</a>")
-    lines.append("    <a onclick=\"jump_to_page('folk.html');\">Folk index</a>")
-    lines.append("    <a onclick=\"jump_to_page('theory.html');\">Theory help</a>")
-    lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
-    lines.append("    <a onclick=\"toggle_multicolumn();\">Toggle multicolumn (c)</a>")
-    lines.append("    <a onclick=\"toggle_dark_mode();\">Toggle dark mode</a>")
-    lines.append("    <a class=narrow onclick=\"\">-------------------------</a>")
-    lines.append("    <a onclick=\"prompt_for_song_search();\">Find song (f)</a>")
-    #lines.append("    <a onclick=\"prompt_for_song_search(true);\">Find song (current artist) (F)</a>")
-    #lines.append("    <a onclick=\"prompt_for_tuning_search();\">Find tuning (n)</a>")
-    lines.append("    <a onclick=\"random_song();\">Random song (r)</a>")
-    lines.append("    <a onclick=\"random_song(true);\">Random song (current artist) (R)</a>")
-    #lines.append("    <a onclick=\"cycle_styles();\">Cycle styles</a>")
+    if index:
+        lines.append("    <a id=menu-toggle-index-sort>Toggle index sort (s) </a>")
+
+    lines.append("    <a class=narrow>-------------------------</a>")
+    lines.append("    <a id=menu-jump-to-index>Artist index (i)</a>")
+    lines.append("    <a id=menu-jump-to-artist>Current artist index (I)</a>")
+    lines.append("    <a id=menu-jump-to-song-index>Song index</a>")
+    lines.append("    <a id=menu-jump-to-tuning-index>Tuning index</a>")
+    lines.append("    <a id=menu-jump-folk-index>Folk index</a>")
+    lines.append("    <a id=menu-jump-to-theory>Theory help</a>")
+    lines.append("    <a class=narrow>-------------------------</a>")
+    lines.append("    <a id=menu-toggle-multicolumn>Toggle multicolumn (c)</a>")
+    lines.append("    <a id=menu-toggle-dark>Toggle dark mode</a>")
+    lines.append("    <a class=narrow>-------------------------</a>")
+    lines.append("    <a id=menu-find-song>Find song (f)</a>")
+    #lines.append("    <a id=menu-tuning-search>Find tuning (n)</a>")
+    lines.append("    <a id=menu-random-song>Random song (r)</a>")
+    lines.append("    <a id=menu-random-song-current>Random song (current artist) (R)</a>")
+    #lines.append("    <a id=menu-cycle-styles>Cycle styles</a>")
 
     lines.append("  </div>")
-    lines.append("  <img class=search-icon src=magnifying.png onclick=\"prompt_for_song_search();\">")
-    lines.append("  <img class=jump-to-top src=arrow.png onclick=\"navigate_up();\">")
-    #lines.append("  <img id=random src=random.png onclick=\"random_song();\">")
+    lines.append("  <img class=search-icon src=magnifying.png>")
+    lines.append("  <img class=jump-to-top src=arrow.png>")
+    #lines.append("  <img id=random src=random.png>")
 
     if chords:
-        lines.append("  <img id=plus src=plus.png onclick=\"transpose_topmost_song(true);\">")
-        lines.append("  <img id=minus src=minus.png onclick=\"transpose_topmost_song(false);\">")
+        lines.append("  <img id=plus src=plus.png>")
+        lines.append("  <img id=minus src=minus.png>")
 
     lines.append("</div>")
 
@@ -1292,7 +1289,7 @@ class CRD_song():
 
                 if capo_integer:
                     self.capo = capo_integer
-                    comline = "<a class=capo_button onclick=\"toggle_capo(this);\">Capo</a>: "
+                    comline = "<a class=capo_button>Capo</a>: "
                     comline += "<div class=capo>%s</div>" % capo_numeral
 
                     if len(splits) > 2:
@@ -1308,7 +1305,7 @@ class CRD_song():
                 key = comline
                 key_text = "Key:"
                 if self.current_key and key != self.current_key:
-                    key_text = "<a class=capo_button onclick=\"toggle_modulation(this);\">Modulate to:</a>"
+                    key_text = "<a class=key_button>Modulate to:</a>"
 
                 key_chord = "<div class=\"key chord\">%s</div>" % key
                 self.current_key = key
