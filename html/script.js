@@ -1331,8 +1331,10 @@ function assign_shortcuts()
     if ( elem11 != null ) { elem11.addEventListener("click",   e => { jump_to_page('songs.html'); })};
     var elem12 = document.getElementById("menu-jump-to-tuning-index");
     if ( elem12 != null ) { elem12.addEventListener("click", e => { jump_to_page('tunings.html'); })};
-    var elem13 = document.getElementById("menu-jump-folk-index");
+    var elem13 = document.getElementById("menu-jump-to-folk-index");
     if ( elem13 != null ) { elem13.addEventListener("click",      e => { jump_to_page('folk.html'); })};
+    var elem13b = document.getElementById("menu-jump-to-year-index");
+    if ( elem13b != null ) { elem13b.addEventListener("click",      e => { jump_to_page('years.html'); })};
     var elem14 = document.getElementById("menu-jump-to-theory");
     if ( elem14 != null ) { elem14.addEventListener("click",       e => { jump_to_page('theory.html'); })};
     var elem15 = document.getElementById("menu-toggle-multicolumn");

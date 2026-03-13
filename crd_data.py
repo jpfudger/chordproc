@@ -99,7 +99,8 @@ def html_context_menu(index=False, chords=False, folk=False):
     lines.append("    <a id=menu-jump-to-artist>Current artist index (I)</a>")
     lines.append("    <a id=menu-jump-to-song-index>Song index</a>")
     lines.append("    <a id=menu-jump-to-tuning-index>Tuning index</a>")
-    lines.append("    <a id=menu-jump-folk-index>Folk index</a>")
+    lines.append("    <a id=menu-jump-to-folk-index>Folk index</a>")
+    lines.append("    <a id=menu-jump-to-year-index>Year index</a>")
     lines.append("    <a id=menu-jump-to-theory>Theory help</a>")
     lines.append("    <a class=narrow>-------------------------</a>")
     lines.append("    <a id=menu-toggle-multicolumn>Toggle multicolumn (c)</a>")
@@ -2791,7 +2792,7 @@ class CRD_data():
         lines += [ '<br> <a href=folk.html>Folk Index</a> <div class=count>%s</div>' % folk_summary ]
         lines += [ '<br> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
         lines += [ '<br> <a href=years.html>Year Index</a>' ]
-        lines += [ '<br> <a href=theory.html>Chords and Scales</a>' ]
+        lines += [ '<br> <a href=theory.html>Theory Help</a>' ]
         lines += [ '<hr>' ]
 
         lines += [ '<div class=col4>' ]
