@@ -1558,7 +1558,8 @@ class CRD_song():
                     line = "<span>" + line
                     in_span = True
 
-            formatted_with_spans.append(line)
+            if line is not None:
+                formatted_with_spans.append(line)
 
         if in_span:
             formatted_with_spans.append("</span>") # close last one
@@ -1977,6 +1978,8 @@ class CRD_data():
         self.collections = []
         self.player = opts.get('player')
         self.playlists = opts.get('playlists')
+        self.all_roud = {}
+        self.all_child = {}
 
         # Note: the "player" callback is a function which takes three strings:
         # an artist name, an album name, and/or a song name
@@ -2084,6 +2087,20 @@ class CRD_data():
                         if keep:
                             song1.songs_with_same_name.append(song2)
 
+            for song in self.all_songs():
+                if song.roud:
+                    if song.roud not in self.all_roud:
+                        self.all_roud[song.roud] = []
+                    self.all_roud[song.roud].append(song)
+
+                if song.child:
+                    if song.child not in self.all_child:
+                        self.all_child[song.child] = []
+                    self.all_child[song.child].append(song)
+
+            #print(self.all_roud)
+            #print(self.all_child)
+                
         return self.song_titles
     def all_dummy_songs(self):
         if len(self.dummy_songs) == 0:
