@@ -187,6 +187,49 @@ def html_song_index(allsongs, artist=None):
     lines += [ '</body>', '</html>' ]
     return lines
 
+def parse_song_link_line(link_line):
+    # expected form: {artist|album|song|version}
+    link_dict = { "text"    : link_line,
+                  "artist"  : None,
+                  "album"   : None,
+                  "song"    : None,
+                  "version" : 1,
+                  "url"     : None,
+                  "link"    : None,
+                  "object"  : None,
+                  }
+    #print(link_line)
+
+    link_line = link_line[1:-1]
+
+    splits = link_line.split("|")
+
+    # if last element is "v1" (etc) set the version and remove the element
+    m_version = re.match(r"v(\d+)", splits[-1])
+    if m_version:
+        link_dict["version"] = int(m_version.group(1))
+        splits.pop()
+
+    link_dict["song"] = splits[-1]
+    if len(splits) > 1:
+        link_dict["artist"] = splits[0]
+    if len(splits) > 2:
+        link_dict["album"] = splits[1]
+
+    #print(link_dict)
+
+    return link_dict
+
+def fuzzy_title(title):
+    f_title = title.lower()
+    
+    chars = [ " ", "'", '"', "?", "(", ")" ]
+
+    for char in chars:
+        f_title = f_title.replace(char, "")
+
+    return f_title
+
 class CRD_artist():
     def __init__(self,name,index=0,data=None):
         self.name = name.strip()
@@ -265,7 +308,7 @@ class CRD_artist():
             return [p]
         
         return []
-    def html(self,add_artist=False):
+    def html(self,add_artist=False, playlist=False):
         lines  = [ '<html>' ]
         lines += html_header(self.name)
         lines += [ '<body>', '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
@@ -1582,23 +1625,7 @@ class CRD_song():
             links = re.findall('(\{[^}]+\})', line )
             # store a link for later processing in add_comment_links
             for link in links:
-                link_dict = { "text"   : link,
-                              "artist" : None,
-                              "album"  : None,
-                              "song"   : None,
-                              "link"   : None,
-                              }
-
-                link = link[1:-1]
-
-                splits = link.split("|")
-                link_dict["song"] = splits[-1]
-                #link_dict["artist"] = self.artist.name # default to current artist
-                if len(splits) > 1:
-                    link_dict["artist"] = splits[0]
-                if len(splits) > 2:
-                    link_dict["album"] = splits[1]
-
+                link_dict = parse_song_link_line(link)
                 self.comment_links.append(link_dict)
         else:
             # if it has a line which is not a cover artist, it can't be a dummy
@@ -1857,6 +1884,7 @@ class CRD_data():
         self.n_artists = 0
         self.albums = []
         self.songs = []
+        self.songs_dict = {}
         self.song_titles = {}
         self.dummy_songs = []
         self.collections = []
