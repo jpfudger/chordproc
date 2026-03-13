@@ -88,7 +88,7 @@ a:link, a:visited, a:active {
     text-decoration: bold;
     }
 
-a.capo_button {
+a.capo_button, a.key_button {
     cursor: pointer;
     }
 
@@ -98,9 +98,8 @@ a.cover:link, a.cover:visited, a.cover:active {
     color: cyan;
     }
 
-.highlight {
-    color: red;
-    display: inline;
+a.highlight {
+    color: darkred;
     }
 
 h2 a:link, h2 a:visited, h2 a:active {
@@ -219,22 +218,112 @@ h3 {
     padding-left: 50px;
     }
 
+button {
+    width: 220px;
+    }
+
+.fingerings-container {
+    /* contains fingering_button div and fingerings div */
+    white-space: nowrap;
+    display: inline-block;
+    padding-bottom: 10px;
+    }
+
+.fingering_button {
+    cursor: pointer;
+    display: block;
+    color: blue;
+    }
+
+.fingerings {
+    /* contains fingering divs (one per line) */
+    display: none;
+    cursor: pointer;
+    white-space: pre-line;
+    border: 1px solid black;
+    padding: 4px;
+    background-color: lightgrey;
+    /* background-color: green; */
+    }
+
+.fingering {
+    white-space: pre;
+    display: inline-block;
+    color: blue;
+    }
+
+
 @media print { 
     /* hide some items when printing: this section needs to be after the original definitions */
     hr { visibility: hidden; } /* use page breaks instead of hrs */
-    select { visibility: hidden; }
-    button { visibility: hidden; }
+    select { visibility: none; display: none; }
+    button { visibility: hidden; display: none; }
     .chords { padding-left: 0px; }
     .settings { visibility: hidden; }
     img.settings-icon { visibility: hidden; }
+    .selectors { visibility: hidden; display: none; }
+    .fingerings-container { visibility: hidden; display: none; padding-top: 0; padding-bottom:0; }
+    .fingering_button { visibility: hidden; display: none; }
+    .fingerings { visibility: hidden; display: none; }
+    .fingering { visibility: hidden; display: none; }
     }
 
-/* overridden later for large screens */
-img.img-tuning-map {
-    filter: invert(1);
-    display: inline;
-    width: 70%;
+/* overridden later for larger screens */
+.tuning-map {
+    /* size of container: the image and links are relative to this */
+    display: inline-block;
+    position: relative;
+    width: 90%;
+    align: center;
     }
+
+.tuning-map img {
+    display: inline;
+    position: relative;
+    width: 100%; /* fill the container */
+    }
+
+.tuning-map a {
+    /* size and display of all link divs (positioned below for each class) */
+    display: inline;
+    position: absolute;
+    width: 11%;
+    height: 6.5%;
+    /* background-color: red; */
+    opacity: 0.5;
+    }
+
+.tuning-map a.tuning-DADGBE {   top: 19%; left: 9.5%; }
+.tuning-map a.tuning-EADGBD {   top: 19%; left: 22%;  }
+.tuning-map a.tuning-DADGBD {   top: 29%; left: 16%;  }
+.tuning-map a.tuning-EADFSBE {  top: 19%; left: 47.5%;  }
+.tuning-map a.tuning-CADGBE {   top: 19%; left: 60.5%;  }
+.tuning-map a.tuning-CGDGBE {   top: 29%; left: 70%;  }
+
+.tuning-map a.tuning-DADGAD {   top: 48.5%; left: 3%;  }
+.tuning-map a.tuning-DADFSAD {  top: 58.5%; left: 3%;  }
+.tuning-map a.tuning-DADFAD {   top: 68.5%; left: 3%;  }
+.tuning-map a.tuning-DADEAD {   top: 78.5%; left: 3%;  }
+.tuning-map a.tuning-DADDAD {   top: 88.5%; left: 3%;  }
+
+.tuning-map a.tuning-GDGBD {    top: 48.5%; left: 35%;  }
+.tuning-map a.tuning-GDGCD {    top: 58.5%; left: 22%;  }
+.tuning-map a.tuning-GCGBD {    top: 58.5%; left: 35%;  }
+.tuning-map a.tuning-GDGBbD {   top: 58.5%; left: 47.5%;  }
+.tuning-map a.tuning-FDGCD {    top: 68.5%; left: 16%;  }
+.tuning-map a.tuning-GCGCD {    top: 68.5%; left: 28.5%;  }
+.tuning-map a.tuning-GCGCC {    top: 78.5%; left: 28.5%;  }
+.tuning-map a.tuning-GCGCE {    top: 88.5%; left: 28.5%;  }
+
+.tuning-map a.tuning-DGDGBD {   top: 38.5%; left: 60.5%;  }
+.tuning-map a.tuning-DGDGBbD {  top: 48.5%; left: 60.5%;  }
+
+.tuning-map a.tuning-CGCGGE {   top: 48.5%; left: 79.5%;  }
+.tuning-map a.tuning-CGCGCE {   top: 58.5%; left: 79.5%;  }
+.tuning-map a.tuning-CGCGCD {   top: 68.5%; left: 73%;  }
+.tuning-map a.tuning-CGCFCE {   top: 68.5%; left: 86%;  }
+.tuning-map a.tuning-CGDFCE {   top: 78.5%; left: 86%;  }
+
 
 @media only screen and (min-width: 1281px) {
     /* Only allow 4 columns on large screens (desktops) */
@@ -244,9 +333,8 @@ img.img-tuning-map {
     .col3 { column-count: 3; }
     .col4 { column-count: 4; }
 
-    img.img-tuning-map {
-        filter: invert(1);
-        display: block;
+    .tuning-map {
+        display: float;
         position: absolute;
         width: 50%;
         top: 20%;
@@ -284,12 +372,7 @@ img.img-tuning-map {
 
 .tuning {
     display: inline;
-    color: #27ae60; /* green */
-    }
-
-.fingering {
-    display: inline;
-    color: #27ae60; /* green */
+    color: blue;
     }
 
 .tabline {
@@ -321,13 +404,14 @@ td, tr {
     border-width: 1px;
     }
 
-img.jump-to-top, img.search-icon, #plus, #minus {
-    filter: invert(1);
+img.jump-to-top, img.search-icon, #plus, #minus, #random {
+    /* only want to display this when the top of the page is not visible */
     display: block;
     cursor: pointer;
     position: relative;
     width: 29;
     left: -8;
+    filter: invert(1);
     }
 
 .settings {
@@ -352,10 +436,11 @@ img.settings-icon {
 .settings-menu {
     /* menu content: hidden by default */
     display: none;
-    position: relative;
+    position: absolute;
     background-color: #f1f1f1;
-    min-width: 250px;
+    min-width: 320px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    cursor: pointer;
     z-index: 1;
     }
 

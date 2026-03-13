@@ -362,7 +362,8 @@ function transpose_all_capos(up=true) {
     }
 //}}}
 //{{{ function: toggle_capo
-function toggle_capo(capo_link_div) {
+function toggle_capo() {
+    var capo_link_div = this;
 
     // The capo div is within a comment div and maybe a span.
     // Because we don't know which, keep trying until we find a chords div.
@@ -520,7 +521,18 @@ function reset_version_selectors()
         // must distinguish between .version and .name_name selectors
         if ( selectors[i].id.endsWith(".version") )
             {
+            var options = selectors[i].getElementsByTagName("option");
+
             selectors[i].value = 0;
+
+            for ( var j=0; j<options.length; j++ )
+                {
+                if ( "selected" in options[j].dataset )
+                    {
+                    selectors[i].value = j;
+                    break;
+                    }
+                }
             }
         }
     }
@@ -642,7 +654,7 @@ function transpose_song(song_index, up)
     // add capo line if not present (but not for the theory page)
     if ( !theory && !capo_div )
         {
-        newline = "<br><div class=comment><a class=capo_button onclick='toggle_capo(this);'>Capo</a>: <div class=capo>0</div> </div><br>";
+        newline = "<br><div class=comment><a class=capo_button>Capo</a>: <div class=capo>0</div> </div><br>";
         song.innerHTML = newline + song.innerHTML;
         }
 
@@ -823,6 +835,42 @@ function nashville_system()
             nashville_chord(div, key);
             }
         }
+    }
+//}}}
+//{{{ function: distribute_chords
+function distribute_chords()
+    {
+    var song_div = topmost_song();
+    var lines = song_div.innerHTML.split("\n");
+
+    var sections = [];
+    //var section_lengths = [];
+    var cur_section = [];
+
+    for ( var i=0; i<lines.length; i++ )
+        {
+        var line = lines[i].trim();
+
+        if ( line == "</span>" || line == "" )
+            {
+            if (cur_section.length > 0 )
+                {
+                //alert(cur_section.length);
+                //alert(cur_section);
+                sections.push(cur_section);
+                //section_lengths.push(cur_section.length);
+                cur_section = [];
+                }
+            }
+
+        if ( line.includes('class="fingering"') )    { continue; }
+        else if ( line.includes('class="comment"') ) { continue; }
+        else if ( line.includes('class="comment"') ) { continue; }
+        else if ( line.includes('class="chord"') )   { cur_section.push(line); }
+        }
+
+    alert(`Found ${sections.length} chord sections of lengths [${sections.map(s => s.length)}]`);
+
     }
 //}}}
 
@@ -1093,6 +1141,27 @@ function toggle_modulation(link_div=null) {
 
     }
 //}}}
+//{{{ function: toggle_fingerings
+function toggle_fingerings() {
+    var container = this;
+    var fingerings_div = container.getElementsByClassName("fingerings")[0];
+    var button_div = container.getElementsByClassName("fingering_button")[0];
+
+    if ( button_div.style.display == "none" )
+        {
+        // button_div.innerHTML = "Show fingerings";
+        button_div.style.display = "inline";
+        fingerings_div.style.display = "none";
+        }
+    else
+        {
+        // button_div.innerHTML = "Hide fingerings";
+        button_div.style.display = "none";
+        fingerings_div.style.display = "inline-block";
+        }
+
+    }
+//}}}
 //{{{ function: theory_popup
 function theory_popup(harp=false) 
     {
@@ -1133,7 +1202,6 @@ function assign_shortcuts()
     shortcut.add("d",function() { jump_to_page("bobdylan.html") }, opts);
     shortcut.add("e",function() { swap_enharmonics() }, opts);
     shortcut.add("f",function() { prompt_for_song_search() }, opts);
-    // shortcut.add("shift+f",function() { prompt_for_song_search(true) }, opts); // same artist
     shortcut.add("h",function() { cycle_versions(topmost_song().id, false) }, opts);
     shortcut.add("i",function() { jump_to_page("index.html") }, opts);
     shortcut.add("shift+i",function() { jump_to_artist_index() }, opts);
@@ -1142,7 +1210,9 @@ function assign_shortcuts()
     shortcut.add("l",function() { cycle_versions(topmost_song().id, true) }, opts);
     shortcut.add("m",function() { toggle_modulation() }, opts);
     shortcut.add("n",function() { nashville_system() }, opts);
-    shortcut.add("p",function() { play_current_song() }, opts);
+    shortcut.add("o",function() { distribute_chords() }, opts);
+    shortcut.add("shift+p",function() { play_current_song() }, opts);
+    shortcut.add("p",function() { jump_to_page("playlists.html") }, opts);
     shortcut.add("shift+p",function() { play_current_song(true)  }, opts); // inc. bootlegs
     shortcut.add("r",function() { random_song() }, opts);
     shortcut.add("shift+r",function() { random_song(true) }, opts); // same artist
@@ -1151,7 +1221,9 @@ function assign_shortcuts()
     shortcut.add("shift+t",function() { jump_to_page("theory.html") }, opts);
     shortcut.add("u",function() { navigate_up() }, opts);
     shortcut.add("v",function() { cycle_versions(topmost_song().id, true) }, opts);
+    shortcut.add("shift+v",function() { cycle_versions(topmost_song().id, false) }, opts);
     shortcut.add("w",function() { prompt_for_word_search() }, opts);
+    shortcut.add("y",function() { jump_to_page("years.html") }, opts);
     shortcut.add("z",function() { lyrics_only() }, opts);
     shortcut.add(",",function() { next_or_previous(false) }, opts); // <
     shortcut.add(".",function() { next_or_previous(true) }, opts);  // >
@@ -1192,6 +1264,30 @@ function assign_shortcuts()
         set_version_selector(song_id, version);
         }
 
+
+    var capo_anchor = window.location.href.match(/\?capo=(-?\d+)/);
+    if ( capo_anchor )
+        {
+        capo_anchor = Number(capo_anchor[1]);
+        // alert(capo_anchor);
+
+        var song_div = topmost_song();
+        var original_capo = song_div.original_capo;
+
+        if ( original_capo )
+            {
+            // not sure whether to add or subtract!
+            capo_anchor = song_div.original_capo - capo_anchor;
+            }
+        
+        for ( var i=Math.abs(capo_anchor); i>0; i-- )
+            {
+            transpose_song(song_div.id, capo_anchor < 0);
+            }
+
+        transpose_topmost_song(up)
+        }
+
     if ( window.location.pathname.includes("songs.html") )
         {
         do_song_search();
@@ -1202,6 +1298,97 @@ function assign_shortcuts()
         do_tuning_search();
         }
 
+    if ( window.location.pathname.includes("/index.html") )
+        {
+        display_up_arrow_on_scroll(); // initially hides the arrow
+        window.onscroll = display_up_arrow_on_scroll;
+        }
+
+
+    var elem01 = document.getElementById("menu-transpose-up");
+    if ( elem01 != null ) { elem01.addEventListener("click",       e => { transpose_topmost_song(true); })};
+    var elem02 = document.getElementById("menu-transpose-down");
+    if ( elem02 != null ) { elem02.addEventListener("click",     e => { transpose_topmost_song(false); })};
+    var elem03 = document.getElementById("menu-cycle-versions");
+    if ( elem03 != null ) { elem03.addEventListener("click",     e => { cycle_topmost_song(true); })};
+    var elem04 = document.getElementById("menu-toggle-nashville");
+    if ( elem04 != null ) { elem04.addEventListener("click",   e => { nashville_system(); })};
+    var elem05 = document.getElementById("menu-toggle-lyrics-only");
+    if ( elem05 != null ) { elem05.addEventListener("click", e => { lyrics_only(); })};
+    var elem06 = document.getElementById("menu-toggle-modulation");
+    if ( elem06 != null ) { elem06.addEventListener("click",  e => { toggle_modulation(); })};
+
+    var elem07 = document.getElementById("menu-toggle-folk-sort");
+    if ( elem07 != null ) { elem07.addEventListener("click",   e => { toggle_sort(); })};
+    var elem08 = document.getElementById("menu-toggle-index-sort");
+    if ( elem08 != null ) { elem08.addEventListener("click",  e => { toggle_sort(); })};
+
+    var elem09 = document.getElementById("menu-jump-to-index");
+    if ( elem09 != null ) { elem09.addEventListener("click",        e => { jump_to_page('index.html'); })};
+    var elem10 = document.getElementById("menu-jump-to-artist");
+    if ( elem10 != null ) { elem10.addEventListener("click",       e => { jump_to_artist_index(); })};
+    var elem11 = document.getElementById("menu-jump-to-song-index");
+    if ( elem11 != null ) { elem11.addEventListener("click",   e => { jump_to_page('songs.html'); })};
+    var elem12 = document.getElementById("menu-jump-to-tuning-index");
+    if ( elem12 != null ) { elem12.addEventListener("click", e => { jump_to_page('tunings.html'); })};
+    var elem13 = document.getElementById("menu-jump-folk-index");
+    if ( elem13 != null ) { elem13.addEventListener("click",      e => { jump_to_page('folk.html'); })};
+    var elem14 = document.getElementById("menu-jump-to-theory");
+    if ( elem14 != null ) { elem14.addEventListener("click",       e => { jump_to_page('theory.html'); })};
+    var elem15 = document.getElementById("menu-toggle-multicolumn");
+    if ( elem15 != null ) { elem15.addEventListener("click",   e => { toggle_multicolumn(); })};
+    var elem16 = document.getElementById("menu-toggle-dark");
+    if ( elem16 != null ) { elem16.addEventListener("click",          e => { toggle_dark_mode(); })};
+    var elem17 = document.getElementById("menu-find-song");
+    if ( elem17 != null ) { elem17.addEventListener("click",            e => { prompt_for_song_search(); })};
+    //document.getElementById("menu-tuning-search").addEventListener("click",        e => { prompt_for_tuning_search(); });
+    var elem19 = document.getElementById("menu-random-song");
+    if ( elem19 != null ) { elem19.addEventListener("click",          e => { random_song(); })};
+    var elem20 = document.getElementById("menu-random-song-current");
+    if ( elem20 != null ) { elem20.addEventListener("click",  e => { random_song(true); })};
+    //document.getElementById("menu-cycle-styles").addEventListener("click",         e => { cycle_styles(); });
+
+    var elem22 = document.getElementsByClassName("jump-to-top");
+    if ( elem22 != null ) { elem22[0].addEventListener("click", e => { navigate_up(); })};
+    var elem23 = document.getElementsByClassName("search-icon");
+    if ( elem23 != null ) { elem23[0].addEventListener("click", e => { prompt_for_song_search(); })};
+    // document.getElementById("random").addEventListener("click", e => { random_song(); });
+
+    var elem25 = document.getElementById("plus");
+    if ( elem25 != null ) { elem25.addEventListener("click", e => { transpose_topmost_song(true); })};
+    var elem26 = document.getElementById("minus");
+    if ( elem26 != null ) { elem26.addEventListener("click", e => { transpose_topmost_song(false); })};
+
+    var elem50 = document.getElementById("search-container"); 
+    if ( elem50 != null ) { elem50.addEventListener("click", e => { hide_search_box(); })};
+    var elem51 = document.getElementById("search-all-artists"); 
+    if ( elem51 != null ) { elem51.addEventListener("click", e => { do_button_search(); })};
+    var elem52 = document.getElementById("search-current-artist"); 
+    if ( elem52 != null ) { elem52.addEventListener("click", e => { do_button_search(true); })};
+    var elem53 = document.getElementById("search-random-song"); 
+    if ( elem53 != null ) { elem53.addEventListener("click", e => { random_song(); })};
+    var elem54 = document.getElementById("search-random-song-current-artist"); 
+    if ( elem54 != null ) { elem54.addEventListener("click", e => { random_song(true); })};
+    var elem55 = document.getElementById("search-goto-index"); 
+    if ( elem55 != null ) { elem55.addEventListener("click", e => { jump_to_page('index.html'); })};
+
+    var capo_divs = document.getElementsByClassName("capo_button");
+    for ( var i=0; i<capo_divs.length; i++ )
+        {
+        capo_divs[i].addEventListener("click", toggle_capo );
+        }
+
+    var key_divs = document.getElementsByClassName("key_button");
+    for ( var i=0; i<key_divs.length; i++ )
+        {
+        key_divs[i].addEventListener("click", e => { toggle_modulation(); });
+        }
+
+    var fingering_containers = document.getElementsByClassName("fingerings-container");
+    for ( var i=0; i<fingering_containers.length; i++ )
+        {
+        fingering_containers[i].addEventListener("click", toggle_fingerings );
+        }
 
     }
 //}}}
@@ -1300,9 +1487,13 @@ function handle_horizontal_swipe()
         }
     else
         {
-        var song = topmost_song();
-        if ( swiped_left )  { cycle_versions(song.id, true);  }
-        if ( swiped_right ) { cycle_versions(song.id, false); }
+        // This works, but it means that on small (phone) screens it is also
+        // triggered by the two-finger zoom gesture, which means that zooming 
+        // also cycles versions, which is annoying.
+
+        // var song = topmost_song();
+        // if ( swiped_left )  { cycle_versions(song.id, true);  }
+        // if ( swiped_right ) { cycle_versions(song.id, false); }
         }
     }
 //}}}
@@ -1375,10 +1566,17 @@ function random_song(same_artist=false)
     }
 //}}}
 //{{{ function: prompt_for_song_search
-function prompt_for_song_search(same_artist=false)
+function prompt_for_song_search(after_no_matches=false)
     {
+    if ( after_no_matches )
+        {
+        var search_div = document.getElementById("search");
+        var extra = "No matches found! Please try again.<br><br>";
+        search_div.innerHTML = extra + search_div.innerHTML;
+        }
+
     var search_container = document.getElementById("search-container");
-    var search_div = document.getElementById("search");
+    if ( search_container == null ) { alert("Search-Container not found"); }
     var search_pattern = document.getElementById("pattern");
 
     hide_settings_menu();
@@ -1394,7 +1592,7 @@ function prompt_for_song_search(same_artist=false)
             {
             if ( search_pattern.value.trim() != "" )
                 {
-                do_button_search(same_artist);
+                do_button_search();
                 }
             }
         else if ( event.key === "`" )
@@ -1448,7 +1646,7 @@ function do_song_search()
 
         if ( matches.length == 0 )
             {
-            prompt_for_song_search();
+            prompt_for_song_search(true); // after_no_matches = true
             }
         else if ( matches.length == 1 )
             {
@@ -1522,34 +1720,35 @@ function do_song_search()
     }
 //}}}
 //{{{ function: do_button_search
-function do_button_search(same_artist=false)
+function do_button_search(restrict_to_current_artist=false)
     {
     var url = "songs.html";
-    var msg = "Enter search pattern (searches artists/albums/songs):";
-
-    if ( same_artist )
-        {
-        var artist = get_artist_from_url();
-
-        if ( artist )
-            {
-            url += "?artist=" + artist;
-            msg = "Enter search pattern (searches songs/albums for current artist):";
-            }
-        }
-
     var search_div = document.getElementById("search");
     var search_pattern = document.getElementById("pattern");
 
     var pattern = search_pattern.value;
     pattern = pattern.replace(/ /g, "+");
     url += "?search=" + pattern;
+
+    if ( restrict_to_current_artist )
+        {
+        var current_url = window.location.pathname;
+        var array = current_url.match( RegExp("\\w+\\.html") );
+        var artist = array[0].split("_")[0];
+        url += "?artist=" + artist;
+        }
+
+    hide_search_box(); // so using browser "back" button doesn't show search box
+
     window.location.href = url;
     }
 //}}}
 //{{{ function: hide_search_box
 function hide_search_box()
     {
+    var extra = "No matches found! Please try again.<br><br>";
+    var search_div = document.getElementById("search");
+    search_div.innerHTML = search_div.innerHTML.replace(extra, "");
     var search_container = document.getElementById("search-container");
     search_container.style.display = "none";
     }
@@ -1613,6 +1812,8 @@ function do_tuning_search()
     }
 //}}}
 
+//{{{ block: implement horizonal swipe
+
 let touchstartX = 0
 let touchendX = 0
 let touchstartY = 0
@@ -1628,6 +1829,8 @@ document.addEventListener('touchend', e => {
     touchendY = e.changedTouches[0].screenY
     handle_horizontal_swipe()
     })
+
+//}}}
 
 document.addEventListener('DOMContentLoaded', reset_version_selectors, false);
 window.onload = assign_shortcuts;
@@ -1669,8 +1872,8 @@ function display_up_arrow_on_scroll()
     }
 //}}}
 
-if ( is_mobile_or_tablet() )
-    {
-    window.onscroll = display_up_arrow_on_scroll;
-    }
+// if ( is_mobile_or_tablet() )
+//     {
+//     window.onscroll = display_up_arrow_on_scroll;
+//     }
 
