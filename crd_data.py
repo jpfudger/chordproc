@@ -1016,6 +1016,7 @@ class CRD_song():
         self.dummy = True
         self.fpath = fpath
         self.lnum = lnum
+        self.end_lnum = 0
         self.index = index
         self.lines = []
         self.version_index = 0
@@ -2135,6 +2136,7 @@ class CRD_data():
                     else:
                         prev_album_close_line = lnum
                 if this_song and level_song == level:
+                    this_song.end_lnum = lnum
                     this_song = None
                     prev_song_close_line = lnum
                 if this_album and level_album == level:
