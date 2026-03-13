@@ -1021,6 +1021,8 @@ class CRD_song():
         self.version_index = 0
         self.versions = []
         self.version_of = None
+        self.notes = []
+        self.default_version = 0
         self.capo = 0
         self.tuning = None
         self.album = None
@@ -2044,6 +2046,7 @@ class CRD_data():
         this_album   = None
         this_song    = None
         this_version = None
+        recording_notes = False
         level_artist = 0
         level_album  = 0
         level_song   = 0
@@ -2116,6 +2119,10 @@ class CRD_data():
                     this_version = this_song.add_version(v_name,path,lnum)
                     newsongs.append(this_version)
                     level_version = level
+                elif len(title) >= 5 and title[0:5] == 'notes':
+                    if not this_song:
+                        print("No song for notes!")
+                    recording_notes = True
                 else:
                     print("Unknown fold type in %s: %s" % (path, line.strip()))
                     raise ValueError("Unknown fold type")
@@ -2142,9 +2149,14 @@ class CRD_data():
                 if this_version and level_version == level:
                     this_version = None
                     prev_song_close_line = 0
+                if recording_notes:
+                    recording_notes = False
+                    #print("finished notes:", this_song.notes)
                 level -= 1
             elif comment_level > 0:
                 pass # don't add commented lines to version or song
+            elif recording_notes:
+                this_song.notes.append(line.rstrip())
             elif this_version:
                 this_version.add_line(line.rstrip())
             elif this_song:
