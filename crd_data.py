@@ -1096,6 +1096,9 @@ class CRD_song():
         #print(crd_string, "=>", fingering)
         return fingering
     def markup_comment_chords(self,line):
+        # @@ marks a fixed chord/note (doesn't transpose with capo changes)
+        line = re.sub( r"@@([A-Za-z0-9+/#]+)" , r'<div class="chord fixed">\1</div>', line )
+        # @ marks a transposable chord/note
         line = re.sub( r"@([A-Za-z0-9+/#]+)" , r"<div class=chord>\1</div>", line )
         return line
     def is_comment_line(self,line):
