@@ -610,21 +610,21 @@ def set_title_and_date(title):
     date = None
     artist = None
     
-    regex_date = "\s*<(\d\d\d\d)-(\d\d)-(\d\d)>\s*$"
+    regex_date = r"\s*<(\d\d\d\d)-(\d\d)-(\d\d)>\s*$"
     m_date = re.search(regex_date, title)
 
     if m_date:
         title = re.sub(regex_date, "", title)
         date = datetime.date(int(m_date.group(1)), int(m_date.group(2)), int(m_date.group(3)))
     else:
-        regex_year = "\s*<(\d\d\d\d)>\s*$"
+        regex_year = r"\s*<(\d\d\d\d)>\s*$"
         m_year = re.search(regex_year, title)
 
         if m_year:
             title = re.sub(regex_year, "", title)
             date = datetime.date(int(m_year.group(1)), 1, 1)
 
-    regex_artist = "\[\s*([^]]+)\s*\]"
+    regex_artist = r"\[\s*([^]]+)\s*\]"
     m_artist = re.search(regex_artist, title)
 
     if m_artist:
@@ -1029,7 +1029,7 @@ class CRD_song():
         self.fingerings = {}
         self.gap_before = False
         self.link = ''.join( [x for x in self.title if x.isalnum() ])
-        self.title_sort = re.sub( '\AThe\s+', '', self.title)
+        self.title_sort = re.sub( r'\AThe\s+', '', self.title)
         if self.title[0] in [ "'", '"', '(' ]:
             self.title_sort = self.title[1:]
         self.gui_item = None
@@ -2125,6 +2125,7 @@ class CRD_data():
                     recording_notes = True
                 else:
                     print("Unknown fold type in %s: %s" % (path, line.strip()))
+                    print(">" + title + "<")
                     raise ValueError("Unknown fold type")
             elif mclose:
                 if comment_level > 0 and comment_level == level:
@@ -2232,6 +2233,17 @@ class CRD_data():
         self.collections = []
         if update or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
+
+            # List all songs in a certain line range.
+            # Note: this only uses the .crd line range (i.e. not trimming blank lines)
+            #
+            # for song in self.all_songs():
+            #     lrange = song.end_lnum - song.lnum
+            #     if lrange < 61 and lrange > 49:
+            #         print(song.lnum, lrange, song.title, song.artist.name)
+            #
+            # exit(1)
+
             self.add_covers()
             self.populate_link_dicts()
 
