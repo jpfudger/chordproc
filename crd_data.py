@@ -1861,6 +1861,7 @@ class CRD_data():
         self.dummy_songs = []
         self.collections = []
         self.player = opts.get('player')
+        self.playlists = opts.get('playlists')
 
         # Note: the "player" callback is a function which takes three strings:
         # an artist name, an album name, and/or a song name
@@ -1918,6 +1919,15 @@ class CRD_data():
                     self.songs.append(song)
             self.songs.sort( key=lambda x: x.title_sort.lower() )
         return self.songs
+    def all_songs_dict(self):
+        # note: the song title key is the fuzzy_title
+        if not self.songs_dict:
+            for song in self.all_songs():
+                title = fuzzy_title(song.title)
+                if title not in self.songs_dict:
+                    self.songs_dict[title] = []
+                self.songs_dict[title].append(song)
+        return self.songs_dict
     def all_song_titles(self):
         if not self.song_titles:
             # build dictionary of unique song titles
@@ -2173,7 +2183,7 @@ class CRD_data():
         if update or not os.path.isfile(self.opts["pickle"]):
             self.build_song_data()
             self.add_covers()
-            self.add_comment_links()
+            self.populate_link_dicts()
 
             # This performs the part of song.html() which adds song-specific
             # fingerings to the local chord dictionary. 
@@ -2520,12 +2530,17 @@ class CRD_data():
             lines += [ '</div>' ] 
             lines += [ '<hr>' ]
 
+        lines += [ '<a href=playlists.html>Playlists</a>', '<hr>' ]
+        lines += [ '<br>', '<br>', '<br>' ]
         lines += [ '</body>', '</html>' ]
 
         if not DO_CRDFILES:
             with open(self.opts["html_root"] + 'index.html', 'w') as f:
                 for l in lines:
                     f.write('\n' + l)
+
+        if self.playlists:
+            self.make_playlist_html()
     def lookup_chord(self,tuning,chord):
         fingerings = []
         for song in self.all_songs():
@@ -2691,4 +2706,173 @@ class CRD_data():
                         title = ms.artist.name + " | " + ms.album.title + " | " + ms.title
                         s_link = "<a href=%s class=cover title=\"%s\">%s</a>" % (url, title, link["song"])
                         link["link"] = s_link
+    def populate_link_dicts(self, link_dicts=None):
+        all_songs_dict = self.all_songs_dict()
+
+        for song_title, song_list in all_songs_dict.items():
+            for song in song_list:
+                for version in song.get_all_versions():
+                    scan_list = link_dicts
+                    if not scan_list:
+                        scan_list = version.comment_links
+
+                    for ldict in scan_list:
+                        #print(ldict["song"])
+                        #print("====================")
+
+                        matching_songs = []
+
+                        msongs = all_songs_dict[ fuzzy_title(ldict["song"]) ]
+
+                        for msong in msongs:
+
+                            #if ldict["song"] == "Stay With Me":
+                                #print(msong.title, "|", msong.artist.name, "|", 
+                                      #msong.album.title, "|", msong.misc_artist)
+                            if ldict["artist"]:
+                                if msong.misc_artist:
+                                    if ldict["artist"].lower() != msong.misc_artist.lower():
+                                        continue
+                                elif ldict["artist"].lower() != msong.artist.name.lower():
+                                    continue
+                            if ldict["album"] and ldict["album"].lower() != msong.album.title.lower():
+                                continue
+
+                            matching_songs.append(msong)
+
+                        if len(matching_songs) == 0:
+                            print("No song matching comment_link: " + ldict["song"])
+                        elif len(matching_songs) > 1:
+                            print("Ambiguous song comment_link: " + ldict["song"])
+                            for ms in matching_songs:
+                                print( "  ", ms.album.fname + "#" + ms.link )
+
+                        for ms in matching_songs:
+
+                            #if ldict["version"]:
+                                #ms = ms.versions[ldict["version"]-1]
+
+                            url = ms.album.fname + "#" + ms.link
+
+                            if ldict["version"] > 1:
+                                url += "-v" + str(ldict["version"])
+
+                            title = ms.artist.name + " | " + ms.album.title + " | " + ms.title
+                            s_link = "<a href=%s class=cover title=\"%s\">%s</a>" % (url, title, ldict["song"])
+                            
+                            ldict["url"] = url
+                            ldict["link"] = s_link
+                            ldict["object"] = ms
+    def make_playlist_html(self):
+        print("Processing playlists...")
+        playlists = {}
+        cur_playlist_name = None
+        cur_album_name = None
+        cur_album = None
+
+        with open(self.playlists) as f:
+            gap = False
+            for line in f:
+                line = line.strip()
+                if not line:
+                    gap = True
+                elif line.startswith("#"):
+                    pass
+                elif line.startswith("{{{ playlist:"):
+                    gap = False
+                    cur_playlist_name = line.replace("{{{ playlist: ", "").strip()
+                    playlists[cur_playlist_name] = []
+                elif line.startswith("{{{ album:"):
+                    cur_album_name = line.replace("{{{ album: ", "").strip()
+                    cur_album = { "name": cur_album_name, "songs": [], "gap": gap }
+                    gap = False
+                    playlists[cur_playlist_name].append(cur_album)
+                elif line.startswith("{"):
+                    link_dict = parse_song_link_line(line)
+                    link_dict["gap"] = gap
+                    gap = False
+                    cur_album["songs"].append(link_dict)
+
+        # Now we need to assign song objects to each link dict.
+        # This involves looping over all the songs in the entire collection,
+        # so it is quicker to collect all the links into a single list,
+        # so we only need to do that loop once.
+
+        all_link_dicts = []
+
+        for playlist_name in playlists:
+            for adict in playlists[playlist_name]:
+                all_link_dicts += adict["songs"]
+
+        #print(all_link_dicts)
+
+        self.populate_link_dicts(all_link_dicts)
+
+        index_link_lines = []
+
+        for playlist_name in playlists:
+            #print(playlist_name)
+
+            pl_artist = CRD_artist(name=playlist_name)
+            pl_artist.fname = "playlists_" + pl_artist.fname
+
+            link = "<a href=%s>%s</a>" %  (pl_artist.fname, playlist_name)
+            link += " <div class=count>%d</div>" % len(playlists[playlist_name])
+            link += "<br>"
+            index_link_lines.append(link)
+
+            for adict in playlists[playlist_name]:
+                #print("    " + adict["name"])
+
+                pl_album = pl_artist.add_album(adict["name"])
+                pl_album.fname = "playlists_" + pl_album.fname
+                pl_album.gap_before = adict["gap"]
+
+                for sdict in adict["songs"]:
+                    #print(sdict)
+
+                    if not sdict["object"]:
+                        print("No object!")
+                        print(sdict)
+
+                    sdict["object"].gap_before = sdict["gap"]
+                    sdict["object"].date = None # never want song year 
+                    sdict["object"].default_version = sdict["version"] - 1
+
+                    # use misc_artist to link to the original
+                    #orig_link = sdict["object"].get_link()
+                    orig_link = sdict["url"]
+                    orig_link = f'<a class=cover href="%s">%s</a>' % ( orig_link, sdict["artist"] )
+                    sdict["object"].misc_artist = orig_link
+                    
+                    #if not sdict["object"].misc_artist:
+                        #sdict["object"].misc_artist = sdict["artist"] # always show artist
+
+                    pl_album.songs.append(sdict["object"])
+
+            print("  ", pl_artist.fname)
+
+            for album in pl_artist.albums:
+                album_path = self.opts["html_root"] + album.fname
+                with open(album_path, 'w') as f:
+                    for l in album.html():
+                        f.write(l + '\n')
+
+            with open(self.opts["html_root"] + pl_artist.fname, 'w') as f:
+                for l in pl_artist.html(playlist=True):
+                    f.write(l + '\n')
+
+        index_lines = [ "<html>" ]
+        index_lines += html_header("Playlists", chords=False, index_page=False, folk=False)
+        index_lines += [ "<body>" ]
+        index_lines += [ "<h2> <a href=index.html>Playlist Index</a> </h2>" ]
+        index_lines += [ "<hr>" ]
+        index_lines += index_link_lines
+        index_lines += [ "<hr>" ]
+        index_lines += [ "</body>", "</html>" ]
+        index_lines += [ "<br> <br> <br> <br> <br>" ]
+
+        with open(self.opts["html_root"] + "playlists.html", 'w') as f:
+            for l in index_lines:
+                f.write(l + '\n')
 
