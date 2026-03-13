@@ -20,6 +20,8 @@ DO_WORDLISTS = [ ] # [ "Bob Dylan" ]
 DO_CRDFILES  = [ ] # [ "robyn_hitchcock.crd" ]
 ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 FIXED_WIDTH_CHORDS = True
+MAX_LINES_FOR_COL = 55
+LONGEST_LINE_FOR_3_COLS = 65
 DO_KEY_DIVS = False
 DO_SOUNDING_KEY = False
 WRITE_FINGERINGS = True
@@ -1676,7 +1678,9 @@ class CRD_song():
                 self.is_comment_line(line)
     def html(self,add_artist=False,transpose=0,prefer_sharp=False):
         self.inherit_fingerings()
-        style = ' style="display:none"'
+
+        version_is_default = True
+
         qindex = "'%s'" % self.index
 
         # do this first, so that self.cover is set
@@ -1686,7 +1690,9 @@ class CRD_song():
         v_lines = [] # lines for version selector, for adding later
         a_lines = [] # lines for other artists songlines, for adding later
 
-        if not self.version_of:
+        if self.version_of:
+            version_is_default = self.version_of.default_version == self.version_index
+        else:
             # case: top level
             top_version = None
             if not formatted_song_lines:
@@ -1698,8 +1704,10 @@ class CRD_song():
                     top_version.inherit_fingerings()
                     formatted_song_lines = top_version.format_song_lines(transpose,prefer_sharp)
                     self.cover = top_version.cover
+                    version_is_default = self.default_version == top_version.version_index
 
             if self.versions:
+                version_is_default = self.default_version == self.version_index
                 default = "Lyrics and Chords"
                 if top_version:
                     default = top_version.title
@@ -1715,14 +1723,21 @@ class CRD_song():
                 v_lines.append( '<option value=0>Version 1/%d: %s</option>' % (n_vers, default))
                 for i, version in enumerate(self.versions):
                     label = "Version %d/%d: %s" % (i+2, n_vers, version.title)
-                    v_lines.append( '<option value=%d>%s</option>' % (i+1, label))
+
+                    selected = ""
+                    if self.default_version > 0:
+                        if version.version_index == self.default_version:
+                            selected = "data-selected=1 "
+
+                    v_lines.append( '<option %svalue=%d>%s</option>' % (selected, i+1, label))
                 v_lines.append('</select>')
 
             year = ""
             if self.date and not self.album.date:
                 year = " <div class=year>%d</div>" % self.date.year
 
-            style = ' style="display:block"'
+            #style = ' style="display:block"'
+
             lines += [ '<hr> <a name=%s></a>' % self.link ] 
             name = self.title
             if self.misc_artist:
@@ -1772,10 +1787,16 @@ class CRD_song():
                 lines += [ "</div>" ]
 
         n_lines = len(self.lines)
+        n_formatted_fingerings = len( [ l for l in formatted_song_lines if "fingering" in l ] )
+        n_lines = n_lines - n_formatted_fingerings + 1
 
-        if n_lines > 100 and self.longest_line() <= 65:
+        style = ' style="display:none"'
+        if version_is_default:
+            style = ' style="display:block"'
+
+        if n_lines > (2 * MAX_LINES_FOR_COL) and self.longest_line() <= LONGEST_LINE_FOR_3_COLS:
             lines += [ '<div id=%s class="chords col3 version"%s>' % (self.index, style) ]
-        elif n_lines > 50:                           
+        elif n_lines > MAX_LINES_FOR_COL:                           
             lines += [ '<div id=%s class="chords col2 version"%s>' % (self.index, style) ]
         else:                                        
             lines += [ '<div id=%s class="chords col1 version"%s>' % (self.index, style) ]
