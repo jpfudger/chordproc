@@ -2200,7 +2200,7 @@ class CRD_data():
                     if inherited_song_gap:
                         this_song.gap_before = True
                         inherited_song_gap = False
-                elif len(title) > 9 and title[0:7] == 'version':
+                elif len(title) > 7 and title[0:7] == 'version':
                     v_name = re.match( r'.*version:\s+(.*)', line ).group(1)
                     if not this_artist:
                         print("No artist for version: " + v_name)
@@ -2496,39 +2496,43 @@ class CRD_data():
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
     def make_tuning_map(self):
         lines = []
-        lines.append("<div class=tuning-map>")
-        lines.append("<img class=img-tuning-map src=\"tuning_map.png\" usemap=#tuning-link-map>")
-        lines.append("</div>")
 
-        lines.append("<div id=image-map>")
-        lines.append("<map name=tuning-link-map>")
-        lines.append('    <area shape=rect coords="" href=#75545  alt="DADGBE">')
-        lines.append('    <area shape=rect coords="" href=#55543  alt="EADGBD">')
-        lines.append('    <area shape=rect coords="" href=#75543  alt="DADGBD">')
-        lines.append('    <area shape=rect coords="" href=#55455  alt="EADF#BE">')
-        lines.append('    <area shape=rect coords="" href=#95545  alt="CADGBE">')
-        lines.append('    <area shape=rect coords="" href=#77545  alt="CGDGBE">')
-        lines.append('    <area shape=rect coords="" href=#75525  alt="DADGAD">')
-        lines.append('    <area shape=rect coords="" href=#75435  alt="DADF#AD">')
-        lines.append('    <area shape=rect coords="" href=#75345  alt="DADFAD">')
-        lines.append('    <area shape=rect coords="" href=#75255  alt="DADEAD">')
-        lines.append('    <area shape=rect coords="" href=#75075  alt="DADDAD">')
-        lines.append('    <area shape=rect coords="" href=#7543   alt="GDGBD">')
-        lines.append('    <area shape=rect coords="" href=#7552   alt="GDGCD">')
-        lines.append('    <area shape=rect coords="" href=#5743   alt="GCGBD">')
-        lines.append('    <area shape=rect coords="" href=#7534   alt="GDGBbD">')
-        lines.append('    <area shape=rect coords="" href=#9552   alt="FDGCD">')
-        lines.append('    <area shape=rect coords="" href=#5752   alt="GCGCD">')
-        lines.append('    <area shape=rect coords="" href=#5750   alt="GCGCC">')
-        lines.append('    <area shape=rect coords="" href=#5754   alt="GCGCE">')
-        lines.append('    <area shape=rect coords="" href=#57543  alt="DGDGBD">')
-        lines.append('    <area shape=rect coords="" href=#57534  alt="DGDGBbD">')
-        lines.append('    <area shape=rect coords="" href=#75709  alt="CGCGGE">')
-        lines.append('    <area shape=rect coords="" href=#75754  alt="CGCGCE">')
-        lines.append('    <area shape=rect coords="" href=#75752  alt="CGCGCD">')
-        lines.append('    <area shape=rect coords="" href=#75574  alt="CGCFCE">')
-        lines.append('    <area shape=rect coords="" href=#77374  alt="CGDFCE">')
-        lines.append("</map>")
+        # note: sharps (#) in tuning names are replaced with (S) to make the css valid
+
+        lines.append("<div class=tuning-map>")
+        lines.append('    <img src="tuning_map.png">' )
+                          
+        lines.append('    <a class="tuning-DADGBE"    href=#75545  title="DADGBE">' )
+        lines.append('    <a class="tuning-EADGBD"    href=#55543  title="EADGBD">' )
+        lines.append('    <a class="tuning-DADGBD"    href=#75543  title="DADGBD">' )
+        lines.append('    <a class="tuning-EADFSBE"   href=#55455  title="EADF#BE">' )
+        lines.append('    <a class="tuning-CADGBE"    href=#95545  title="CADGBE">' )
+        lines.append('    <a class="tuning-CGDGBE"    href=#77545  title="CGDGBE">' )
+                          
+        lines.append('    <a class="tuning-DADGAD"    href=#75525  title="DADGAD">' )
+        lines.append('    <a class="tuning-DADFSAD"   href=#75435  title="DADF#AD">' )
+        lines.append('    <a class="tuning-DADFAD"    href=#75345  title="DADFAD">' )
+        lines.append('    <a class="tuning-DADEAD"    href=#75255  title="DADEAD">' )
+        lines.append('    <a class="tuning-DADDAD"    href=#75075  title="DADDAD">' )
+                          
+        lines.append('    <a class="tuning-GDGBD"     href=#7543   title="GDGBD">' )
+        lines.append('    <a class="tuning-GDGCD"     href=#7552   title="GDGCD">' )
+        lines.append('    <a class="tuning-GCGBD"     href=#5743   title="GCGBD">' )
+        lines.append('    <a class="tuning-GDGBbD"    href=#7534   title="GDGBbD">' )
+        lines.append('    <a class="tuning-FDGCD"     href=#9552   title="FDGCD">' )
+        lines.append('    <a class="tuning-GCGCD"     href=#5752   title="GCGCD">' )
+        lines.append('    <a class="tuning-GCGCC"     href=#5750   title="GCGCC">' )
+        lines.append('    <a class="tuning-GCGCE"     href=#5754   title="GCGCE">' )
+                          
+        lines.append('    <a class="tuning-DGDGBD"    href=#57543  title="DGDGBD">' )
+        lines.append('    <a class="tuning-DGDGBbD"   href=#57534  title="DGDGBbD">' )
+                          
+        lines.append('    <a class="tuning-CGCGGE"    href=#75709  title="CGCGGE">' )
+        lines.append('    <a class="tuning-CGCGCE"    href=#75754  title="CGCGCE">' )
+        lines.append('    <a class="tuning-CGCGCD"    href=#75752  title="CGCGCD">' )
+        lines.append('    <a class="tuning-CGCFCE"    href=#75574  title="CGCFCE">' )
+        lines.append('    <a class="tuning-CGDFCE"    href=#77374  title="CGDFCE">' )
+
         lines.append("</div>")
 
         return lines
@@ -2540,7 +2544,13 @@ class CRD_data():
         lines += [ '<hr>' ]
         lines += [ '<a href=fingerings.html>All Fingerings</a>' ]
         lines += [ '<hr>' ]
+
+        lines += self.make_tuning_map()
+
         lines += [ '<ul>' ]
+
+        # dummy entry for standard tuning?
+        #lines.append( '<li><a class=tuning href="">EADGBE----(Standard)-----------------------------</a> <div class=count>0</div>' )
 
         body = []
 
@@ -2631,7 +2641,6 @@ class CRD_data():
             body.append( '<br>' )
 
         lines += [ '</ul>', '<br>' ]
-        lines += self.make_tuning_map()
 
         lines += body
         lines += [ '<br>' * 50, '</body>', '</html>' ]
