@@ -305,40 +305,45 @@ class CRD_artist():
         lines += [ '<body>', '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
 
-        lines += self.next_and_previous_links()
-        n_artist_tunings, n_artist_tuning_songs = self.make_tuning_index()
+        n_artist_tunings = 0
+        n_artist_tuning_songs = 0
 
-        c_origs, c_covers = self.song_counts()
-        if c_covers:
-            count_string = "(%d) (%d originals)" % (c_origs + c_covers, c_origs)
-            count_string = "<div class=count>%d/%d</div>" % (c_origs, c_origs + c_covers)
-        else:
-            count_string = "(%d)" % (c_origs + c_covers)
-            count_string = "<div class=count>%d</div>" % (c_origs + c_covers)
+        if not playlist:
+            # next/prev links; tuning index; song index; word list; related artists
+            lines += self.next_and_previous_links()
+            n_artist_tunings, n_artist_tuning_songs = self.make_tuning_index()
 
-        lines += [ '<hr>' ]
-        lines += [ '<a href="%s">Song Index</a> %s' % ( self.index_fname, count_string ) ]
+            c_origs, c_covers = self.song_counts()
+            if c_covers:
+                count_string = "(%d) (%d originals)" % (c_origs + c_covers, c_origs)
+                count_string = "<div class=count>%d/%d</div>" % (c_origs, c_origs + c_covers)
+            else:
+                count_string = "(%d)" % (c_origs + c_covers)
+                count_string = "<div class=count>%d</div>" % (c_origs + c_covers)
 
-        if n_artist_tunings > 0:
-            lines += [ '<br>' ]
-            count_string = "<div class=count>%d/%d</div>" % ( n_artist_tuning_songs, n_artist_tunings )
-            lines += [ '<a href="%s">Tuning Index</a> %s' % (self.tunings_fname, count_string) ]
+            lines += [ '<hr>' ]
+            lines += [ '<a href="%s">Song Index</a> %s' % ( self.index_fname, count_string ) ]
 
-        if DO_WORDLISTS and self.name in DO_WORDLISTS:
-            lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
+            if n_artist_tunings > 0:
+                lines += [ '<br>' ]
+                count_string = "<div class=count>%d/%d</div>" % ( n_artist_tuning_songs, n_artist_tunings )
+                lines += [ '<a href="%s">Tuning Index</a> %s' % (self.tunings_fname, count_string) ]
 
-        related = self.get_artist_links()
-        if related and not DO_CRDFILES:
-            links = []
-            for aname in related:
-                a = self.data.get_artist(aname)
-                if not a:
-                    raise ValueError("Error: no artist object for: " + aname)
-                link = "<a href=%s>%s</a>" % (a.fname, aname)
-                links.append(link)
-                
-            link_list_string = ", ".join(links)
-            lines += [ '<br>Related artists: ' + link_list_string ]
+            if DO_WORDLISTS and self.name in DO_WORDLISTS:
+                lines += [ '<br>', '<a href="%s">Word Index</a>' % ( self.words_fname ) ]
+
+            related = self.get_artist_links()
+            if related and not DO_CRDFILES:
+                links = []
+                for aname in related:
+                    a = self.data.get_artist(aname)
+                    if not a:
+                        raise ValueError("Error: no artist object for: " + aname)
+                    link = "<a href=%s>%s</a>" % (a.fname, aname)
+                    links.append(link)
+                    
+                link_list_string = ", ".join(links)
+                lines += [ '<br>Related artists: ' + link_list_string ]
 
         col_class = "col2" if self.too_many_albums else "col1"
         lines += [ '<hr>' ]
