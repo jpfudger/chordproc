@@ -352,13 +352,15 @@ class CRD_artist():
 
         #lines += [ '<ol>' ]
         decade = None
+        after_misc = False
         for album in self.albums:
             #lines.append( '<li>' )
 
-
             if album.gap_before:
                 lines.append("<br>")
-            elif decade and album.date and decade != int(str(album.date.year)[:-1]):
+            elif decade and album.date and decade != int(str(album.date.year)[:-1]) and not after_misc:
+                # springsteen has dated albums AFTER his Misc sections
+                # we don't want to split the post-misc albums by decade
                 lines.append("</span><br><span>")
 
             style = " class=cover" if album.all_songs_are_covers() else ""
