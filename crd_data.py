@@ -1438,11 +1438,51 @@ class CRD_song():
     def format_song_lines(self,transpose=0,prefer_sharp=False):
         formatted = []
         n_tab_lines = 0
+        fingering_section = False
+        n_fingering_sections = 0
+
         for ii,line in enumerate(self.lines):
             lastline = ii == len(self.lines)-1
             newline = self.markup_chord_line(line,transpose,prefer_sharp)
 
-            formatted.append(newline)
+            make_collapsible_fingerings = True
+
+            if make_collapsible_fingerings:
+                if "class=fingering" in newline:
+                    if fingering_section:
+                        formatted.append(newline)
+                    else:
+                        # start fingering container
+                        fingering_section = True
+                        n_fingering_sections += 1
+                        formatted.append("<div class=fingerings-container>")
+
+                        #button_html = "<img src=hand.gif>"
+                        button_html = "(Show chord shapes)"
+
+                        formatted.append(f"<a class=fingering_button>{button_html}</a>")
+                        formatted.append("<div class=fingerings> " + newline)
+                else:
+                    if fingering_section:
+                        # end fingering container
+                        fingering_section = False
+                        formatted.append("</div> </div>")
+                    formatted.append(newline)
+
+                if lastline and "class=fingering" in newline:
+                    # print(f"ended fingering section on last line:")
+                    # print(f"      artist:  {self.artist.name}")
+                    # print(f"      album:   {self.album.title}")
+                    # if self.version_of:
+                    #     print(f"      song:    {self.version_of.title}")
+                    #     print(f"      version: {self.title}")
+                    # else:
+                    #     print(f"      song:    {self.title}")
+
+                    fingering_section = False
+                    formatted.append("</div></div>")
+            else:
+                formatted.append(newline)
 
             change_range = []
             if ('-' in line) and ('|' in line):
@@ -1461,6 +1501,9 @@ class CRD_song():
                         formatted[-i] = '<div class=tabline>%s</div>' % l
                 n_tab_lines = 0
 
+        if n_fingering_sections > 2:
+            print(f"{n_fingering_sections} fingering sections in {self.title} ({self.artist.name})")
+
         if DO_WORDLISTS and self.artist.name in DO_WORDLISTS:
             self.wordlist_from_formatted_lines(formatted)
 
@@ -1469,15 +1512,22 @@ class CRD_song():
 
         formatted_with_spans = []
         in_span = False
+        in_fingering_section = False
         for ii, line in enumerate(formatted):
             lastline = ii == len(formatted)-1
 
-            if line == "":
+            if in_fingering_section:
+                if line == "":
+                    in_fingering_section = False
+                    line = None
+            elif line == "":
                 if in_span:
                     line = "</span>"
                     in_span = False
             elif "<div class=key>" in line:
                 pass
+            elif "class=fingerings-container" in line:
+                in_fingering_section = True
             elif not in_span and not lastline:
                 nextline = formatted[ii+1]
                 if nextline != "":
