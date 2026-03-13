@@ -372,6 +372,10 @@ class CRD_artist():
             if self.too_many_albums and album.date: 
                 decade = int(str(album.date.year)[:-1])
 
+            if album.title.startswith("Misc:"):
+                #print("Misc album: " + album.title)
+                after_misc = True
+
         if self.too_many_albums: lines.append("</span>")
         #lines += [ '</ol>' ]
         lines += [ '</div>' ]
