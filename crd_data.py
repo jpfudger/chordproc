@@ -178,6 +178,113 @@ def html_song_index(allsongs, artist=None):
     lines += [ '</body>', '</html>' ]
     return lines
 
+def html_year_index(allsongs):
+    lines  = [ '<html>' ]
+    lines += html_header("ChordProc: Year Index")
+    lines += ["<body>"]
+    title_link = "<a href=index.html>Year Index</a>"
+    lines += [ '<h2>%s</h2>' % title_link ]
+
+    lines += [ '<hr>' ]
+
+    songs = {}
+    albums = {}
+
+    for song in allsongs:
+        if song.artist.name in IGNORE_ARTISTS:
+            pass
+        elif song.album and song.album.date and song.album.date.year:
+            # add album
+            if song.album.date.year not in albums:
+                albums[song.album.date.year] = []
+            if song.album not in albums[song.album.date.year]:
+                albums[song.album.date.year].append(song.album)
+        elif song.date and song.date.year:
+            # add song
+            if song.date.year not in songs:
+                songs[song.date.year] = []
+            if song not in songs[song.date.year]:
+                songs[song.date.year].append(song)
+        else:
+            if song.album:
+                if 0 not in albums:
+                    albums[0] = []
+                if song.album not in albums[0]:
+                    albums[0].append(song.album)
+            else:
+                if 0 not in songs:
+                    songs[0] = []
+                if song not in songs[0]:
+                    songs[0].append(song)
+            
+    year_list = list(songs.keys()) + list(albums.keys())
+    year_list = list(set(year_list))
+    year_list = [ y for y in year_list if y >= 1950 ]
+    year_list = year_list
+    year_list.sort()
+
+    year_link_string = ""
+    for year in year_list:
+        if not year_link_string:
+            year_link_string += "&nbsp;" * 5
+        elif year % 10 == 0:
+            year_link_string += '\n<br>' + ( "&nbsp;" * 5 )
+        year_link_string += f'<a href="#{year}">{year}</a> '
+    lines += [ year_link_string, "<hr>" ]
+
+    for year in (year_list + [0]):
+        lines.append(f'<a name="{year}"></a>')
+
+        n_songs = len(songs[year]) if year in songs else 0
+        n_albums = len(albums[year]) if year in albums else 0
+
+        title = str(year) if year > 0 else "No-Year Albums Containing No-Year Songs"
+        lines.append(f'<b>{title}</b> <div class=count>{n_songs}/{n_albums}</div>')
+
+        entries = []
+        
+        if n_albums:
+            y_albums = albums[year]
+            y_albums.sort(key=lambda a: (a.title,a.artist.name))
+            for album in y_albums:
+                alink = f'<a class=highlight href="{album.fname}">{album.title}</a>'
+                # note: highlight => red, to disambiguate albums from songs
+                alink += f' ({album.artist.name})</a>'
+                entries.append(alink)
+
+        if n_songs:
+            if entries:
+                entries.append("<br>")
+            y_songs = songs[year]
+            y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
+            for song in y_songs:
+                s_link = song.album.fname + "#" + song.link
+                s_class = ' class=cover' if song.cover else ''
+                album = song.album.artist.name + ", " + song.album.title
+                title = song.title
+                if song.misc_artist:
+                    album = song.misc_artist + ", Misc"
+                entries.append( f'<a href={s_link}{s_class}>{title}</a> ({album})' )
+
+        ncols = "col1"
+        max_2col = 100
+        if len(entries) > max_2col:
+            if year != 0:
+                print(f"Year with >{max_2col} entries: {year}")
+            ncols = "col3"
+        elif len(entries) > 10:
+            ncols = "col2"
+
+        lines.append(f'<div class="songindex {ncols}">')
+        lines += entries
+
+        lines.append('</div>')
+        lines.append('<hr>')
+
+    lines += [ '<br>', '</body>', '</html>' ]
+
+    return lines
+
 def parse_song_link_line(link_line):
     # expected form: {artist|album|song|version}
     link_dict = { "text"    : link_line,
@@ -2666,6 +2773,9 @@ class CRD_data():
             with open(self.opts["html_root"] + 'songs.html', 'w') as f:
                 for l in html_song_index(allsongs):
                     f.write('\n' + l)
+            with open(self.opts["html_root"] + 'years.html', 'w') as f:
+                for l in html_year_index(allsongs):
+                    f.write('\n' + l)
 
         artists_summary, artists_links, misc_links = self.make_artists_index()
         tunings_summary = self.make_tuning_index()
@@ -2680,6 +2790,7 @@ class CRD_data():
         lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
         lines += [ '<br> <a href=folk.html>Folk Index</a> <div class=count>%s</div>' % folk_summary ]
         lines += [ '<br> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
+        lines += [ '<br> <a href=years.html>Year Index</a>' ]
         lines += [ '<br> <a href=theory.html>Chords and Scales</a>' ]
         lines += [ '<hr>' ]
 
