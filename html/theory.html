@@ -4,26 +4,45 @@
     <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="style1.css" id="style">
     <script src="script.js"></script>
+    <meta name="google" content="notranslate">
 </head>
+<div id=search-container>
+<div id=search>Enter search term (used for searching song and album titles and optionally artist names):<br><br>
+<input type=text id=pattern><br><br>
+<button id=search-all-artists type=button>Search All</button>
+<button id=search-current-artist type=button>Search Current Artist</button>
+<br><br>
+<button id=search-random-song type=button>Random Song</button>
+<button id=search-random-song-current-artist type=button>Random Song (current artist)</button>
+<br><br>
+<button id=search-goto-index type=button>Artist Index</button>
+</div>
+</div>
 <body>
 <div class=settings>
   <img class=settings-icon src=menu.png>
   <div class=settings-menu>
-    <a onclick="transpose_topmost_song(true);">Transpose up (k)</a>
-    <a onclick="transpose_topmost_song(false);">Transpose down (j)</a>
-    <a onclick="cycle_topmost_song(true);">Cycle song versions (v)</a>
-    <!--<a onclick="lyrics_only();">Toggle lyrics only (z)</a>-->
-    <!--<a onclick="cancel_modulation();">Toggle modulation (m)</a>-->
+    <a id=menu-transpose-up>Transpose up (k)</a>
+    <a id=menu-transpose-down>Transpose down (j)</a>
+    <a id=menu-cycle-versions>Cycle song versions (v)</a>
+    <!-- <a id=menu-toggle-lyrics-only>Toggle lyrics only (z)</a> -->
+    <!-- <a id=menu-toggle-modulation>Toggle modulation (m)</a> -->
     <a class=narrow onclick="">-------------------------</a>
-    <a onclick="jump_to_page('index.html');">Artist index (i)</a>
-    <a onclick="jump_to_page('songs.html');">Song index</a>
-    <a onclick="jump_to_page('tunings.html');">Tuning index</a>
-    <a onclick="jump_to_page('folk.html');">Folk index</a>
+    <a id=menu-jump-to-index>Artist index (i)</a>
+    <a id=menu-jump-to-song-index>Song index</a>
+    <a id=menu-jump-to-tuning-index>Tuning index</a>
+    <a id=menu-jump-to-folk-index>Folk index</a>
     <a class=narrow onclick="">-------------------------</a>
-    <a onclick="toggle_multicolumn();">Toggle multicolumn</a>
-    <a onclick="toggle_dark_mode();">Toggle dark mode</a>
-    <a onclick="prompt_for_search();">Find song (f)</a>
+    <a id=menu-toggle-multicolumn>Toggle multicolumn (c)</a>
+    <a id=menu-toggle-dark>Toggle dark mode</a>
+    <a class=narrow onclick="">-------------------------</a>
+    <a id=menu-find-song>Find song (f)</a>
+    <a id=menu-random-song>Random song (r)</a>
   </div>
+  <img class=search-icon src=magnifying.png onclick="prompt_for_song_search();">
+  <img class=jump-to-top src=arrow.png onclick="navigate_up();">
+  <img id=plus src=plus.png onclick="transpose_topmost_song(true);">
+  <img id=minus src=minus.png onclick="transpose_topmost_song(false);">
 </div>
 <h2><div title=theory>Chords and Scales</div></h2>
 <hr>
@@ -100,6 +119,7 @@ The inversions of these chords overlap, so there are only 3 unique dim7 chords:
     <div class=chord>C#dim7</div> = <div class=chord>Edim7 </div> = <div class=chord>Gdim7 </div> = <div class=chord>A#dim7</div> = <div class=fingering>xx2323</div>
     <div class=chord>Ddim7 </div> = <div class=chord>Fdim7 </div> = <div class=chord>G#dim7</div> = <div class=chord>Bdim7 </div> = <div class=fingering>xx3434</div>
 
+Geometrically, they form a square on the circle of fifths.
 The m7b5 chord (&oslash;) is sometimes called "half-diminished" due to the absence of the bb7.
 A half-diminished chord can be played as a minor triad (based on the minor 3rd) over the root:
 
@@ -116,6 +136,7 @@ The inversions of these chords overlap, so there are only 4 unique augmented cho
     <div class=chord>D+ </div>  =  <div class=chord>F#+</div> =  <div class=chord>A#+</div>
     <div class=chord>D#+</div>  =  <div class=chord>B+ </div> =  <div class=chord>G+ </div>
 </span>
+Geometrically, they form an equilateral triangle on the circle of fifths.
 An augmented minor triad produces an inverted major triad based on the raised 5th:
 
     <div class=chord>Cm+ </div> = <div class=chord>G#/c</div>
@@ -331,6 +352,7 @@ This is the Aeolian (natural minor) scale, but with a raised sixth.
     <div class=tabline>|-5--|----|-7--|-8--|----|</div>      
     <div class=tabline>|-5--|-6--|----|-8--|----|</div>      
     <div class=tabline>|----|-6--|----|-8*-|----|</div>      
+</span>
                                                              
 </div>
 
