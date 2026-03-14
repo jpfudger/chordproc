@@ -1,0 +1,116 @@
+#!/usr/bin/python3
+import os, sys
+import glob, re
+
+args = sys.argv[1:] # can supply regex to find html files containing a match
+
+CACHE_PATH = "chords.uniq"
+
+def import_cache_from_file():
+    cache = []
+
+    if os.path.exists(CACHE_PATH):
+        with open(CACHE_PATH) as f:
+            for chord in f.readlines():
+                chord = chord.split()[0]
+                if chord not in cache:
+                    cache.append(chord)
+
+    #print(cache)
+    return cache
+
+def diff_and_write_cache(suffixes, cache):
+    diff = False
+    suffix_list = list(suffixes.keys())
+    suffix_list.sort()
+
+    for suffix in suffix_list:
+        if suffix not in cache:
+            if not diff: print("!!!")
+            diff = True
+            suggestion = ""
+            if ("m+" in suffix) or ("+m" in suffix):
+                suggestion = " (Can be rewritten as an inversion of a major chord)"
+            if ("#5" in suffix) or ("+5" in suffix) or ("5+" in suffix):
+                suggestion = " (alternative: +)"
+            if ("7/9" in suffix) or ("7add9" in suffix):
+                suggestion = " (alternative: 9 -- which implies the 7)"
+            elif ("-5" in suffix):
+                suggestion = " (alternative: b5)"
+            print("!!! New chord suffix: " + suffix + suggestion)
+
+    for suffix in cache:
+        if suffix not in suffix_list:
+            if not diff: print("!!!")
+            diff = True
+            print("!!! Removed chord suffix: " + suffix)
+
+    if len(cache) != len(suffix_list):
+        diff = True
+        print("!!!")
+        print("!!! %d unique suffixes (%d in cache)" % (len(suffix_list), len(cache)))
+        print("!!!")
+
+    if diff:
+        if os.path.exists(CACHE_PATH):
+            os.rename(CACHE_PATH, CACHE_PATH + ".prev")
+        with open(CACHE_PATH, "w") as f:
+            for suffix in suffix_list:
+                f.write(suffix.ljust(10) + str(suffixes[suffix]) + "\n")
+                #print(suffix)
+
+def suffix_from_chord(chord):
+    suffix = chord
+    suffix = re.sub(r":$","",suffix) # strip trailing colon (from fingerings)
+    suffix = re.sub(r"\?$","",suffix) # strip question mark
+    suffix = re.sub(r"\/[a-gA-G#]+$","",suffix) # strip bass
+    suffix = re.sub(r"\*+$","",suffix) # strip trailing ***
+    suffix = re.sub(r"\([ivx]+\)$","",suffix,flags=re.I) # strip trailing roman numerals
+    suffix = re.sub(r"\(\d+\)$","",suffix) # strip trailing arabic numerals
+
+    for note in ['A', 'B', 'C', 'D', 'E', 'F', 'G']:
+        if suffix.startswith(note + '#'):
+            suffix = suffix[2:]
+        elif suffix.startswith(note + 'b'):
+            suffix = suffix[2:]
+        elif suffix.startswith(note):
+            suffix = suffix[1:]
+
+    return suffix
+
+def extract_chords_from_html(args):
+    chords = {}
+    suffixes = {}
+
+    for html in glob.glob("html/*.html"):
+        #print(html)
+        with open(html) as f:
+            for line in f:
+                line = line.strip()
+                if "class=chord" in line:
+                    #print(line)
+                    linechords = re.findall(r"<div class=chord[^>]*>([^<]+)<\/div>", line)
+                    for chord in linechords:
+                        chord = chord.strip()
+                        if not chord in chords:
+                            chords[chord] = 0
+                        chords[chord] += 1
+                        for arg in args:
+                            if re.search(arg, chord):
+                                print(chord, html)
+
+    for chord in chords.keys():
+        suffix = suffix_from_chord(chord)
+
+        if not suffix: continue
+
+        if not suffix in suffixes:
+            suffixes[suffix] = 0
+        suffixes[suffix] += chords[chord]
+
+    return suffixes
+
+cache = import_cache_from_file()
+suffixes = extract_chords_from_html(args)
+diff_and_write_cache(suffixes, cache)
+

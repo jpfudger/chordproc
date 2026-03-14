@@ -1,0 +1,46 @@
+#!/usr/bin/python3
+
+import os, glob, datetime
+
+# This script lists files which were not updated in the most 
+# recent call to the chordproc script. The first file written
+# by that script is songs.html, so we find the last modification
+# time of that file and list all html files older than that
+# (ignoring theory.html, which is maintained by hand).
+
+def format_datetime(dt):
+    return dt.strftime("%d-%b-%Y %H:%M:%S.%f")[:-4]
+
+HTML_ROOT = "html"
+IGNORE = [ "theory.html" ]
+
+s_path = os.path.join(HTML_ROOT, "songs.html")
+s_mtime = os.path.getmtime(s_path)
+s_dt = datetime.datetime.fromtimestamp(s_mtime)
+
+print(f"Listing all files older than {s_path} ({format_datetime(s_dt)})...")
+
+older_files = []
+
+for path in glob.glob(os.path.join(HTML_ROOT, "*.html")):
+    mtime = os.path.getmtime(path)
+    dt = datetime.datetime.fromtimestamp(mtime)
+    if os.path.basename(path) in IGNORE:
+        print(f"Ignoring {os.path.basename(path)} (maintained by hand?) ({format_datetime(dt)})")
+        continue
+    if dt >= s_dt:
+        continue
+    older_files.append(path)
+
+if older_files:
+    older_files.sort(key=lambda p: os.path.getmtime(p))
+
+    for path in older_files:
+        print(path)
+else:
+    print("No older files found")
+
+    
+
+
+

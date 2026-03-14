@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for WORD in thats whats wheres whos wont hes shes theyre theyll youll youre youve dont cant id im ive heres theres weve yeh yea wasnt couldnt shouldnt wouldnt cuz
+do
+    grep --color -i "\b$WORD\b" crds/*
+done
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+grep --color='auto' -P -n "[^\x00-\x7F]" crds/*
+# also look for tab chars:
+grep --color='auto' "	" crds/*

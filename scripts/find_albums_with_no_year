@@ -1,0 +1,7 @@
+#!/bin/bash
+
+grep "{{{ album:[^<]\+$" crds/*  \
+    | grep -v "album: \bMisc\b"  \
+    | grep -v "misc\.crd:"       \
+    | grep "\.crd:"
+

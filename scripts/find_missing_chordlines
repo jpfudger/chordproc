@@ -1,0 +1,34 @@
+#!/usr/bin/python3
+import glob
+import re
+
+allchords = []
+suffixes = []
+n_chords = 0
+
+
+# Idea: combine with allchords.py:
+# Build list of all unique chord suffixes.
+# Build lsit of letters NOT used in those suffixes.
+# Exclude lines containing those letters from this list.
+
+
+for html in glob.glob("html/*.html"):
+    #print(html)
+    with open(html) as f:
+        for line in f:
+            line = line.strip()
+            if "<div " in line:
+                pass
+            elif "<a " in line:
+                pass
+            elif "<h3>" in line:
+                pass
+            elif "<title" in line:
+                pass
+            elif "---" in line:
+                pass
+            elif re.search(r"\b[B-G][#b]?m?\b", line):
+                #print( [ len(word) for word in line.split() ] )
+                print(line)
+

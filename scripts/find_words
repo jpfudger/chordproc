@@ -1,0 +1,535 @@
+#!/usr/bin/python3
+import sys, os, re, glob
+
+# We could report spelling mistakes by comparing with the unix wordlist.
+# Need to filter out the ubiquitous "livin'" abbreviations.
+# Maybe replace trailing "'"s with "g" and look that up in the wordlist?
+
+INCLUDE_TITLES = True
+WORDS_CACHE = "words.uniq"
+LINES_CACHE = "lines.uniq"
+CONCORDANCE_PATH = "concordance.txt"
+CONCORDANCE_PATH_BOB = "concordance.bob.txt"
+GLOB_PATH = "html/*.html"
+IGNORE_TOP_N_WORDS = 50
+SPLIT_AT_ALL_HYPHENS = False
+SPLIT_VALID_AT_HYPHENS = True # split only when it doesn't introduce a new word
+SPLIT_AT_ALL_QUOTES = False
+
+class Concordance():
+    def __init__(self, artist=None, pattern=None):
+        self.words = {}
+        self.lines = []
+        self.pattern = pattern
+        self.artist = artist.replace(" ", "").lower() if artist else None
+
+        self.populate()
+
+    def populate(self):
+        html_files = glob.glob(GLOB_PATH)
+        html_files.sort()
+
+        album_title = None
+        song_title = None
+        song_index = None
+        n_playlists_ignored = 0
+        
+        for html in html_files:
+            filename = os.path.basename(html)
+            if filename == "theory.html": continue
+            if filename == "tunings.html": continue
+            if filename == "index.html": continue
+            if filename == "fingerings.html": continue
+            if filename == "search.html": continue
+            if filename == "years.html": continue
+            if filename.startswith("playlists_"):
+                n_playlists_ignored += 1
+                continue
+
+            if self.artist:
+                if not filename.startswith(self.artist):
+                    continue
+
+            year = 0
+            with open(html) as f:
+                for line in f:
+                    line = re.sub(r"<\/?span>", "", line)
+                    line = line.strip()
+
+                    if "class=year" in line:
+                        orig_line = line
+
+                        regex_year_link = r"<a class=year href=years\.html#\d+>(\d+)</a>"
+                        m_year_link = re.search(regex_year_link, line)
+                        if m_year_link:
+                            year = int(m_year_link.group(1))
+                        line = re.sub(regex_year_link, "", line)
+
+                        regex_year_div = r"<div class=year>(\d+)<\/div>"
+                        m_year_div = re.search(regex_year_div, line)
+                        if m_year_div:
+                            year = int(m_year_div.group(1))
+                        line = re.sub(regex_year_div, "", line)
+
+                        if m_year_link and m_year_div:
+                            print("***\nLINE MATCHED YEAR_LINK AND YEAR_DIV:")
+                            print(orig_line)
+                        if not m_year_link and not m_year_div:
+                            print("***\nNO YEAR FOUND FOR class=year LINE:")
+                            print(orig_line)
+
+                    if "class=chord" in line: continue
+                    if "class=comment" in line: continue
+                    if "id=search" in line: continue # this only works if all the text is on this line
+                    if "<" in line:
+                        if "<div class=count>" in line:
+                            line = re.sub(r"<div class=count>\d+<\/div>", "", line)
+
+                        h2 = re.search(r"<h2[^>]*>([^<]+)</h2>", line)
+                        h3 = re.search(r"<h3 id=([^>]*)>([^<]+)</h3>", line)
+
+                        if h2:
+                            album_title = h2.group(1)
+                        if h3:
+                            song_index = h3.group(1)
+                            song_title = h3.group(2)
+                            if INCLUDE_TITLES:
+                                line = song_title
+                                line = re.sub(r"\s+\[[^]]+\]", "", line)
+
+                    if re.match("<[^>]+>", line): 
+                        continue # ignore cover line
+
+                    if "|" in line: 
+                        if re.search("[a-wyz]", line): # x is allowed (e.g. x2)
+                            print("Word character in | line: " + line)
+                        continue
+
+                    self.process_line(line, song_title, year, html) # use song_index instead?
+
+        print(f"Ignored {n_playlists_ignored} playlist files")
+
+        self.post_process_word_list()
+
+    def process_line(self, line, song_title, year, html):
+        if line.strip() != "":
+            self.lines.append(line)
+
+        strip_chars = (":", "[", "]")
+        ignore_chars = (",",".", ";","?","!",'"',"(",")","&","%","|","/", "\\")
+        ignore_words = ("-","'","*","**","+","&","=","/","[","]")
+        ignore_subpatterns = ("---",)
+
+        line = re.sub(r"(\d+),(\d+)", r"\1__DIGIT__COMMA__\2", line)
+        #if "__DIGIT__COMMA__" in line: print(line)
+        for char in ignore_chars:
+            line = line.replace(char, " ")
+        line = re.sub("__DIGIT__COMMA__", ",", line)
+
+        if SPLIT_AT_ALL_QUOTES:
+            # this doesn't work
+            # we definitely shouldn't remove quotes at the beginning or end of a word
+            line = line.replace("'", " ")
+
+        if SPLIT_AT_ALL_HYPHENS:
+            line = line.replace("-"," ")
+
+        splits = line.lower().split()
+        for word in splits:
+            if word in ignore_words: continue
+            
+            has_ignore_subpattern = False
+            for pattern in ignore_subpatterns:
+                if pattern in word: 
+                    #print("Ignoring: " + word)
+                    has_ignore_subpattern = True
+                    break
+            if has_ignore_subpattern: 
+                continue
+
+            if re.match("^-+$", word): continue
+            if re.match("a+h+", word): 
+                word = "ah"
+
+            for char in strip_chars:
+                if word.startswith(char):
+                    word = word[1:]
+                if word.endswith(char):
+                    word = word[:-1]
+
+            if not word: continue
+            if word in ignore_words: continue
+            if re.match("^-+$", word): continue
+
+            if self.pattern and re.search(self.pattern, word):
+                print(self.pattern, ":", line, "(" + html + ")" )
+
+            #if word == self.pattern:
+                #print(self.pattern, ":", line)
+
+            if word not in self.words:
+                self.words[word] = { "count": 0, "songs": [], "year": year }
+
+            self.words[word]["count"] += 1
+            self.words[word]["songs"].append(song_title)
+
+            if year and year < self.words[word]["year"]:
+                self.words[word]["year"] = year
+
+    def earliest_year(self, word1, word2):
+        year = 0
+
+        year1 = self.words[word1]["year"]
+        year2 = self.words[word2]["year"]
+
+        if year1 and year2:
+            year = min(year1, year2)
+        elif year1:
+            year = year1
+        elif year2:
+            year = year2
+
+        return year
+
+    def post_process_word_list(self):
+        REMOVE_A_LEADERS = True
+        REMOVE_ABBREVIATIONS = True
+        REMOVE_PLURALS = False # bad idea because of a/as/ass/asses
+        REMOVE_POSSESSIVES = True # right thing to do, but unfinished
+
+        if REMOVE_A_LEADERS:
+            awords = []
+
+            for word in self.words.keys():
+                if word.startswith("a-") or word.startswith("a'"):
+                    short = word[2:]
+                    if short in self.words:
+                        self.words[short]["count"] += self.words[word]["count"]
+                        self.words[short]["songs"] += self.words[word]["songs"]
+                        self.words[short]["year"] = self.earliest_year(short, word)
+                        awords.append(word)
+                    elif REMOVE_ABBREVIATIONS and word.endswith("'"):
+                        short = short[:-1] + "g"
+                        if short in self.words:
+                            self.words[short]["count"] += self.words[word]["count"]
+                            self.words[short]["songs"] += self.words[word]["songs"]
+                            self.words[short]["year"] = self.earliest_year(short, word)
+                            awords.append(word)
+
+            for word in awords:
+                self.words.pop(word)
+
+            print("Removed %d a-leaders" % len(awords))
+
+        if REMOVE_ABBREVIATIONS:
+            abbrevs = []
+
+            for word in self.words.keys():
+                if len(word) <= 2:
+                    continue # to prevent o' => og
+                elif word.endswith("s'"):
+                    stripped = word[:-1]
+                    if stripped in self.words:
+                        self.words[stripped]["count"] += self.words[word]["count"]
+                        self.words[stripped]["songs"] += self.words[word]["songs"]
+                        self.words[stripped]["year"] = self.earliest_year(stripped, word)
+                        abbrevs.append(word)
+                elif word.endswith("'"):
+                    full = word[:-1] + "g"
+                    if full in self.words:
+                        self.words[full]["count"] += self.words[word]["count"]
+                        self.words[full]["songs"] += self.words[word]["songs"]
+                        self.words[full]["year"] = self.earliest_year(full, word)
+                        abbrevs.append(word)
+
+            for word in abbrevs:
+                self.words.pop(word)
+
+            print("Removed %d abbreviations" % len(abbrevs))
+
+        if REMOVE_PLURALS:
+            plurals = []
+
+            for word in self.words.keys():
+                if word.endswith("s"):
+                    singular = word[:-1]
+                    if word.endswith("'s"):
+                        singular = word[:-2]
+
+                    if singular in self.words:
+                        self.words[singular]["count"] += self.words[word]["count"]
+                        self.words[singular]["songs"] += self.words[word]["songs"]
+                        self.words[singular]["year"] = self.earliest_year(singular, word)
+                        plurals.append(word)
+
+            for word in plurals:
+                self.words.pop(word)
+
+            print("Removed %d plurals" % len(plurals))
+
+        if REMOVE_POSSESSIVES:
+            possessives = []
+            new_words = {}
+            for word in self.words.keys():
+                if word.endswith("'s"):
+                    singular = word[:-2]
+                    
+                    # this doesn't work!
+                    if singular in self.words:
+                        self.words[singular]["count"] += len(self.words[word]["songs"])
+                        self.words[singular]["songs"] += self.words[word]["songs"]
+                        self.words[singular]["year"] = self.earliest_year(singular, word)
+
+                    else:
+                        new_words[singular] = { "count": 0, "songs": [], "year": 0 }
+                        new_words[singular]["count"] += self.words[word]["count"]
+                        new_words[singular]["songs"] += self.words[word]["songs"]
+                        new_words[singular]["year"] = self.words[word]["year"]
+
+                    possessives.append(word)
+
+            for word in possessives:
+                self.words.pop(word)
+
+            for word, refs in new_words.items():
+                if word in self.words:
+                    raise("Word unexpectedly present: " + word)
+                else:
+                    self.words[word] = refs
+
+        if SPLIT_VALID_AT_HYPHENS:
+            n_hyphenated = 0
+            hyphenated_words_to_delete = []
+            for word in self.words.keys():
+                if "-" in word:
+                    n_hyphenated += 1
+                    splits = word.split("-")
+                    all_valid = True
+                    for split in splits:
+                        if split not in self.words:
+                            all_valid = False
+                            break
+
+                    if all_valid:
+                        hyphenated_words_to_delete.append(word)
+                        for split in splits:
+                            self.words[split]["count"] += 1
+                            self.words[split]["songs"] += self.words[word]["songs"]
+                            self.words[split]["year"] = self.earliest_year(split, word)
+
+            for word in hyphenated_words_to_delete:
+                self.words.pop(word)
+
+            n_hyphenated -= len(hyphenated_words_to_delete)
+            print("Removed %d hyphenated words (leaving %d)" % 
+                    (len(hyphenated_words_to_delete), n_hyphenated) )
+
+
+        # for word in self.words.keys():
+        #     if "-" in word:
+        #         nodash = word.replace("-","")
+        #         if nodash in self.words:
+        #             print(f"  {word} ({self.words[word]}) => {nodash} ({self.words[nodash]})")
+
+    def import_cache_from_file(self):
+        cache = []
+
+        if os.path.exists(WORDS_CACHE):
+            with open(WORDS_CACHE) as f:
+                for chord in f.readlines():
+                    chord = chord.split()[0]
+                    if chord not in cache:
+                        cache.append(chord)
+
+        #print(cache)
+        return cache
+
+    def diff_and_write_to_file(self):
+        allwords = list(self.words.keys())
+        allwords.sort(key=lambda w: (-self.words[w]["count"], w))
+
+        diff = False
+
+        words_cache = self.import_cache_from_file()
+
+        for word in allwords:
+            if word not in words_cache:
+                if not diff: print("!!!")
+                diff = True
+                print("!!! New word: " + word)
+
+        for word in words_cache:
+            if word not in allwords:
+                if not diff: print("!!!")
+                diff = True
+                print("!!! Removed word: " + word)
+
+        if len(self.words) != len(words_cache):
+            diff = True
+            print("!!!")
+            difference = str(len(allwords) - len(words_cache))
+            if not difference.startswith("-"):
+                difference = "+" + difference
+
+            print("!!! %d unique words (%d in cache) (%s)" % (len(allwords), len(words_cache), difference))
+            print("!!!")
+
+        if diff:
+            if os.path.exists(WORDS_CACHE):
+                print("Renaming %s to %s.prev" % ( WORDS_CACHE, WORDS_CACHE ))
+                os.rename(WORDS_CACHE, WORDS_CACHE + ".prev")
+
+        print("Writing %d words to %s" % (len(allwords), WORDS_CACHE))
+        with open(WORDS_CACHE, "w") as f:
+            for word in allwords:
+                count = str(self.words[word]["count"])
+                f.write(word + " " + count + "\n")
+
+        print("Writing %d lines to %s" % (len(self.lines), LINES_CACHE))
+        with open(LINES_CACHE,"w") as f:
+            for line in self.lines:
+                f.write(line + "\n")
+
+    def write_concordance(self, path, alphabetical_order=False):
+        words = dict(self.words) # copy, so we can change counts
+        allwords = list(words.keys())
+        allwords.sort(key=lambda w: (-words[w]["count"], w))
+
+        if IGNORE_TOP_N_WORDS > 0:
+            for i, w in enumerate(allwords):
+                words[w]["count"] = 0;
+                if i == IGNORE_TOP_N_WORDS:
+                    break
+
+        if alphabetical_order:
+            allwords.sort()
+
+        lengths = [ len(x) for x in allwords ]
+        lengths.sort()
+        lengths.reverse()
+        #print(lengths[:10])
+
+        output_lines = []
+
+        for word in allwords:
+            year = words[word]["year"]
+            songs = words[word]["songs"]
+            songs = list(set(songs))
+            songs.sort()
+            joined = " | ".join(songs)
+
+            if words[word]["count"] == 0:
+                joined = "0"
+
+            line = ( word.ljust(20) + " : " ) + joined
+            output_lines.append(line)
+
+            if False: # verbose:
+                print(word)
+                for song in songs:
+                    print("   ", song)
+
+        print("Writing words to %s" % path)
+        with open(path, "w") as f:
+            for l in output_lines:
+                f.write(l + "\n")
+
+    def write_javascript(self, path, alphabetical_order=False):
+        words = dict(self.words) # copy, so we can change counts
+        allwords = list(words.keys())
+        allwords.sort(key=lambda w: (-words[w]["count"], w))
+
+        if IGNORE_TOP_N_WORDS > 0:
+            for i, w in enumerate(allwords):
+                words[w]["count"] = 0;
+                if i == IGNORE_TOP_N_WORDS:
+                    break
+
+        if alphabetical_order:
+            allwords.sort()
+
+        lengths = [ len(x) for x in allwords ]
+        lengths.sort()
+        lengths.reverse()
+        #print(lengths[:10])
+
+        output_lines = []
+
+        output_lines.append("function get_concordance()")
+        output_lines.append("    {")
+        output_lines.append("    var lines = [")
+
+        for word in allwords:
+            songs = words[word]["songs"]
+            songs = list(set(songs))
+            songs.sort()
+            line = "        \"%s : %s\"" % (word, " | ".join(songs))
+            output_lines.append(line)
+
+        output_lines.append("        ];")
+        output_lines.append("    return lines;")
+        output_lines.append("    }")
+
+        print("Writing words to %s" % path)
+        with open(path, "w") as f:
+            for l in output_lines:
+                f.write(l + "\n")
+
+    def plot_first_usage(self, path):
+        years = {}
+
+        for word, wdict in self.words.items():
+            year = wdict["year"]
+            if year:
+                #print(year)
+                if year not in years:
+                    years[year] = 0
+                years[year] += 1
+
+        min_year = min(list(years.keys()))
+        max_year = max(list(years.keys()))
+        year_list = list(range(min_year, max_year+1))
+
+        count_list = []
+
+        for year in year_list:
+            count = years.get(year, 0)
+            count_list.append(count)
+
+        #print(year_list)
+        #print(count_list)
+
+        import matplotlib.pyplot as plt
+
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+       
+        ax.plot(year_list, count_list)
+        ax.grid()
+        plt.savefig(path)
+        # plt.show()
+
+def main():
+    pattern = None
+    args = sys.argv[1:]
+    if args:
+        pattern = args[0]
+
+    c = Concordance(pattern=pattern)
+
+    if pattern:
+        print("Pattern supplied: not writing to file")
+    else:
+        c.diff_and_write_to_file()
+        c.write_concordance(path=CONCORDANCE_PATH)
+        c.plot_first_usage(path="words.all.png")
+
+    print()
+
+    cb = Concordance(artist="Bob Dylan")
+    cb.write_concordance(path=CONCORDANCE_PATH_BOB)
+    cb.write_javascript(path="concordance.bob.js")
+    cb.plot_first_usage(path="words.bob.png")
+
+main()
+

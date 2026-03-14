@@ -1,0 +1,20 @@
+#!/usr/bin/python3
+
+import os, glob, re
+
+TAGS = [ "div", "html", "body", "span" ]
+
+for path in glob.glob("html/*.html"):
+
+    with open(path) as f:
+        text = f.read()
+
+    for tag in TAGS:
+
+        opened = re.findall(fr"<{tag}\b", text)
+        closed = re.findall(fr"</{tag}>", text)
+
+        if len(opened) != len(closed):
+            print(f"Unmatched tag (<{tag}>) in {os.path.basename(path)}  +{len(opened)}/-{len(closed)}")
+
+

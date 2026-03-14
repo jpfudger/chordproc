@@ -1,0 +1,72 @@
+#!/usr/bin/python3
+
+import glob, os, sys, argparse
+
+def filter_lines(long_lines, keep=10):
+    long_lines.sort(key=lambda x: -x[1])
+
+
+    longest_line_to_keep = long_lines[keep-1][1]
+
+    last_index_to_keep = 0
+    for l in long_lines:
+        if l[1] < longest_line_to_keep:
+            break
+        last_index_to_keep += 1
+
+    return long_lines[:last_index_to_keep]
+
+def parse_crd_file(path):
+    line_lengths = []
+
+    with open(path) as f:
+        lnum = 0
+        for line in f:
+            lnum += 1
+            line = line.rstrip()
+
+            if line.lstrip().startswith("{{{"):
+                pass # open fold
+            elif line.lstrip().startswith("}}}"):
+                pass # close fold
+            elif line.lstrip().startswith("["):
+                pass # comment
+            else:
+                line_lengths.append((lnum, len(line), path))
+
+    return line_lengths
+
+def find_longest_lines(pattern=None, n_longest=10):
+    long_lines = []
+
+    crd_files = glob.glob("crds/*.crd")
+    crd_files.sort()
+
+    for path in crd_files:
+        if pattern and pattern not in path:
+            continue
+
+        #print("Processing: " + path)
+        fname = os.path.basename(path)
+        long_lines += parse_crd_file(path)
+        long_lines = filter_lines(long_lines, keep=n_longest)
+
+        #for l in long_lines: print(l)
+        #input("Wait")
+
+    for l in long_lines:
+        lnum = l[1]
+        length = l[0]
+        path = l[2]
+
+        print("%s L%s %s" % (str(lnum).ljust(6), str(length).ljust(6), path))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser("find_long_lines")
+    parser.add_argument("-n", type=int, default=10, help="show N longest lines [10]")
+    parser.add_argument("-s", type=str, default=None, help="filter .crd filenames")
+    args = parser.parse_args()
+
+    find_longest_lines(pattern=args.s, n_longest=args.n)
+

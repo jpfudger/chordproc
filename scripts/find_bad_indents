@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+from glob import glob
+
+BAD_INDENT = 4
+
+crds = glob("crds/*.crd")
+crds.sort()
+
+for crd in crds:
+    with open(crd) as f:
+        lines = f.readlines()
+
+        printing = False
+        prev_line = None
+        prev_indent = None
+
+        for line in lines:
+            indent = len(line) - len(line.lstrip())
+
+            if "---" in line:
+                prev_line = None
+                prev_indent = None
+                printing = False
+            elif indent == BAD_INDENT:
+                if prev_line and prev_indent and prev_indent == indent:
+                    print(prev_line.rstrip())
+                    printing = True
+                prev_line = line
+                prev_indent = indent
+            else:
+                if prev_line and prev_indent and printing:
+                    print(prev_line.rstrip())
+                prev_line = None
+                prev_indent = None
+                printing = False
+
+
+            

@@ -1,0 +1,74 @@
+#!/usr/bin/python3
+import glob, re
+
+# This script finds all songs which contain the word "harp" or "harmonica"
+# which do not also have a defined "Harp:" key.
+
+crds = glob.glob("crds/*.crd")
+crds.sort()
+
+total_harps = 0
+
+for crd in crds:
+    with open(crd) as f:
+        lines = f.readlines()
+
+        level = 0
+        harp = False
+        harp_ref = False
+        artist = None
+        song = None
+        album = None
+        version = None
+
+        for line in lines:
+            splits = line.split()
+
+            if len(splits) == 0:
+                pass
+
+            elif splits[0] == "}}}":
+                level -= 1
+
+                if harp_ref and not harp:
+                    print(f"{artist} | {album} | {song}")
+
+                harp = False
+                harp_ref = False
+                
+            elif splits[0] == "{{{":
+                level += 1
+
+                ftype = splits[1]
+                fname = " ".join(splits[2:])
+
+                if ftype == "---":
+                    ftype = splits[2]
+                    fname = " ".join(splits[3:])
+
+                if "<" in fname:
+                    fname = re.sub("<[^>]+>", "", fname).strip()
+
+                if ftype == "song:":
+                    song = fname
+                elif ftype == "album:":
+                    album = fname
+                elif ftype == "artist:":
+                    artist = fname
+                elif ftype == "version:":
+                    version = fname
+                
+            else:
+                line = line.strip().lower()
+                line = re.sub("jews.?harp", "", line)
+
+                if line.startswith("harp:"):
+                    harp = True
+                    total_harps += 1
+                elif "[" not in line:
+                    pass # ignore non-comment lines (i.e. all lyrics)
+                elif re.search(r"\b(harmonica\\|harp)\b", line):
+                    harp_ref = True
+
+print("Total songs with harp: %d" % total_harps)
+
