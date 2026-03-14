@@ -27,6 +27,7 @@ DO_SOUNDING_KEY = False
 WRITE_FINGERINGS = True
 HARP_LINK = "theory.html#DiatonicHarmonicaPositions"
 IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
+MIN_YEAR_LINK = 1950
 ARTIST_BAND_LINKS = {
     "Babyshambles" :        [ "Pete Doherty" ],
     "Band" :                [ "Bob Dylan" ],
@@ -220,8 +221,7 @@ def html_year_index(allsongs):
             
     year_list = list(songs.keys()) + list(albums.keys())
     year_list = list(set(year_list))
-    year_list = [ y for y in year_list if y >= 1950 ]
-    year_list = year_list
+    year_list = [ y for y in year_list if y >= MIN_YEAR_LINK ] # also filters out 0
     year_list.sort()
 
     year_link_string = ""
@@ -239,7 +239,7 @@ def html_year_index(allsongs):
         n_songs = len(songs[year]) if year in songs else 0
         n_albums = len(albums[year]) if year in albums else 0
 
-        title = str(year) if year > 0 else "No-Year Albums Containing No-Year Songs"
+        title = str(year) if year > 0 else "Albums Containing Songs With No Year"
         lines.append(f'<b>{title}</b> <div class=count>{n_songs}/{n_albums}</div>')
 
         entries = []
@@ -815,7 +815,11 @@ class CRD_album():
 
         year_sub = ""
         if self.date and self.date.year:
-            year_sub = " <div class=year>%d</div>" % self.date.year
+            y = self.date.year
+            if y >= MIN_YEAR_LINK:
+                year_sub = f" <a class=year href=years.html#{y}>{y}</a>"
+            else:
+                year_sub = f" <div class=year>{y}</div>"
 
         title_link = '<a href=%s>%s</a> : %s%s' % (self.artist.fname, self.artist.name, self.title, year_sub)
         lines  = [ '<html>' ]
@@ -1908,8 +1912,12 @@ class CRD_song():
                 v_lines.append('</select>')
 
             year = ""
-            if self.date and not self.album.date:
-                year = " <div class=year>%d</div>" % self.date.year
+            if self.date and self.date.year and not self.album.date:
+                y = self.date.year
+                if y >= MIN_YEAR_LINK:
+                    year = f" <a class=year href=years.html#{y}>{y}</a>"
+                else:
+                    year = f" <div class=year>{y}</div>"
 
             #style = ' style="display:block"'
 
