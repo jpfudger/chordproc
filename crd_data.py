@@ -261,11 +261,13 @@ def html_year_index(allsongs):
             for song in y_songs:
                 s_link = song.album.fname + "#" + song.link
                 s_class = ' class=cover' if song.cover else ''
-                album = song.album.artist.name + ", " + song.album.title
                 title = song.title
+                source = song.album.artist.name + ", " + song.album.title
+                if "Misc" in song.album.title:
+                    source = song.album.artist.name
                 if song.misc_artist:
-                    album = song.misc_artist + ", Misc"
-                entries.append( f'<a href={s_link}{s_class}>{title}</a> ({album})' )
+                    source = song.misc_artist
+                entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
 
         ncols = "col1"
         max_2col = 100
@@ -282,7 +284,8 @@ def html_year_index(allsongs):
         lines.append('</div>')
         lines.append('<hr>')
 
-    lines += [ '<br>', '</body>', '</html>' ]
+    lines += ['<br>' * 20]
+    lines += [ '</body>', '</html>' ]
 
     return lines
 
