@@ -27,7 +27,7 @@ DO_SOUNDING_KEY = False
 WRITE_FINGERINGS = True
 HARP_LINK = "theory.html#DiatonicHarmonicaPositions"
 IGNORE_ARTISTS = [ "JPF" ] # omitted from the index
-MIN_YEAR_LINK = 1950
+MIN_YEAR_LINK = 1 # 1950
 ARTIST_BAND_LINKS = {
     "Babyshambles" :        [ "Pete Doherty" ],
     "Band" :                [ "Bob Dylan" ],
@@ -224,13 +224,22 @@ def html_year_index(allsongs):
     year_list = [ y for y in year_list if y >= MIN_YEAR_LINK ] # also filters out 0
     year_list.sort()
 
+    all_years = list(range(min(year_list),max(year_list)+1))
+    while min(all_years) % 10 != 0:
+        all_years.insert(0, min(all_years)-1)
+
     year_link_string = ""
-    for year in year_list:
+    for year in all_years:
         if not year_link_string:
             year_link_string += "&nbsp;" * 5
         elif year % 10 == 0:
             year_link_string += '\n<br>' + ( "&nbsp;" * 5 )
-        year_link_string += f'<a href="#{year}">{year}</a> '
+
+        if year not in year_list:
+            year_link_string += f'<div class=dummy>{year}</div>&nbsp; '
+        else:
+            year_link_string += f'<a href="#{year}">{year}</a>&nbsp; '
+
     lines += [ year_link_string, "<hr>" ]
 
     for year in (year_list + [0]):
@@ -267,6 +276,8 @@ def html_year_index(allsongs):
                     source = song.album.artist.name
                 if song.misc_artist:
                     source = song.misc_artist
+                if song.album.misc_artist:
+                    source = song.album.misc_artist
                 entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
 
         ncols = "col1"
