@@ -194,8 +194,8 @@ h3 {
 */
 
 .dummy {
-    color: lightgrey;
-    /* font-style: italic; */
+    color: grey;
+    display: inline;
     }
 
 .songindex {
