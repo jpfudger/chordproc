@@ -171,6 +171,10 @@ def html_song_index(allsongs, artist=None):
         s_link = song.album.fname + '#' + song.link
         s_class = ' class=cover' if song.cover else ''
         album = song.album.title if artist else (song.album.artist.name + ", " + song.album.title)
+    
+        if song.album.misc_artist:
+            album = song.album.misc_artist
+
         title = song.title
         if song.misc_artist:
             title += f" [{song.misc_artist}]"
@@ -259,7 +263,11 @@ def html_year_index(allsongs):
             for album in y_albums:
                 alink = f'<a class=highlight href="{album.fname}">{album.title}</a>'
                 # note: highlight => red, to disambiguate albums from songs
-                alink += f' ({album.artist.name})</a>'
+                source = album.artist.name
+                if album.misc_artist:
+                    source = album.misc_artist
+
+                alink += f' ({source})</a>'
                 entries.append(alink)
 
         if n_songs:
@@ -825,7 +833,12 @@ class CRD_album():
         
         return []
     def html(self):
-        title = self.artist.name + ' : ' + self.title
+        artist_name = self.artist.name
+
+        if self.misc_artist and not artist_name.startswith("Misc:"):
+            artist_name = self.misc_artist
+
+        title = artist_name + ' : ' + self.title
 
         year_sub = ""
         if self.date and self.date.year:
@@ -835,7 +848,7 @@ class CRD_album():
             else:
                 year_sub = f" <div class=year>{y}</div>"
 
-        title_link = '<a href=%s>%s</a> : %s%s' % (self.artist.fname, self.artist.name, self.title, year_sub)
+        title_link = '<a href=%s>%s</a> : %s%s' % (self.artist.fname, artist_name, self.title, year_sub)
         lines  = [ '<html>' ]
         lines += html_header(title, chords=True)
         lines += [ '<body>', '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
