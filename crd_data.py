@@ -195,6 +195,9 @@ def html_year_index(allsongs):
 
     songs = {}
     albums = {}
+    versions = {}
+
+    INCLUDE_VERSIONS = True
 
     for song in allsongs:
         if song.artist.name in IGNORE_ARTISTS:
@@ -222,6 +225,29 @@ def html_year_index(allsongs):
                     songs[0] = []
                 if song not in songs[0]:
                     songs[0].append(song)
+
+        if INCLUDE_VERSIONS:
+            for version in song.versions:
+                song_year = None
+                if song.date and song.date.year:
+                    song_year = song.date.year
+                elif song.album and song.album.date and song.album.date.year:
+                    song_year = song.album.date.year
+
+                version_year = None
+                if version.date and version.date.year:
+                    version_year = version.date.year
+
+                if version_year and version_year != song_year:
+                    # add version
+                    if version.date.year not in versions:
+                        versions[version.date.year] = []
+                    if version not in versions[version.date.year]:
+                        #print(f"adding version: {version.version_of.title} {version.title}")
+                        versions[version.date.year].append(version)
+                else:
+                    pass 
+                    #print(f"Unprocessed version: {version.version_of.title} {version.version_index}")
             
     year_list = list(songs.keys()) + list(albums.keys())
     year_list = list(set(year_list))
@@ -251,6 +277,7 @@ def html_year_index(allsongs):
 
         n_songs = len(songs[year]) if year in songs else 0
         n_albums = len(albums[year]) if year in albums else 0
+        n_versions = len(versions[year]) if year in versions else 0
 
         title = str(year) if year > 0 else "Albums Containing Songs With No Year"
         lines.append(f'<b>{title}</b> <div class=count>{n_songs}/{n_albums}</div>')
@@ -277,7 +304,7 @@ def html_year_index(allsongs):
             y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
             for song in y_songs:
                 s_link = song.album.fname + "#" + song.link
-                s_class = ' class=cover' if song.cover else ''
+                s_class = '' # ' class=cover' if song.cover else ''
                 title = song.title
                 source = song.album.artist.name + ", " + song.album.title
                 if "Misc" in song.album.title:
@@ -286,6 +313,25 @@ def html_year_index(allsongs):
                     source = song.misc_artist
                 if song.album.misc_artist:
                     source = song.album.misc_artist
+                entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
+
+        if n_versions:
+            if entries:
+                entries.append("<br>")
+            y_songs = versions[year]
+            y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
+            for song in y_songs:
+                s_link = song.album.fname + f"?v={song.version_index+1}" + "#" + song.version_of.link
+                s_class = ' class=cover' # if song.cover else ''
+                title = song.version_of.title
+                source = song.album.artist.name
+                #source = song.album.artist.name + ", " + song.album.title
+                # if "Misc" in song.album.title:
+                #     source = song.album.artist.name
+                # if song.misc_artist:
+                #     source = song.misc_artist
+                # if song.album.misc_artist:
+                #     source = song.album.misc_artist
                 entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
 
         ncols = "col1"
