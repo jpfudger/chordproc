@@ -324,6 +324,8 @@ button {
 .tuning-map a.tuning-CGCFCE {   top: 68.5%; left: 86%;  }
 .tuning-map a.tuning-CGDFCE {   top: 78.5%; left: 86%;  }
 
+hr.no-col-divider { display: block; }
+br.col-divider { display: none; }
 
 @media only screen and (min-width: 1281px) {
     /* Only allow 4 columns on large screens (desktops) */
@@ -332,6 +334,9 @@ button {
     .col2 { column-count: 2; }
     .col3 { column-count: 3; }
     .col4 { column-count: 4; }
+
+    hr.no-col-divider { display: none; }
+    br.col-divider { display: block; }
 
     .tuning-map {
         display: float;

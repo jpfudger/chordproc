@@ -2655,7 +2655,7 @@ class CRD_data():
             n_artists += 1
             n_albums += len(artist.albums)
             n_songs += len(artist.all_songs())
-            link = '<a href="%s">%s</a> <div class=count>%d/%d</div><br>' % \
+            link = '<a href="%s">%s</a> <div class=count>%d/%d</div>' % \
                ( artist.fname, artist.name, len(artist.all_songs()), len(artist.albums) ) 
 
             if artist.name.startswith("Misc"):
@@ -2869,25 +2869,33 @@ class CRD_data():
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2 title="%s">Chords</h2>' % timestamp ]
         lines += [ '<hr>' ]
-        lines += [ '<a href=songs.html>Song Index</a> <div class=count>%s</div>' % artists_summary ]
-        lines += [ '<br> <a href=folk.html>Folk Index</a> <div class=count>%s</div>' % folk_summary ]
-        lines += [ '<br> <a href=tunings.html>Tuning Index</a> <div class=count>%s</div>' % tunings_summary ]
-        lines += [ '<br> <a href=years.html>Year Index</a>' ]
-        lines += [ '<br> <a href=theory.html>Theory Help</a>' ]
+        lines += [ '<div class=col4>' ]
+
+        top_links = []
+        top_links.append( '<a href=songs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary )
+        top_links.append( '<a href=folk.html>Folk Index</a> <div class=count>%s</div><br>' % folk_summary )
+        top_links.append( '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary )
+        top_links.append( '<a href=years.html>Year Index</a><br>' )
+        top_links.append( '<a href=theory.html>Theory Help</a> <div class=count>7</div><br>' )
+        top_links.append( '<a href=playlists.html>Playlists</a> <div class=count>3</div>' )
+        top_links.append( '<hr class=no-col-divider> <br class=col-divider>' )
+        top_links += [ l + '<br>' for l in misc_links ] # 6 misc categories at the moment
+
+        for link in top_links:
+            lines.append(link)
+
+        lines += [ '</div>' ]
         lines += [ '<hr>' ]
 
         lines += [ '<div class=col4>' ]
-        lines += artists_links
+
+        for link in artists_links:
+            lines += [ link + ' <br>' ]
+
         lines += [ '</div>' ] 
+        #lines += [ '<hr>' ]
+
         lines += [ '<hr>' ]
-
-        if misc_links:
-            lines += [ '<div>' ] # class=col4>' ]
-            lines += misc_links
-            lines += [ '</div>' ] 
-            lines += [ '<hr>' ]
-
-        lines += [ '<a href=playlists.html>Playlists</a>', '<hr>' ]
         lines += [ '<br>', '<br>', '<br>' ]
         lines += [ '</body>', '</html>' ]
 

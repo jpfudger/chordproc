@@ -1398,7 +1398,8 @@ function assign_shortcuts()
 //{{{ function: toggle_artist_sort
 function toggle_artist_sort()
     {
-    var div = document.getElementsByClassName('col4')[0];
+    var divs = document.getElementsByClassName('col4');
+    var div = divs[1]; // artist list is now second col4 div
     var lines = div.innerHTML.split(/\r?\n|\r|\n/g);
 
     var sorted_by_name = lines.slice();
