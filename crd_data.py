@@ -352,7 +352,9 @@ def html_year_index(allsongs):
     lines += ['<br>' * 20]
     lines += [ '</body>', '</html>' ]
 
-    return lines
+    summary = str(len(year_list))
+
+    return lines, summary
 
 def parse_song_link_line(link_line):
     # expected form: {artist|album|song|version}
@@ -2850,18 +2852,35 @@ class CRD_data():
 
         return "%d/%d" % (n_tunings_songs, n_tunings)
     def make_html(self):
+        years_summary = None
+        playlists_summary = None
+        theory_path = self.opts["html_root"] + "theory.html"
+        theory_summary = None
+
         if not DO_CRDFILES:
             allsongs = self.all_songs()
             with open(self.opts["html_root"] + 'songs.html', 'w') as f:
                 for l in html_song_index(allsongs):
                     f.write('\n' + l)
             with open(self.opts["html_root"] + 'years.html', 'w') as f:
-                for l in html_year_index(allsongs):
+                years_lines, years_summary = html_year_index(allsongs)
+                for l in years_lines:
                     f.write('\n' + l)
+            #if self.playlists:
+                #playlists_summary = self.make_playlist_html()
+            if os.path.isfile(theory_path):
+                n_theory_sections = 0
+                with open(theory_path) as f:
+                    for line in f:
+                        if line.strip().startswith("<li>"):
+                            n_theory_sections += 1
+                theory_summary = str(n_theory_sections)
 
         artists_summary, artists_links, misc_links = self.make_artists_index()
         tunings_summary = self.make_tuning_index()
         folk_summary = self.make_folk_index()
+        if self.playlists:
+            playlists_summary = self.make_playlist_html()
 
         lines  = [ '<html>' ]
         lines += html_header("Chords", index_page=True)
@@ -2875,9 +2894,9 @@ class CRD_data():
         top_links.append( '<a href=songs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary )
         top_links.append( '<a href=folk.html>Folk Index</a> <div class=count>%s</div><br>' % folk_summary )
         top_links.append( '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary )
-        top_links.append( '<a href=years.html>Year Index</a><br>' )
-        top_links.append( '<a href=theory.html>Theory Help</a> <div class=count>7</div><br>' )
-        top_links.append( '<a href=playlists.html>Playlists</a> <div class=count>3</div>' )
+        top_links.append( f'<a href=years.html>Year Index</a> <div class=count>{years_summary}</div><br>' )
+        top_links.append( f'<a href=theory.html>Theory Help</a> <div class=count>{theory_summary}</div><br>' )
+        top_links.append( f'<a href=playlists.html>Playlists</a> <div class=count>{playlists_summary}</div>' )
         top_links.append( '<hr class=no-col-divider> <br class=col-divider>' )
         top_links += [ l + '<br>' for l in misc_links ] # 6 misc categories at the moment
 
@@ -2903,9 +2922,6 @@ class CRD_data():
             with open(self.opts["html_root"] + 'index.html', 'w') as f:
                 for l in lines:
                     f.write('\n' + l)
-
-        if self.playlists:
-            self.make_playlist_html()
     def lookup_chord(self,tuning,chord):
         fingerings = []
         for song in self.all_songs():
@@ -3090,10 +3106,6 @@ class CRD_data():
                         msongs = all_songs_dict[ fuzzy_title(ldict["song"]) ]
 
                         for msong in msongs:
-
-                            #if ldict["song"] == "Stay With Me":
-                                #print(msong.title, "|", msong.artist.name, "|", 
-                                      #msong.album.title, "|", msong.misc_artist)
                             if ldict["artist"]:
                                 if msong.misc_artist:
                                     if ldict["artist"].lower() != msong.misc_artist.lower():
@@ -3135,6 +3147,10 @@ class CRD_data():
         cur_album_name = None
         cur_album = None
 
+        n_playlists = 0
+        n_playlist_albums = 0
+        n_playlist_songs = 0
+
         with open(self.playlists) as f:
             gap = False
             for line in f:
@@ -3144,15 +3160,18 @@ class CRD_data():
                 elif line.startswith("#"):
                     pass
                 elif line.startswith("{{{ playlist:"):
+                    n_playlists += 1
                     gap = False
                     cur_playlist_name = line.replace("{{{ playlist: ", "").strip()
                     playlists[cur_playlist_name] = []
                 elif line.startswith("{{{ album:"):
+                    n_playlist_albums += 1
                     cur_album_name = line.replace("{{{ album: ", "").strip()
                     cur_album = { "name": cur_album_name, "songs": [], "gap": gap }
                     gap = False
                     playlists[cur_playlist_name].append(cur_album)
                 elif line.startswith("{"):
+                    n_playlist_songs += 1
                     link_dict = parse_song_link_line(line)
                     link_dict["gap"] = gap
                     gap = False
@@ -3240,4 +3259,8 @@ class CRD_data():
         with open(self.opts["html_root"] + "playlists.html", 'w') as f:
             for l in index_lines:
                 f.write(l + '\n')
+
+        summary = f"{n_playlist_songs}/{n_playlist_albums}/{n_playlists}"
+
+        return summary
 
