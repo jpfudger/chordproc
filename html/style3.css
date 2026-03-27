@@ -390,6 +390,7 @@ br.col-divider { display: none; }
     font-family: monospace;
     min-width: 75;
     font-size: small;
+    font-weight: normal;
     }
 
 img.cover {

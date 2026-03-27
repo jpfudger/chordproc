@@ -77,6 +77,9 @@ def set_title_and_date(title):
 
     return title, date, artist
 
+def count(string):
+    return f"<div class=count>{string}</div>"
+
 class CRD_song_link():
     def __init__(self, text):
         # expected form: {artist|album|song|version}
@@ -2572,9 +2575,6 @@ class CRD_data():
 
         lines += [ '<ul>' ]
 
-        # dummy entry for standard tuning?
-        #lines.append( '<li><a class=tuning href="">EADGBE----(Standard)-----------------------------</a> <div class=count>0</div>' )
-
         body = []
 
         fingerings_lines = []
@@ -2718,27 +2718,22 @@ class CRD_data():
         lines  = [ '<html>' ]
         lines += CRD_html.header("Chords", index_page=True)
         lines += [ '<body>' ]
-        timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
-        lines += [ '<h2 title="%s">Chords</h2>' % timestamp ]
+        timestamp =  datetime.datetime.now().strftime("%d/%m/%Y")
+        lines += [ f'<h2 title="%s">Chords <div class=count>{timestamp}</div></h2>' ]
         lines += [ '<hr>' ]
         lines += [ '<div class=col4>' ]
 
-        top_links = []
-        top_links.append( '<a href=songs.html>Song Index</a> <div class=count>%s</div><br>' % artists_summary )
-        top_links.append( '<a href=folk.html>Folk Index</a> <div class=count>%s</div><br>' % folk_summary )
-        top_links.append( '<a href=tunings.html>Tuning Index</a> <div class=count>%s</div><br>' % tunings_summary )
-        top_links.append( f'<a href=years.html>Year Index</a> <div class=count>{years_summary}</div><br>' )
-        top_links.append( f'<a href=theory.html>Theory Help</a> <div class=count>{theory_summary}</div><br>' )
-        top_links.append( f'<a href=playlists.html>Playlists</a> <div class=count>{playlists_summary}</div>' )
-        top_links.append( '<hr class=no-col-divider> <br class=col-divider>' )
-        top_links += [ l + '<br>' for l in misc_links ] # 6 misc categories at the moment
-
-        for link in top_links:
-            lines.append(link)
+        lines.append(f'<a href=songs.html>Song Index</a> ' + count(artists_summary) + '<br>')
+        lines.append(f'<a href=folk.html>Folk Index</a> ' + count(folk_summary) + '<br>')
+        lines.append(f'<a href=tunings.html>Tuning Index</a> ' + count(tunings_summary) + '<br>')
+        lines.append(f'<a href=years.html>Year Index</a> ' + count(years_summary) + '<br>')
+        lines.append(f'<a href=theory.html>Theory Help</a> ' + count(theory_summary) + '<br>')
+        lines.append(f'<a href=playlists.html>Playlists</a> ' + count(playlists_summary) )
+        lines.append( '<hr class=no-col-divider> <br class=col-divider>' )
+        lines += [ l + '<br>' for l in misc_links ] # 6 misc categories at the moment
 
         lines += [ '</div>' ]
         lines += [ '<hr>' ]
-
         lines += [ '<div class=col4>' ]
 
         for link in artists_links:
