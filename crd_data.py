@@ -44,320 +44,6 @@ ARTIST_BAND_LINKS = {
     "Velvet Underground" : [ "John Cale", "Lou Reed" ],
     }
 
-def html_header(title, chords=False, index_page=False, folk=False):
-    lines = [ '<head>',
-        '    <title>%s</title>' % title,
-        '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
-        '    <link rel="stylesheet" type="text/css" href="style1.css" id="style">',
-        '    <script src="script.js"></script>',
-        '    <meta name="google" content="notranslate">',
-        ]
-
-    lines += [ '</head>' ]
-
-    lines += html_context_menu(index=index_page, chords=chords, folk=folk)
-    lines += html_search_boxes()
-    
-    return lines
-
-def html_search_boxes():
-    lines = []
-    lines.append("<div id=search-container>")
-    lines.append("<div id=search>Enter search term (used for searching song and album titles and optionally artist names):<br><br>")
-    lines.append("<input type=text id=pattern><br><br>")
-    lines.append("<button id=search-all-artists type=button>Search All</button>")
-    lines.append("<button id=search-current-artist type=button>Search Current Artist</button>")
-    lines.append("<br><br>")
-    lines.append("<button id=search-random-song type=button>Random Song</button>")
-    lines.append("<button id=search-random-song-current-artist type=button>Random Song (current artist)</button>")
-    lines.append("<br><br>")
-    lines.append("<button id=search-goto-index type=button>Artist Index</button>")
-    lines.append("</div>")
-    lines.append("</div>")
-    return lines
-
-def html_context_menu(index=False, chords=False, folk=False):
-    lines = []
-
-    lines.append("<div class=settings>")
-    lines.append("  <img class=settings-icon src=menu.png>")
-    lines.append("  <div class=settings-menu>")
-
-    if chords:
-        lines.append("    <a id=menu-transpose-up>Transpose up (k)</a>")
-        lines.append("    <a id=menu-transpose-down>Transpose down (j)</a>")
-        lines.append("    <a id=menu-cycle-versions>Cycle song versions (v)</a>")
-        lines.append("    <a id=menu-toggle-nashville>Toggle Nashville chords (n)</a>")
-        lines.append("    <a id=menu-toggle-lyrics-only>Toggle lyrics only (z)</a>")
-        lines.append("    <a id=menu-toggle-modulation>Toggle modulation (m)</a>")
-
-    if folk:
-        lines.append("    <a id=menu-toggle-folk-sort>Toggle artist sort (s) </a>")
-
-    if index:
-        lines.append("    <a id=menu-toggle-index-sort>Toggle index sort (s) </a>")
-
-    lines.append("    <a class=narrow>-------------------------</a>")
-    lines.append("    <a id=menu-jump-to-index>Artist index (i)</a>")
-    lines.append("    <a id=menu-jump-to-artist>Current artist index (I)</a>")
-    lines.append("    <a id=menu-jump-to-song-index>Song index</a>")
-    lines.append("    <a id=menu-jump-to-tuning-index>Tuning index</a>")
-    lines.append("    <a id=menu-jump-to-folk-index>Folk index</a>")
-    lines.append("    <a id=menu-jump-to-year-index>Year index</a>")
-    lines.append("    <a id=menu-jump-to-theory>Theory help</a>")
-    lines.append("    <a class=narrow>-------------------------</a>")
-    lines.append("    <a id=menu-toggle-multicolumn>Toggle multicolumn (c)</a>")
-    lines.append("    <a id=menu-toggle-dark>Toggle dark mode</a>")
-    lines.append("    <a class=narrow>-------------------------</a>")
-    lines.append("    <a id=menu-find-song>Find song (f)</a>")
-    #lines.append("    <a id=menu-tuning-search>Find tuning (n)</a>")
-    lines.append("    <a id=menu-random-song>Random song (r)</a>")
-    lines.append("    <a id=menu-random-song-current>Random song (current artist) (R)</a>")
-    #lines.append("    <a id=menu-cycle-styles>Cycle styles</a>")
-
-    lines.append("  </div>")
-    lines.append("  <img class=search-icon src=magnifying.png>")
-    lines.append("  <img class=jump-to-top src=arrow.png>")
-    #lines.append("  <img id=random src=random.png>")
-
-    if chords:
-        lines.append("  <img id=plus src=plus.png>")
-        lines.append("  <img id=minus src=minus.png>")
-
-    lines.append("</div>")
-
-    return lines
-
-def html_song_index(allsongs, artist=None):
-    lines  = [ '<html>' ]
-
-    if artist:
-        lines += html_header(artist.name + " : Song Index")
-        lines += ["<body>"]
-        title_link = "<a href=%s>%s : Song Index</a>" % ( artist.fname, artist.name )
-        lines += [ '<h2 title="%s">%s</h2>' % ( artist.index, title_link ) ]
-    else:
-        lines += html_header("ChordProc: Song Index")
-        lines += ["<body>"]
-        title_link = "<a href=index.html>Song Index</a>"
-        lines += [ '<h2>%s</h2>' % title_link ]
-
-    lines += [ '<hr>', '<div id=results>' ]
-
-    # long lists of songs warrant alphabet links
-    add_letter_links = len(allsongs) > 100
-
-    if add_letter_links:
-        alphastring = ''
-        for char in list('#' + ALPHABET):
-            alphastring += '<a href="#%s">%s</a> ' % ( char, char )
-        lines += [ alphastring, '<hr>' ]
-
-    lines += [ '<div class="songindex col2">' ]
-    cur_letter = None
-
-    for song in allsongs:
-        if cur_letter == None:
-            pass
-        elif not song.title_sort[0] in ALPHABET:
-            pass # all non alpha characters in same section
-        elif cur_letter and cur_letter != song.title_sort[0]:
-            if add_letter_links:
-                lines.append('</div>')
-                lines.append('<a name="%s"></a>' % song.title_sort[0])
-                lines.append('<hr>')
-                lines.append('<div class="songindex col2">')
-            else:
-                lines.append('<br>')
-        cur_letter = song.title_sort[0]
-        s_link = song.album.fname + '#' + song.link
-        s_class = ' class=cover' if song.cover else ''
-        album = song.album.title if artist else (song.album.artist.name + ", " + song.album.title)
-    
-        if song.album.misc_artist:
-            album = song.album.misc_artist
-
-        title = song.title
-        if song.misc_artist:
-            title += f" [{song.misc_artist}]"
-        lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, title, album ) )
-    
-    lines += [ '</div>', '</div>', '<br>' ]
-    lines += [ '</body>', '</html>' ]
-    return lines
-
-def html_year_index(allsongs):
-    lines  = [ '<html>' ]
-    lines += html_header("ChordProc: Year Index")
-    lines += ["<body>"]
-    title_link = "<a href=index.html>Year Index</a>"
-    lines += [ '<h2>%s</h2>' % title_link ]
-
-    lines += [ '<hr>' ]
-
-    songs = {}
-    albums = {}
-    versions = {}
-
-    INCLUDE_VERSIONS = True
-
-    for song in allsongs:
-        if song.artist.name in IGNORE_ARTISTS:
-            pass
-        elif song.album and song.album.date and song.album.date.year:
-            # add album
-            if song.album.date.year not in albums:
-                albums[song.album.date.year] = []
-            if song.album not in albums[song.album.date.year]:
-                albums[song.album.date.year].append(song.album)
-        elif song.date and song.date.year:
-            # add song
-            if song.date.year not in songs:
-                songs[song.date.year] = []
-            if song not in songs[song.date.year]:
-                songs[song.date.year].append(song)
-        else:
-            if song.album:
-                if 0 not in albums:
-                    albums[0] = []
-                if song.album not in albums[0]:
-                    albums[0].append(song.album)
-            else:
-                if 0 not in songs:
-                    songs[0] = []
-                if song not in songs[0]:
-                    songs[0].append(song)
-
-        if INCLUDE_VERSIONS:
-            for version in song.versions:
-                song_year = None
-                if song.date and song.date.year:
-                    song_year = song.date.year
-                elif song.album and song.album.date and song.album.date.year:
-                    song_year = song.album.date.year
-
-                version_year = None
-                if version.date and version.date.year:
-                    version_year = version.date.year
-
-                if version_year and version_year != song_year:
-                    # add version
-                    if version.date.year not in versions:
-                        versions[version.date.year] = []
-                    if version not in versions[version.date.year]:
-                        #print(f"adding version: {version.version_of.title} {version.title}")
-                        versions[version.date.year].append(version)
-                else:
-                    pass 
-                    #print(f"Unprocessed version: {version.version_of.title} {version.version_index}")
-            
-    year_list = list(songs.keys()) + list(albums.keys())
-    year_list = list(set(year_list))
-    year_list = [ y for y in year_list if y >= MIN_YEAR_LINK ] # also filters out 0
-    year_list.sort()
-
-    all_years = list(range(min(year_list),max(year_list)+1))
-    while min(all_years) % 10 != 0:
-        all_years.insert(0, min(all_years)-1)
-
-    year_link_string = ""
-    for year in all_years:
-        if not year_link_string:
-            year_link_string += "&nbsp;" * 5
-        elif year % 10 == 0:
-            year_link_string += '\n<br>' + ( "&nbsp;" * 5 )
-
-        if year not in year_list:
-            year_link_string += f'<div class=dummy>{year}</div>&nbsp; '
-        else:
-            year_link_string += f'<a href="#{year}">{year}</a>&nbsp; '
-
-    lines += [ year_link_string, "<hr>" ]
-
-    for year in (year_list + [0]):
-        lines.append(f'<a name="{year}"></a>')
-
-        n_songs = len(songs[year]) if year in songs else 0
-        n_albums = len(albums[year]) if year in albums else 0
-        n_versions = len(versions[year]) if year in versions else 0
-
-        title = str(year) if year > 0 else "Albums Containing Songs With No Year"
-        lines.append(f'<b>{title}</b> <div class=count>{n_songs}/{n_albums}</div>')
-
-        entries = []
-        
-        if n_albums:
-            y_albums = albums[year]
-            y_albums.sort(key=lambda a: (a.title,a.artist.name))
-            for album in y_albums:
-                alink = f'<a class=highlight href="{album.fname}">{album.title}</a>'
-                # note: highlight => red, to disambiguate albums from songs
-                source = album.artist.name
-                if album.misc_artist:
-                    source = album.misc_artist
-
-                alink += f' ({source})</a>'
-                entries.append(alink)
-
-        if n_songs:
-            if entries:
-                entries.append("<br>")
-            y_songs = songs[year]
-            y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
-            for song in y_songs:
-                s_link = song.album.fname + "#" + song.link
-                s_class = '' # ' class=cover' if song.cover else ''
-                title = song.title
-                source = song.album.artist.name + ", " + song.album.title
-                if "Misc" in song.album.title:
-                    source = song.album.artist.name
-                if song.misc_artist:
-                    source = song.misc_artist
-                if song.album.misc_artist:
-                    source = song.album.misc_artist
-                entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
-
-        if n_versions:
-            if entries:
-                entries.append("<br>")
-            y_songs = versions[year]
-            y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
-            for song in y_songs:
-                s_link = song.album.fname + f"?v={song.version_index+1}" + "#" + song.version_of.link
-                s_class = ' class=cover' # if song.cover else ''
-                title = song.version_of.title
-                source = song.album.artist.name
-                #source = song.album.artist.name + ", " + song.album.title
-                # if "Misc" in song.album.title:
-                #     source = song.album.artist.name
-                # if song.misc_artist:
-                #     source = song.misc_artist
-                # if song.album.misc_artist:
-                #     source = song.album.misc_artist
-                entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
-
-        ncols = "col1"
-        max_2col = 100
-        if len(entries) > max_2col:
-            if year != 0:
-                print(f"Year with >{max_2col} entries: {year}")
-            ncols = "col3"
-        elif len(entries) > 10:
-            ncols = "col2"
-
-        lines.append(f'<div class="songindex {ncols}">')
-        lines += entries
-
-        lines.append('</div>')
-        lines.append('<hr>')
-
-    lines += ['<br>' * 20]
-    lines += [ '</body>', '</html>' ]
-
-    summary = str(len(year_list))
-
-    return lines, summary
-
 def parse_song_link_line(link_line):
     # expected form: {artist|album|song|version}
     link_dict = { "text"    : link_line,
@@ -391,15 +77,353 @@ def parse_song_link_line(link_line):
 
     return link_dict
 
-def fuzzy_title(title):
-    f_title = title.lower()
+def set_title_and_date(title):
+    # also extracts misc artist (in square brackets)
+    date = None
+    artist = None
     
-    chars = [ " ", "'", '"', "?", "(", ")" ]
+    regex_date = r"\s*<(\d\d\d\d)-(\d\d)-(\d\d)>\s*$"
+    m_date = re.search(regex_date, title)
 
-    for char in chars:
-        f_title = f_title.replace(char, "")
+    if m_date:
+        title = re.sub(regex_date, "", title)
+        date = datetime.date(int(m_date.group(1)), int(m_date.group(2)), int(m_date.group(3)))
+    else:
+        regex_year = r"\s*<(\d\d\d\d)>\s*$"
+        m_year = re.search(regex_year, title)
 
-    return f_title
+        if m_year:
+            title = re.sub(regex_year, "", title)
+            date = datetime.date(int(m_year.group(1)), 1, 1)
+
+    regex_artist = r"\[\s*([^]]+)\s*\]"
+    m_artist = re.search(regex_artist, title)
+
+    if m_artist:
+        title = re.sub(regex_artist, "", title)
+        title = title.strip()
+        artist = m_artist.group(1)
+        artist = artist.strip()
+
+    # if date: print(date)
+    title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
+
+    return title, date, artist
+
+class CRD_html():
+    def header(title, chords=False, index_page=False, folk=False):
+        lines = [ '<head>',
+            '    <title>%s</title>' % title,
+            '    <link rel="shortcut icon" href="thumb.ico" type="image/x-icon">',
+            '    <link rel="stylesheet" type="text/css" href="style1.css" id="style">',
+            '    <script src="script.js"></script>',
+            '    <meta name="google" content="notranslate">',
+            ]
+
+        lines += [ '</head>' ]
+
+        lines += CRD_html.context_menu(index=index_page, chords=chords, folk=folk)
+        lines += CRD_html.search_boxes()
+        
+        return lines
+
+    def search_boxes():
+        lines = []
+        lines.append("<div id=search-container>")
+        lines.append("<div id=search>Enter search term (used for searching song and album titles and optionally artist names):<br><br>")
+        lines.append("<input type=text id=pattern><br><br>")
+        lines.append("<button id=search-all-artists type=button>Search All</button>")
+        lines.append("<button id=search-current-artist type=button>Search Current Artist</button>")
+        lines.append("<br><br>")
+        lines.append("<button id=search-random-song type=button>Random Song</button>")
+        lines.append("<button id=search-random-song-current-artist type=button>Random Song (current artist)</button>")
+        lines.append("<br><br>")
+        lines.append("<button id=search-goto-index type=button>Artist Index</button>")
+        lines.append("</div>")
+        lines.append("</div>")
+        return lines
+
+    def context_menu(index=False, chords=False, folk=False):
+        lines = []
+
+        lines.append("<div class=settings>")
+        lines.append("  <img class=settings-icon src=menu.png>")
+        lines.append("  <div class=settings-menu>")
+
+        if chords:
+            lines.append("    <a id=menu-transpose-up>Transpose up (k)</a>")
+            lines.append("    <a id=menu-transpose-down>Transpose down (j)</a>")
+            lines.append("    <a id=menu-cycle-versions>Cycle song versions (v)</a>")
+            lines.append("    <a id=menu-toggle-nashville>Toggle Nashville chords (n)</a>")
+            lines.append("    <a id=menu-toggle-lyrics-only>Toggle lyrics only (z)</a>")
+            lines.append("    <a id=menu-toggle-modulation>Toggle modulation (m)</a>")
+
+        if folk:
+            lines.append("    <a id=menu-toggle-folk-sort>Toggle artist sort (s) </a>")
+
+        if index:
+            lines.append("    <a id=menu-toggle-index-sort>Toggle index sort (s) </a>")
+
+        lines.append("    <a class=narrow>-------------------------</a>")
+        lines.append("    <a id=menu-jump-to-index>Artist index (i)</a>")
+        lines.append("    <a id=menu-jump-to-artist>Current artist index (I)</a>")
+        lines.append("    <a id=menu-jump-to-song-index>Song index</a>")
+        lines.append("    <a id=menu-jump-to-tuning-index>Tuning index</a>")
+        lines.append("    <a id=menu-jump-to-folk-index>Folk index</a>")
+        lines.append("    <a id=menu-jump-to-year-index>Year index</a>")
+        lines.append("    <a id=menu-jump-to-theory>Theory help</a>")
+        lines.append("    <a class=narrow>-------------------------</a>")
+        lines.append("    <a id=menu-toggle-multicolumn>Toggle multicolumn (c)</a>")
+        lines.append("    <a id=menu-toggle-dark>Toggle dark mode</a>")
+        lines.append("    <a class=narrow>-------------------------</a>")
+        lines.append("    <a id=menu-find-song>Find song (f)</a>")
+        #lines.append("    <a id=menu-tuning-search>Find tuning (n)</a>")
+        lines.append("    <a id=menu-random-song>Random song (r)</a>")
+        lines.append("    <a id=menu-random-song-current>Random song (current artist) (R)</a>")
+        #lines.append("    <a id=menu-cycle-styles>Cycle styles</a>")
+
+        lines.append("  </div>")
+        lines.append("  <img class=search-icon src=magnifying.png>")
+        lines.append("  <img class=jump-to-top src=arrow.png>")
+        #lines.append("  <img id=random src=random.png>")
+
+        if chords:
+            lines.append("  <img id=plus src=plus.png>")
+            lines.append("  <img id=minus src=minus.png>")
+
+        lines.append("</div>")
+
+        return lines
+
+    def song_index(allsongs, artist=None):
+        lines  = [ '<html>' ]
+
+        if artist:
+            lines += CRD_html.header(artist.name + " : Song Index")
+            lines += ["<body>"]
+            title_link = "<a href=%s>%s : Song Index</a>" % ( artist.fname, artist.name )
+            lines += [ '<h2 title="%s">%s</h2>' % ( artist.index, title_link ) ]
+        else:
+            lines += CRD_html.header("ChordProc: Song Index")
+            lines += ["<body>"]
+            title_link = "<a href=index.html>Song Index</a>"
+            lines += [ '<h2>%s</h2>' % title_link ]
+
+        lines += [ '<hr>', '<div id=results>' ]
+
+        # long lists of songs warrant alphabet links
+        add_letter_links = len(allsongs) > 100
+
+        if add_letter_links:
+            alphastring = ''
+            for char in list('#' + ALPHABET):
+                alphastring += '<a href="#%s">%s</a> ' % ( char, char )
+            lines += [ alphastring, '<hr>' ]
+
+        lines += [ '<div class="songindex col2">' ]
+        cur_letter = None
+
+        for song in allsongs:
+            if cur_letter == None:
+                pass
+            elif not song.title_sort[0] in ALPHABET:
+                pass # all non alpha characters in same section
+            elif cur_letter and cur_letter != song.title_sort[0]:
+                if add_letter_links:
+                    lines.append('</div>')
+                    lines.append('<a name="%s"></a>' % song.title_sort[0])
+                    lines.append('<hr>')
+                    lines.append('<div class="songindex col2">')
+                else:
+                    lines.append('<br>')
+            cur_letter = song.title_sort[0]
+            s_link = song.album.fname + '#' + song.link
+            s_class = ' class=cover' if song.cover else ''
+            album = song.album.title if artist else (song.album.artist.name + ", " + song.album.title)
+        
+            if song.album.misc_artist:
+                album = song.album.misc_artist
+
+            title = song.title
+            if song.misc_artist:
+                title += f" [{song.misc_artist}]"
+            lines.append( '<a href=%s%s>%s</a> (%s)' % ( s_link, s_class, title, album ) )
+        
+        lines += [ '</div>', '</div>', '<br>' ]
+        lines += [ '</body>', '</html>' ]
+        return lines
+
+    def year_index(allsongs):
+        lines  = [ '<html>' ]
+        lines += CRD_html.header("ChordProc: Year Index")
+        lines += ["<body>"]
+        title_link = "<a href=index.html>Year Index</a>"
+        lines += [ '<h2>%s</h2>' % title_link ]
+
+        lines += [ '<hr>' ]
+
+        songs = {}
+        albums = {}
+        versions = {}
+
+        INCLUDE_VERSIONS = True
+
+        for song in allsongs:
+            if song.artist.name in IGNORE_ARTISTS:
+                pass
+            elif song.album and song.album.date and song.album.date.year:
+                # add album
+                if song.album.date.year not in albums:
+                    albums[song.album.date.year] = []
+                if song.album not in albums[song.album.date.year]:
+                    albums[song.album.date.year].append(song.album)
+            elif song.date and song.date.year:
+                # add song
+                if song.date.year not in songs:
+                    songs[song.date.year] = []
+                if song not in songs[song.date.year]:
+                    songs[song.date.year].append(song)
+            else:
+                if song.album:
+                    if 0 not in albums:
+                        albums[0] = []
+                    if song.album not in albums[0]:
+                        albums[0].append(song.album)
+                else:
+                    if 0 not in songs:
+                        songs[0] = []
+                    if song not in songs[0]:
+                        songs[0].append(song)
+
+            if INCLUDE_VERSIONS:
+                for version in song.versions:
+                    song_year = None
+                    if song.date and song.date.year:
+                        song_year = song.date.year
+                    elif song.album and song.album.date and song.album.date.year:
+                        song_year = song.album.date.year
+
+                    version_year = None
+                    if version.date and version.date.year:
+                        version_year = version.date.year
+
+                    if version_year and version_year != song_year:
+                        # add version
+                        if version.date.year not in versions:
+                            versions[version.date.year] = []
+                        if version not in versions[version.date.year]:
+                            #print(f"adding version: {version.version_of.title} {version.title}")
+                            versions[version.date.year].append(version)
+                    else:
+                        pass 
+                        #print(f"Unprocessed version: {version.version_of.title} {version.version_index}")
+                
+        year_list = list(songs.keys()) + list(albums.keys())
+        year_list = list(set(year_list))
+        year_list = [ y for y in year_list if y >= MIN_YEAR_LINK ] # also filters out 0
+        year_list.sort()
+
+        all_years = list(range(min(year_list),max(year_list)+1))
+        while min(all_years) % 10 != 0:
+            all_years.insert(0, min(all_years)-1)
+
+        year_link_string = ""
+        for year in all_years:
+            if not year_link_string:
+                year_link_string += "&nbsp;" * 5
+            elif year % 10 == 0:
+                year_link_string += '\n<br>' + ( "&nbsp;" * 5 )
+
+            if year not in year_list:
+                year_link_string += f'<div class=dummy>{year}</div>&nbsp; '
+            else:
+                year_link_string += f'<a href="#{year}">{year}</a>&nbsp; '
+
+        lines += [ year_link_string, "<hr>" ]
+
+        for year in (year_list + [0]):
+            lines.append(f'<a name="{year}"></a>')
+
+            n_songs = len(songs[year]) if year in songs else 0
+            n_albums = len(albums[year]) if year in albums else 0
+            n_versions = len(versions[year]) if year in versions else 0
+
+            title = str(year) if year > 0 else "Albums Containing Songs With No Year"
+            lines.append(f'<b>{title}</b> <div class=count>{n_songs}/{n_albums}</div>')
+
+            entries = []
+            
+            if n_albums:
+                y_albums = albums[year]
+                y_albums.sort(key=lambda a: (a.title,a.artist.name))
+                for album in y_albums:
+                    alink = f'<a class=highlight href="{album.fname}">{album.title}</a>'
+                    # note: highlight => red, to disambiguate albums from songs
+                    source = album.artist.name
+                    if album.misc_artist:
+                        source = album.misc_artist
+
+                    alink += f' ({source})</a>'
+                    entries.append(alink)
+
+            if n_songs:
+                if entries:
+                    entries.append("<br>")
+                y_songs = songs[year]
+                y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
+                for song in y_songs:
+                    s_link = song.album.fname + "#" + song.link
+                    s_class = '' # ' class=cover' if song.cover else ''
+                    title = song.title
+                    source = song.album.artist.name + ", " + song.album.title
+                    if "Misc" in song.album.title:
+                        source = song.album.artist.name
+                    if song.misc_artist:
+                        source = song.misc_artist
+                    if song.album.misc_artist:
+                        source = song.album.misc_artist
+                    entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
+
+            if n_versions:
+                if entries:
+                    entries.append("<br>")
+                y_songs = versions[year]
+                y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
+                for song in y_songs:
+                    s_link = song.album.fname + f"?v={song.version_index+1}" + "#" + song.version_of.link
+                    s_class = ' class=cover' # if song.cover else ''
+                    title = song.version_of.title
+                    source = song.album.artist.name
+                    #source = song.album.artist.name + ", " + song.album.title
+                    # if "Misc" in song.album.title:
+                    #     source = song.album.artist.name
+                    # if song.misc_artist:
+                    #     source = song.misc_artist
+                    # if song.album.misc_artist:
+                    #     source = song.album.misc_artist
+                    entries.append( f'<a href={s_link}{s_class}>{title}</a> ({source})' )
+
+            ncols = "col1"
+            max_2col = 100
+            if len(entries) > max_2col:
+                if year != 0:
+                    print(f"Year with >{max_2col} entries: {year}")
+                ncols = "col3"
+            elif len(entries) > 10:
+                ncols = "col2"
+
+            lines.append(f'<div class="songindex {ncols}">')
+            lines += entries
+
+            lines.append('</div>')
+            lines.append('<hr>')
+
+        lines += ['<br>' * 20]
+        lines += [ '</body>', '</html>' ]
+
+        summary = str(len(year_list))
+
+        return lines, summary
 
 class CRD_artist():
     def __init__(self,name,index=0,data=None):
@@ -486,7 +510,7 @@ class CRD_artist():
 
     def html(self,add_artist=False, playlist=False):
         lines  = [ '<html>' ]
-        lines += html_header(self.name)
+        lines += CRD_html.header(self.name)
         lines += [ '<body>', '<h2 title="%s"><a href=index.html>%s</a></h2>' % (self.index, self.name) ]
         #total_songs = sum( [ len(a.songs) for a in self.albums ] )
 
@@ -725,7 +749,7 @@ class CRD_artist():
                 title = "<a href=%s>%s : Tuning Index</a>" % ( self.fname, self.name )
 
                 lines = [ "<html>" ]
-                lines += html_header(self.name + " : Tuning Index")
+                lines += CRD_html.header(self.name + " : Tuning Index")
                 lines += [ "<body>", "<h2>%s</h2>" % title ]
                 lines += [ "<hr>" ]
 
@@ -818,39 +842,6 @@ class CRD_artist():
         # with open(json_fname, "w") as f:
         #     json.dump(d, f, indent=4)
 
-def set_title_and_date(title):
-    # also extracts misc artist (in square brackets)
-    date = None
-    artist = None
-    
-    regex_date = r"\s*<(\d\d\d\d)-(\d\d)-(\d\d)>\s*$"
-    m_date = re.search(regex_date, title)
-
-    if m_date:
-        title = re.sub(regex_date, "", title)
-        date = datetime.date(int(m_date.group(1)), int(m_date.group(2)), int(m_date.group(3)))
-    else:
-        regex_year = r"\s*<(\d\d\d\d)>\s*$"
-        m_year = re.search(regex_year, title)
-
-        if m_year:
-            title = re.sub(regex_year, "", title)
-            date = datetime.date(int(m_year.group(1)), 1, 1)
-
-    regex_artist = r"\[\s*([^]]+)\s*\]"
-    m_artist = re.search(regex_artist, title)
-
-    if m_artist:
-        title = re.sub(regex_artist, "", title)
-        title = title.strip()
-        artist = m_artist.group(1)
-        artist = artist.strip()
-
-    # if date: print(date)
-    title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
-
-    return title, date, artist
-
 class CRD_album():
     def __init__(self,title,artist,index,player):
         self.title, self.date, self.misc_artist = set_title_and_date(title)
@@ -915,7 +906,7 @@ class CRD_album():
 
         title_link = '<a href=%s>%s</a> : %s%s' % (self.artist.fname, artist_name, self.title, year_sub)
         lines  = [ '<html>' ]
-        lines += html_header(title, chords=True)
+        lines += CRD_html.header(title, chords=True)
         lines += [ '<body>', '<h2 title="%s">%s</h2>' % (self.index, title_link) ]
         #lines += [ self.get_playlist_link() ]
 
@@ -1999,6 +1990,17 @@ class CRD_data():
         newopts["pickle"]    = opts.get("pickle",    r'/home/jpf/bin/chord_pickle')
         return newopts
 
+    @staticmethod
+    def fuzzy_title(title):
+        f_title = title.lower()
+        
+        chars = [ " ", "'", '"', "?", "(", ")" ]
+
+        for char in chars:
+            f_title = f_title.replace(char, "")
+
+        return f_title
+
     def resource_root(self):
         # resources prefix
         path = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'resources' + os.sep
@@ -2041,7 +2043,7 @@ class CRD_data():
         # note: the song title key is the fuzzy_title
         if not self.songs_dict:
             for song in self.all_songs():
-                title = fuzzy_title(song.title)
+                title = self.fuzzy_title(song.title)
                 if title not in self.songs_dict:
                     self.songs_dict[title] = []
                 self.songs_dict[title].append(song)
@@ -2500,7 +2502,7 @@ class CRD_data():
 
             with open(self.opts["html_root"] + artist.index_fname, 'w') as f:
                 allsongs = artist.all_songs()
-                for l in html_song_index(allsongs, artist):
+                for l in CRD_html.song_index(allsongs, artist):
                     f.write(l + '\n')
 
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
@@ -2550,7 +2552,7 @@ class CRD_data():
 
     def make_tuning_index(self):
         lines  = [ '<html>' ]
-        lines += html_header("Tuning Index")
+        lines += CRD_html.header("Tuning Index")
         lines += [ '<body>' ]
         lines += [ '<h2> <a href=index.html>Tuning Index</a> </h2>' ]
         lines += [ '<hr>' ]
@@ -2659,7 +2661,7 @@ class CRD_data():
 
         if WRITE_FINGERINGS:
             header = [ "<html>" ]
-            header += html_header("Fingerings")
+            header += CRD_html.header("Fingerings")
             header += [ "<body>" ]
             footer = [ "</body>", "</html>'" ]
             fingerings_lines = header + fingerings_lines + footer
@@ -2682,10 +2684,10 @@ class CRD_data():
         if not DO_CRDFILES:
             allsongs = self.all_songs()
             with open(self.opts["html_root"] + 'songs.html', 'w') as f:
-                for l in html_song_index(allsongs):
+                for l in CRD_html.song_index(allsongs):
                     f.write('\n' + l)
             with open(self.opts["html_root"] + 'years.html', 'w') as f:
-                years_lines, years_summary = html_year_index(allsongs)
+                years_lines, years_summary = CRD_html.year_index(allsongs)
                 for l in years_lines:
                     f.write('\n' + l)
             #if self.playlists:
@@ -2705,7 +2707,7 @@ class CRD_data():
             playlists_summary = self.make_playlist_html()
 
         lines  = [ '<html>' ]
-        lines += html_header("Chords", index_page=True)
+        lines += CRD_html.header("Chords", index_page=True)
         lines += [ '<body>' ]
         timestamp =  datetime.datetime.now().strftime("%d %b %Y %X")
         lines += [ '<h2 title="%s">Chords</h2>' % timestamp ]
@@ -2767,7 +2769,7 @@ class CRD_data():
 
     def make_folk_index(self):
         html_lines = [ "<html>" ]
-        html_lines += html_header("Folk Index", folk=True)
+        html_lines += CRD_html.header("Folk Index", folk=True)
         html_lines += [ "<body>" ]
         html_lines += [ "<h2> <a href=index.html>Folk Song Index</a> </h2>" ]
         html_lines += [ "<table>" ]
@@ -2931,7 +2933,7 @@ class CRD_data():
 
                         matching_songs = []
 
-                        msongs = all_songs_dict[ fuzzy_title(ldict["song"]) ]
+                        msongs = all_songs_dict[ self.fuzzy_title(ldict["song"]) ]
 
                         for msong in msongs:
                             if ldict["artist"]:
@@ -3076,7 +3078,7 @@ class CRD_data():
                     f.write(l + '\n')
 
         index_lines = [ "<html>" ]
-        index_lines += html_header("Playlists", chords=False, index_page=False, folk=False)
+        index_lines += CRD_html.header("Playlists", chords=False, index_page=False, folk=False)
         index_lines += [ "<body>" ]
         index_lines += [ "<h2> <a href=index.html>Playlist Index</a> </h2>" ]
         index_lines += [ "<hr>" ]
