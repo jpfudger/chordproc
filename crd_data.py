@@ -44,39 +44,6 @@ ARTIST_BAND_LINKS = {
     "Velvet Underground" : [ "John Cale", "Lou Reed" ],
     }
 
-def parse_song_link_line(link_line):
-    # expected form: {artist|album|song|version}
-    link_dict = { "text"    : link_line,
-                  "artist"  : None,
-                  "album"   : None,
-                  "song"    : None,
-                  "version" : 1,
-                  "url"     : None,
-                  "link"    : None,
-                  "object"  : None,
-                  }
-    #print(link_line)
-
-    link_line = link_line[1:-1]
-
-    splits = link_line.split("|")
-
-    # if last element is "v1" (etc) set the version and remove the element
-    m_version = re.match(r"v(\d+)", splits[-1])
-    if m_version:
-        link_dict["version"] = int(m_version.group(1))
-        splits.pop()
-
-    link_dict["song"] = splits[-1]
-    if len(splits) > 1:
-        link_dict["artist"] = splits[0]
-    if len(splits) > 2:
-        link_dict["album"] = splits[1]
-
-    #print(link_dict)
-
-    return link_dict
-
 def set_title_and_date(title):
     # also extracts misc artist (in square brackets)
     date = None
@@ -109,6 +76,48 @@ def set_title_and_date(title):
     title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
 
     return title, date, artist
+
+class CRD_song_link():
+    def __init__(self, text):
+        # expected form: {artist|album|song|version}
+        self.text    = text
+        self.artist  = None
+        self.album   = None
+        self.song    = None
+        self.version = 1
+        self.url     = None
+        self.link    = None
+        self.object  = None
+        self.__parse_text()
+
+    def __parse_text(self):
+        link_line = self.text[1:-1]
+        splits = link_line.split("|")
+
+        # if last element is "v1" (etc) set the version and remove the element
+        m_version = re.match(r"v(\d+)", splits[-1])
+        if m_version:
+            self.version = int(m_version.group(1))
+            splits.pop()
+
+        self.song = splits[-1]
+        if len(splits) > 1:
+            self.artist = splits[0]
+        if len(splits) > 2:
+            self.album = splits[1]
+
+    def dict(self):
+        d = { "text"    : self.text,
+              "artist"  : self.artist,
+              "album"   : self.album,
+              "song"    : self.song,
+              "version" : self.version,
+              "url"     : self.url,
+              "link"    : self.link,
+              "object"  : self.object,
+              }
+
+        return d
 
 class CRD_html():
     def header(title, chords=False, index_page=False, folk=False):
@@ -1666,7 +1675,7 @@ class CRD_song():
             links = re.findall(r'(\{[^}]+\})', line )
             # store a link for later processing in add_comment_links
             for link in links:
-                link_dict = parse_song_link_line(link)
+                link_dict = CRD_song_link(link).dict()
                 self.comment_links.append(link_dict)
         else:
             # if it has a line which is not a cover artist, it can't be a dummy
@@ -3003,7 +3012,7 @@ class CRD_data():
                     playlists[cur_playlist_name].append(cur_album)
                 elif line.startswith("{"):
                     n_playlist_songs += 1
-                    link_dict = parse_song_link_line(line)
+                    link_dict = CRD_song_link(line).dict()
                     link_dict["gap"] = gap
                     gap = False
                     cur_album["songs"].append(link_dict)
