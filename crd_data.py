@@ -5,6 +5,8 @@ import re
 import subprocess
 import datetime
 
+from .crd_chord import CRD_chord, CRD_get_chord, CRD_tuning
+
 # Todo:
 #
 # 1) Currently the fingerings for each songs are stored in the song class,
@@ -421,6 +423,7 @@ class CRD_artist():
         self.tunings_fname = alphaname + '_tunings.html'
         self.tuning = None
         self.words = {}
+
     def add_album(self,title):
         album_index = '%d.%d' % ( self.index, len(self.albums) + 1 )
         new_album = CRD_album( title, self, album_index, self.player )
@@ -428,6 +431,7 @@ class CRD_artist():
         if len(self.albums) > 30:
             self.too_many_albums = True
         return new_album
+
     def get_artist_links(self):
         artists = []
 
@@ -447,6 +451,7 @@ class CRD_artist():
         artists = list(set(artists))
         artists.sort()
         return artists
+
     def all_songs(self):
         allsongs = []
         for album in self.albums:
@@ -456,6 +461,7 @@ class CRD_artist():
                 allsongs.append(song)
         allsongs.sort(key=lambda x: x.title_sort)
         return allsongs
+
     def next_and_previous_links(self):
         n = None
         p = None
@@ -477,6 +483,7 @@ class CRD_artist():
             return [p]
         
         return []
+
     def html(self,add_artist=False, playlist=False):
         lines  = [ '<html>' ]
         lines += html_header(self.name)
@@ -561,6 +568,7 @@ class CRD_artist():
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
         return lines
+
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
         lines += [ r'\usepackage[a4paper,margin=1cm]{geometry}' ]
@@ -597,6 +605,7 @@ class CRD_artist():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         print(name)
+
     def remove_abbreviations(self, words):
         delwords = []
         for word in words.keys():
@@ -608,6 +617,7 @@ class CRD_artist():
 
         for word in delwords:
             del words[word]
+
     def get_words(self):
         if not self.words:
             for album in self.albums:
@@ -628,6 +638,7 @@ class CRD_artist():
             self.remove_abbreviations(self.words)
 
         return self.words
+
     def words_html(self):
         words = self.get_words()
         wordlist = list(words.keys())
@@ -677,6 +688,7 @@ class CRD_artist():
         lines += [ '</body>', '</html>' ]
 
         return lines
+
     def song_counts(self):
         origs = 0
         covers = 0
@@ -690,6 +702,7 @@ class CRD_artist():
                     origs += 1
 
         return (origs, covers)
+
     def make_tuning_index(self):
         all_tunings = self.data.group_songs_by_tunings()
         n_artist_tunings = 0
@@ -768,6 +781,7 @@ class CRD_artist():
                     f.write(l + '\n')
 
         return n_artist_tunings, n_artist_tuning_songs
+
     def write_json(self):
         d = {}
         d["artist"] = self.name
@@ -852,6 +866,7 @@ class CRD_album():
         alphaname = ( alpha(artist.name) if artist else '' ) + '_' + alpha(self.title)
         alphaname = alphaname.lower()
         self.fname = alphaname + '.html'
+
     def add_song(self,title,fpath,lnum):
         song_index = self.index + '.%d' % ( len(self.songs) + 1 )
         apath = os.path.abspath(fpath)
@@ -859,6 +874,7 @@ class CRD_album():
         self.songs.append(new_song)
         new_song.album = self
         return new_song
+
     def next_and_previous_links(self):
         n = None
         p = None
@@ -880,6 +896,7 @@ class CRD_album():
             return [p]
         
         return []
+
     def html(self):
         artist_name = self.artist.name
 
@@ -927,6 +944,7 @@ class CRD_album():
         lines += [ '<br>' ] * 10
         lines += [ '</body>', '</html>' ]
         return lines
+
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
         lines += [ r'\usepackage[a4paper,margin=2cm]{geometry}' ]
@@ -955,14 +973,17 @@ class CRD_album():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+
     def get_playlist(self):
         playlist, image = self.player(self.artist.name, self.title)
         return playlist
+
     def get_playlist_link(self):
         playlist, image = self.player(self.artist.name, self.title)
         if playlist and image:
             link = '<a href="%s"><img class=cover src="%s"></a>' % ( playlist, image )
         return link
+
     def n_songs(self):
         n = 0
         for song in self.songs:
@@ -970,252 +991,12 @@ class CRD_album():
                 continue
             n += 1
         return n
+
     def all_songs_are_covers(self):
         for song in self.songs:
             if not song.cover:
                 return False
         return True
-
-class CRD_chord():
-    def __init__(self,string):
-        self.string = string
-        self.root = None
-        self.bass = None
-        self.__identify()
-    def __identify(self):
-        tones = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G' ]
-        flats = [ 'Ab', 'Bb', 'Db', 'Eb', 'Gb' ]
-        sharps = [ 'A#', 'C#', 'D#', 'F#', 'G#' ]
-
-        allnotes = [ n.lower() for n in ( sharps + flats + tones ) ]
-
-        for t in allnotes:
-            if self.string.lower().startswith(t):
-                self.root = t
-                break
-
-        for t in allnotes:
-            if self.string.lower().endswith( '/' + t) or self.string.lower().endswith( '\\' + t):
-                self.bass = t
-                break
-    def __notes(self,which=None,prefer_sharp=False):
-        notes = [ 'A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab' ]
-        if prefer_sharp or (which and '#' in which):
-            notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
-        return notes + notes
-    def format(self,transpose=0,prefer_sharp=False):
-        formatted = self.string
-        transpose = transpose % 12
-
-        if self.is_chord():
-            max_width = len(formatted)
-
-            if self.root:
-                if len(self.root) == 1: max_width += 1
-
-                # get notes in the form that the root note can be looked up:
-                notes = self.__notes(self.root)
-                lowernotes = [ n.lower() for n in notes ]
-                rootindex = lowernotes.index(self.root.lower())
-
-                # get notes in form requested by caller; index will be the same
-                notes = self.__notes(None,prefer_sharp)
-                newroot = notes[rootindex + transpose]
-                formatted = newroot + formatted[len(self.root):]
-
-            if self.bass:
-                if len(self.bass) == 1: max_width += 1
-
-                try:
-                    notes = self.__notes(self.bass,prefer_sharp)
-                    lowernotes = [ n.lower() for n in notes ]
-                    bassindex = lowernotes.index(self.bass.lower())
-                except ValueError:
-                    notes = self.__notes(self.bass,not prefer_sharp)
-                    lowernotes = [ n.lower() for n in notes ]
-                    bassindex = lowernotes.index(self.bass.lower())
-                newbass = notes[bassindex + transpose]
-
-                if not self.root:
-                    formatted = '/' + newbass.lower()
-                else:
-                    formatted = formatted[:-len(self.bass)-1] + '/' + newbass.lower()
-
-            if FIXED_WIDTH_CHORDS and len(formatted) < max_width:
-                # pad up to max width to allow room for transposed symbol
-                formatted += " " * (max_width - len(formatted))
-
-        return formatted       
-    def is_chord(self):
-        if self.root == None and self.bass == None:
-            return False
-
-        if len(self.string) > 12:
-            # G#add9(sus4)
-            self.root = None
-            self.bass = None
-            return False
-
-        nochord_chars = [ '-', 'o', 'r', 'l', 'k', 't', 'h', 'gg', 'y', 'ing' ]
-        # we can't ignore "x" because of barre designations: A(ix)
-
-        # the following notes cannot occur consecutively (e.g. Free) 
-        for note in [ 'c', 'e', 'f', 'g' ]:
-            if note + note in self.string.lower():
-                self.root = None
-                self.bass = None
-                return False
-
-        for c in nochord_chars:
-            if c in self.string.lower():
-                self.root = None
-                self.bass = None
-                return False
-
-        # n can only appear in min
-        if re.search( '[^i]n', self.string ):
-            self.root = None
-            self.bass = None
-            return False
-
-        # j can only appear in maj
-        if re.search( '[^a]j', self.string ):
-            self.root = None
-            self.bass = None
-            return False
-
-        # s can only appear in sus
-        if 's' in self.string.replace('sus','xxx'):
-            self.root = None
-            self.bass = None
-            return False
-
-        if self.string[0] != '/' and self.string[1:] in [ 'ome', 'a', 'ip', 'oo', 'gain', 'ocaine!', 'um', 'o', 'abe', 'ig', 'XP', 'aa' ]:
-            # Come  (Pissing in a River)
-            # Ba    (Looking at Tomorrow)
-            # Baa   (Mr Sheep
-            # Bip   (Looking at Tomorrow)
-            # Doo   (Til I Die)
-            # Again (Crumb Begging Baghead)
-            # Cocaine, Dum, Do
-            # Babe, Dig
-            # EXP (Robyn Hitchcock)
-            # print("Rejecting: " + self.string)
-            return False
-
-        return True
-
-CHORD_CACHE = {}
-
-def get_chord(string):
-    global CHORD_CACHE
-
-    chord = None
-
-    if string in CHORD_CACHE:
-        chord = CHORD_CACHE[string]
-    else:
-        chord = CRD_chord(string)
-        CHORD_CACHE[string] = chord
-
-    return chord
-
-class CRD_tuning():
-    def __init__(self,input_string,names=[],stock_tunings=None):
-        self.input_string = input_string
-        self.tuning = None
-        self._name = None
-        self.names = names
-        self.fingerings = {}
-        self.n_strings = 0
-        self.stock_tunings = stock_tunings
-
-        if not self.name():
-            # extract tuning candidate
-            splits = input_string.strip().split(':')
-            candidate = splits[0] if len(splits) == 1 else splits[1]
-            m = re.match( '([abcdefgABCDEFG#]+).*', candidate.strip() )
-            if m:
-                self.tuning = m.group(1)
-            else:
-                raise ValueError( "Failed to extract tuning from " + candidate.strip() )
-
-        tmp_strings = self.tuning.replace("#","")
-        tmp_strings = tmp_strings.replace("b","")
-        self.n_strings = len(tmp_strings)
-        self.songs = [] # much better than using a dummy CRD_artist! Could even be a dictionary of artists?
-    def get_fingering(self,crd_string,as_title=False):
-        crd_string = crd_string.strip()
-        fingering = ''
-        try:
-            fingering = self.fingerings[crd_string]
-            if as_title:
-                fingering = ' title="%s = %s"' % ( crd_string, fingering )
-        except KeyError:
-            pass
-        return fingering
-    def __str__(self):
-        return self.tuning
-    def __note_offset(self,root,note):
-        if '#' in note + root:
-            notes = [ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#' ]
-        else:
-            notes = [ 'A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab' ]
-        notes = notes + notes
-        root_index = notes.index(root)
-        notes = notes[root_index:]
-        return notes.index(note)
-    def note_list(self):
-        chars = list(self.tuning)
-        notes = []
-        for char in chars:
-            if re.match( '[A-G]', char ):
-                notes.append(char)
-            else:
-                notes[-1] += char
-        return notes
-    def offset(self):
-        nl = self.note_list()
-        previous = nl[0]
-        encoded = [ previous ]
-
-        for note in nl[1:]:
-            offset = self.__note_offset( previous, note ) 
-            encoded.append(offset)
-            previous = note
-
-        return ''.join( [str(x) for x in encoded[1:] ] )
-    def root(self):
-        return self.note_list()[0]
-    def name(self):
-        # also sets self.tuning if successful
-        if not self._name:
-            self._name = None
-            if self.stock_tunings:
-                for t in self.stock_tunings:
-                    tuning_pattern = re.escape(t.tuning.lower())
-                    if re.search( r"\b%s\b" % tuning_pattern, self.input_string.lower() ):
-                        self.tuning = t.tuning
-                        if t.names:
-                            self._name = t.names[0]
-                            self.names = t.names[:]
-                        break
-
-                    if not self._name:
-                        for name in t.names:
-                            if re.search( r"\b%s\b" % name.lower(), self.input_string.lower() ):
-                                self.tuning = t.tuning
-                                self._name = name
-                                self.names.append(name)
-                                break
-
-        #if not self.tuning:
-            # If this error gets thrown you may need to add the new tuning
-            # to the list in resources/stock_tunings.crd
-            #print("Error: no name for tuning: " + self.input_string)
-        return self._name
-    def standard(self):
-        return "standard" in [ n.lower() for n in self.names ]
 
 class CRD_song():
     def __init__(self,title,artist,fpath,lnum,index):
@@ -1251,9 +1032,11 @@ class CRD_song():
         self.current_key = None # last encountered key set by song
         self.wordlist = []
         self.songs_with_same_name = []
+
     def add_fingering(self,chord,fingering):
-        chord_string = chord.format().strip()
+        chord_string = chord.format(fixed_width=FIXED_WIDTH_CHORDS).strip()
         self.fingerings[ chord_string ] = fingering.lower()
+
     def add_version(self,name,path,lnum):
         self.dummy = False
         version = CRD_song(name,self.artist,path,lnum,-1)
@@ -1266,9 +1049,11 @@ class CRD_song():
             # we need to increment the version index so the links work properly.
             version.version_index += 1
         return version
+
     def get_all_versions(self):
         all_versions = [self] + self.versions
         return all_versions
+
     def get_fingering(self,crd_string,as_title=False):
         crd_string = crd_string.strip()
         fingering = ''
@@ -1282,12 +1067,14 @@ class CRD_song():
         #print(self.fingerings)
         #print(crd_string, "=>", fingering)
         return fingering
+
     def markup_comment_chords(self,line):
         # @@ marks a fixed chord/note (doesn't transpose with capo changes)
         line = re.sub( r"@@([A-Za-z0-9+/#]+)" , r'<div class="chord fixed">\1</div>', line )
         # @ marks a transposable chord/note
         line = re.sub( r"@([A-Za-z0-9+/#]+)" , r"<div class=chord>\1</div>", line )
         return line
+
     def is_comment_line(self,line):
         if line.strip().startswith('[') and line.strip().endswith(']'):
             m_ws = re.search(r'(^\s*)', line)
@@ -1368,7 +1155,7 @@ class CRD_song():
                         chord = None
                         fingering = None
                 else:
-                    chord = get_chord(word)
+                    chord = CRD_get_chord(word)
 
             if "@" in line:
                 line = self.markup_comment_chords(line)
@@ -1377,6 +1164,7 @@ class CRD_song():
             return line, "fingering"
 
         return None, None
+
     def strip_delimeters(self,word):
         starter = ''
         ender = ''
@@ -1435,6 +1223,7 @@ class CRD_song():
         #     ender = '  '
 
         return word, starter, ender
+
     def parse_capo_position(self,input_string):
         string = input_string.upper().strip()
 
@@ -1467,19 +1256,20 @@ class CRD_song():
             capo_numeral = "-" + capo_numeral
 
         return capo_integer, capo_numeral
+
     def markup_chord_line(self,line,transpose=0,prefer_sharp=False):
         comline, comtype = self.is_comment_line(line)
         if comline:
             if comtype == "harp":
                 # strip leading "Harp key:" and format key as chord
                 splits = comline.split()
-                hchord = get_chord(splits[1])
+                hchord = CRD_get_chord(splits[1])
                 if hchord.is_chord():
-                    formatted = hchord.format(transpose,prefer_sharp)
+                    formatted = hchord.format(transpose,prefer_sharp,FIXED_WIDTH_CHORDS)
                     hcomment = "<div class=chord>%s</div>" % formatted
 
                     if self.capo != 0:
-                        formatted_nocapo = hchord.format(self.capo, prefer_sharp)
+                        formatted_nocapo = hchord.format(self.capo, prefer_sharp,FIXED_WIDTH_CHORDS)
                         nocapo_link = "<div class=\"chord fixed\">%s</div>" % formatted_nocapo
 
                         #hcomment += f" (chords) / {nocapo_link} (capo)"
@@ -1529,7 +1319,7 @@ class CRD_song():
                     # this only affects "key" and "modulate to" comments when there is a capo.
                     key_crd = CRD_chord(key)
                     if key_crd:
-                        key_nocapo = key_crd.format(self.capo, prefer_sharp)
+                        key_nocapo = key_crd.format(self.capo, prefer_sharp, FIXED_WIDTH_CHORDS)
                         sounding_key_chord = "<div class=\"chord fixed\">%s</div>" % key_nocapo
                         sounding_key_text = " (sounding %s)" % sounding_key_chord
 
@@ -1621,15 +1411,15 @@ class CRD_song():
                 formatted += '<div class=comment>' + word + '</div>'
             else:
                 word, starter, ender = self.strip_delimeters(word)
-                chord = get_chord(word)
+                chord = CRD_get_chord(word)
                 if chord.is_chord():
                     if transpose == 0:
                         prefer_sharp = "#" in word
-                    formatted_crd = chord.format(transpose,prefer_sharp)
+                    formatted_crd = chord.format(transpose,prefer_sharp,FIXED_WIDTH_CHORDS)
                     fingering = self.get_fingering(formatted_crd,True)
                     
                     if not fingering and ("#" in formatted_crd or "b" in formatted_crd):
-                        formatted_crd_alt = chord.format(transpose,not prefer_sharp)
+                        formatted_crd_alt = chord.format(transpose,not prefer_sharp,FIXED_WIDTH_CHORDS)
                         fingering = self.get_fingering(formatted_crd_alt,True)
 
                     # if not fingering:
@@ -1646,6 +1436,7 @@ class CRD_song():
             line = re.sub( '>', '&gt;', line )
             return line
         return formatted
+
     def format_song_lines(self,transpose=0,prefer_sharp=False):
         formatted = []
         n_tab_lines = 0
@@ -1766,6 +1557,7 @@ class CRD_song():
                 break
 
         return formatted_with_spans
+
     def ignore_word(self,word):
         return word in [
         "IT", "THE", "TO", "AND", "THAT", "IN", "YOU", "OF", "MY", "ON",
@@ -1779,6 +1571,7 @@ class CRD_song():
         "DID", "GONE", "GONNA", "WOULD", "WERE", "HIM", "ABOUT", "AROUND", "INTO", "ONLY",
         "AN", "MUCH", "ALWAYS", "THEIR", "THEY'RE", "DIDN'T", "YOU'VE", "AM", "I", "THESE",
         ]
+
     def wordlist_from_formatted_lines(self, formatted):
         songwords = []
         for line in formatted:
@@ -1846,6 +1639,7 @@ class CRD_song():
         self.wordlist = list(set(self.wordlist))
 
         return
+
     def add_line(self,newline):
         line = newline.rstrip()
 
@@ -1901,9 +1695,11 @@ class CRD_song():
                 # (this is required for filtering in group_songs_by_tunings)
                 # if self.version_index == 1 and self.version_of and not self.version_of.tuning:
                 #     self.version_of.tuning = self.tuning
+
     def longest_line(self):
         lengths = [ len(l) for l in self.lines ]
         return max(lengths)
+
     def inherit_fingerings(self):
         # looks up the current tuning in the stock_tunings list
         # and uses it to inject unspecified fingerings into the 
@@ -1925,11 +1721,13 @@ class CRD_song():
             for crd, fing in t.fingerings.items():
                 if self.get_fingering(crd,True) == "":
                     self.add_fingering( crd, fing )
+
     def process_local_fingerings(self):
         # extract local fingerings from each song line
         for line in self.lines:
             if re.search('[x0-9A-G]{6}', line):
                 self.is_comment_line(line)
+
     def html(self,add_artist=False,transpose=0,prefer_sharp=False):
         self.inherit_fingerings()
 
@@ -2079,6 +1877,7 @@ class CRD_song():
         if not self.version_of:
             lines += [ "<br>" ]
         return lines
+
     def latex(self):
         lines  = [ r'\documentclass{article}' ]
         lines += [ r'\usepackage[a4paper,margin=2cm]{geometry}' ]
@@ -2100,6 +1899,7 @@ class CRD_song():
                              stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.DEVNULL)
         output = p.communicate(input='\n'.join(lines).encode())
         #print(output)
+
     def search(self,pattern,lyrics):
         string = self.title + " "
         if lyrics:
@@ -2109,10 +1909,12 @@ class CRD_song():
         string = string.lower()
 
         return re.search(pattern, string)
+
     def get_mp3_link(self):
         playlist, image  = self.album.player(self.album.artist.name, \
                                              self.album.title, self.title)
         return playlist
+
     def get_words(self,words,include_covers=False):
         if not include_covers and self.cover: 
             return
@@ -2128,6 +1930,7 @@ class CRD_song():
                 else:
                     words[word] = [self]
         return
+
     def get_link(self):
         s_link = self.album.fname + '#' + self.link
         if self.version_of:
@@ -2138,6 +1941,7 @@ class CRD_song():
                 # note: we add 1 to the index so it matches the drop-down menu
                 s_link += "-v" + str(self.version_index+1)
         return s_link
+
     def get_html_link(self, mark_covers=False, use_song_title_of_first_version=False):
         s_link = self.get_link()
 
@@ -2194,10 +1998,12 @@ class CRD_data():
         newopts["root"]      = opts.get("root",      r'crds')
         newopts["pickle"]    = opts.get("pickle",    r'/home/jpf/bin/chord_pickle')
         return newopts
+
     def resource_root(self):
         # resources prefix
         path = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'resources' + os.sep
         return path
+
     def summarise_data(self):
         print( "artists: %d" % len(self.artists) )
         print( "albums:  %d" % len(self.all_albums() ) )
@@ -2213,6 +2019,7 @@ class CRD_data():
             n_albums = len(artist.albums)
             n_songs = len(artist.all_songs())
             print( "%s : %d / %d" % ( artist.name.rjust(35), n_albums, n_songs ) )
+
     def all_albums(self):
         if len(self.albums) == 0:
             for artist in self.artists:
@@ -2220,6 +2027,7 @@ class CRD_data():
                     self.albums.append(album)
             self.albums.sort( key=lambda x: x.title )
         return self.albums
+
     def all_songs(self):
         if len(self.songs) == 0:
             for album in self.all_albums():
@@ -2228,6 +2036,7 @@ class CRD_data():
                     self.songs.append(song)
             self.songs.sort( key=lambda x: x.title_sort.lower() )
         return self.songs
+
     def all_songs_dict(self):
         # note: the song title key is the fuzzy_title
         if not self.songs_dict:
@@ -2237,6 +2046,7 @@ class CRD_data():
                     self.songs_dict[title] = []
                 self.songs_dict[title].append(song)
         return self.songs_dict
+
     def all_song_titles(self):
         if not self.song_titles:
             # build dictionary of unique song titles
@@ -2293,6 +2103,7 @@ class CRD_data():
             #print(self.all_child)
                 
         return self.song_titles
+
     def all_dummy_songs(self):
         if len(self.dummy_songs) == 0:
             for album in self.all_albums():
@@ -2303,6 +2114,7 @@ class CRD_data():
                     self.dummy_songs.append(song)
             self.dummy_songs.sort( key=lambda x: x.title_sort.lower() )
         return self.dummy_songs
+
     def get_artist(self,name,add=False):
         for a in self.artists:
             if a.name == name:
@@ -2315,6 +2127,7 @@ class CRD_data():
             return a
         
         return None
+
     def process_chord_file(self,path):
         lines = []
         try:
@@ -2323,6 +2136,7 @@ class CRD_data():
             self.process_chord_lines(lines,path)
         except:
             raise ValueError("Failed to process " + path + " (non-ASCII character?)")
+
     def process_chord_lines(self,lines,path=None):
         level = 0
         this_artist  = None
@@ -2459,6 +2273,7 @@ class CRD_data():
                     break
                 end_index -= 1
             song.lines = song.lines[ start_index : end_index ]
+
     def load_tuning_data(self):
         lines = []
         path = self.resource_root() + 'stock_tunings.crd'
@@ -2509,6 +2324,7 @@ class CRD_data():
         #         print( "     " + key.ljust(10) + value )
 
         return tunings
+
     def load_song_data(self,update):
         self.artists = []
         self.tunings = []
@@ -2544,6 +2360,7 @@ class CRD_data():
             with open(self.opts["pickle"],'rb') as f:
                 self.artists, self.tunings, self.collections = pickle.load(f)
         #self.summarise_data()
+
     def build_song_data(self):
         files = glob.glob(self.opts["root"] + '/*.crd')
         files.sort()
@@ -2582,6 +2399,7 @@ class CRD_data():
         #             if s.cover == a1.name:
         #                 print(s.cover)
         # exit()
+
     def group_songs_by_tunings(self):
         if not self.tunings:
             self.tunings = []
@@ -2647,6 +2465,7 @@ class CRD_data():
             # sort by offset => similar tuning appear next to each other
             self.tunings.sort(key=lambda x: (-x.albums[0].songs[0].tuning.n_strings, -len(x.all_songs()) ))
         return self.tunings
+
     def make_artists_index(self):
         n_artists = 0
         n_albums = 0
@@ -2685,6 +2504,7 @@ class CRD_data():
                     f.write(l + '\n')
 
         return "%d/%d/%d" % (n_songs, n_albums, n_artists), links, misc_links
+
     def make_tuning_map(self):
         lines = []
 
@@ -2727,6 +2547,7 @@ class CRD_data():
         lines.append("</div>")
 
         return lines
+
     def make_tuning_index(self):
         lines  = [ '<html>' ]
         lines += html_header("Tuning Index")
@@ -2801,11 +2622,11 @@ class CRD_data():
                     fingerings_lines.append( "<div class=\"chords col1\">" )
 
                     all_chords = list(fingerings.keys())
-                    all_chords.sort(key=lambda c: ( get_chord(c).root, c))
+                    all_chords.sort(key=lambda c: ( CRD_get_chord(c).root, c))
 
                     root = None
                     for chord in all_chords:
-                        this_root = get_chord(chord).root
+                        this_root = CRD_get_chord(chord).root
                         if root and root != this_root:
                             fingerings_lines.append("")
                         fings = list(set(fingerings[chord]))
@@ -2851,6 +2672,7 @@ class CRD_data():
                 f.write('\n' + l)
 
         return "%d/%d" % (n_tunings_songs, n_tunings)
+
     def make_html(self):
         years_summary = None
         playlists_summary = None
@@ -2922,6 +2744,7 @@ class CRD_data():
             with open(self.opts["html_root"] + 'index.html', 'w') as f:
                 for l in lines:
                     f.write('\n' + l)
+
     def lookup_chord(self,tuning,chord):
         fingerings = []
         for song in self.all_songs():
@@ -2934,12 +2757,14 @@ class CRD_data():
 
         fingerings = list(set(fingerings))
         return fingerings
+
     def make_latex_book(self):
         n_artists = 0
         n_albums = 0
         n_songs = 0
         for artist in self.artists:
             artist.latex()
+
     def make_folk_index(self):
         html_lines = [ "<html>" ]
         html_lines += html_header("Folk Index", folk=True)
@@ -3012,6 +2837,7 @@ class CRD_data():
                 f.write('\n' + l)
 
         return "%s" % len(trad_songs)
+
     def add_covers(self):
         # This needs to called after song.cover is set
         # which is currently in format_song_lines so there's no easy place to call it.
@@ -3053,6 +2879,7 @@ class CRD_data():
             # the song, which is tricky to solve.
 
             # Also, if an original song is found, we could add links to the cover(s).
+
     def add_comment_links(self):
         all_songs = self.all_songs()
 
@@ -3087,6 +2914,7 @@ class CRD_data():
                         title = ms.artist.name + " | " + ms.album.title + " | " + ms.title
                         s_link = "<a href=%s class=cover title=\"%s\">%s</a>" % (url, title, link["song"])
                         link["link"] = s_link
+
     def populate_link_dicts(self, link_dicts=None):
         all_songs_dict = self.all_songs_dict()
 
@@ -3140,6 +2968,7 @@ class CRD_data():
                             ldict["url"] = url
                             ldict["link"] = s_link
                             ldict["object"] = ms
+
     def make_playlist_html(self):
         print("Processing playlists...")
         playlists = {}
