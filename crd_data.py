@@ -2568,12 +2568,17 @@ class CRD_data():
         lines += [ '<body>' ]
         lines += [ '<h2> <a href=index.html>Tuning Index</a> </h2>' ]
         lines += [ '<hr>' ]
-        lines += [ '<a href=fingerings.html>All Fingerings</a>' ]
-        lines += [ '<hr>' ]
+        #lines += [ '<a href=fingerings.html>All Fingerings</a>' ]
+        #lines += [ '<hr>' ]
 
         lines += self.make_tuning_map()
 
         lines += [ '<ul>' ]
+
+        # dummy entry for standard tuning - link to fingerings
+        standard_link = 'fingerings.html#55545'
+        standard = 'EADGBE----(Standard)-----------------------------'
+        lines += [ f'<li><a class=tuning href={standard_link}>{standard}</a>' ]
 
         body = []
 
