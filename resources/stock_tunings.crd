@@ -43,14 +43,18 @@ C9  000000
 {{{ tuning: CGCDGA    [Martin Carthy]
 # He also uses DGCGCD (Famous Flower of Serving Men), DGDGGD, DGDGDG, DGBDGB
 }}}
+{{{ tuning: DABEAE    [Modal D6/9]
+# Used a lot by The Tallest Man On Earth. Not sure of the name!
+}}}
 {{{ tuning: DADGBD    [Double Drop D] [Open Gadd9]
 # Neil Young has called this "D Modal"
+# Robert Johnson transciptions call it "Open Gadd9"
 
 D       0xx230
 
 }}}
-{{{ tuning: DADDAD    [Dulcimer D Modal]
-# Calling it simply "Dulcimer" means it is matched to the Joni tuning EADAAE.
+{{{ tuning: DADDAD    [Open D5] [D Modal]
+# Dulcimer Mixolydian for Guitar (as used by Laura Marling)
 }}}
 {{{ tuning: DADGBE    [Drop D]
 A       202220
@@ -96,6 +100,7 @@ Am      x22210
 
 }}}
 {{{ tuning: EADGBE    [Standard]
+# E2-A2-D3-G3-B3-E4
 
 Cdim    x3454x
 C#dim   x4565x
@@ -118,15 +123,18 @@ Gdim7   xx5656 / 345353
 Adim7   xx7878 / 567575
 Bdim7   xx0101 / xx9A9A / 789797
 
-A       x02220
+A       x02220 / x02225
 A/e     002220
 Asus4   x02230
 Asus2   x02200
-Amaj7   x02120
+Amaj7   x02120 / x02224
 A6      x02222
 Am      x02210
 Am6     x02212
-Am7     x02010
+Am7     x02010 / x02223
+Aadd9   x02420
+A9      x02423
+A+      x02221
 
 Bb      113331
 Bbm     113321
@@ -151,6 +159,7 @@ C#m     446654
 C#m7    446454
 
 D       xx0232
+D/f#    2x0232
 D6      xx0202
 D7      xx0212
 Dsus4   xx0233
@@ -260,12 +269,23 @@ Bm      xx0424
 }}}
 {{{ tuning: BGDGBD    [Open G/b]
 # Both Sides Now (Tallest Man on Earth)
+
+Gsus2   345200          
+Cadd9   102010          
+Cmaj9   102000          
+Dsus4   304200
+Em7     505000
+Em9     504000
+
 }}}
 {{{ tuning: CACFAC    [Open F/c]
 # Refuge of the Roads
 }}}
 {{{ tuning: EADAAE    [Open Asus4]
 # Case Of You
+}}}
+{{{ tuning: CGDAEG    [Robert Fripp New Standard Tuning]
+# C2-G2-D3-A3-E4-G4
 }}}
 
 {{{ tuning: GDGBD     [Banjo: Open G]
@@ -573,7 +593,8 @@ Bm11    4000
 Bm7     4455
 
 }}}
-{{{ tuning: GDAD      [Bouzouki: Standard]
+{{{ tuning: GDAD      [Bouzouki: Standard] [Tenor Guitar]
+# Also Octave Mandolin?
 
 A       2242
 Am      2232
@@ -606,10 +627,49 @@ F#m     2444
 
 G       0020
 Gm      0010
+G7      0012 / 0210
 
 Ab      1131
 Abm     1121
 
+}}}
+
+{{{ tuning: CGDA      [Tenor: Standard]
+# This is standard mandolin/violin tuning, but 1 fifth lower.
+
+A   1220
+A7  1020
+Am  0220
+
+Bb  2335
+
+B   3442
+B7  3440
+Bm  2445
+
+C   0023
+C7  0021
+
+C#m 1124
+
+D   2245
+D7  2243
+Dm  2235
+
+E   4467
+E7  4465
+Em  4457
+
+F   0230
+
+F#m 1244
+
+G   2002
+G7  2032
+
+}}}
+{{{ tuning: DGBE      [Tenor: Chicago] [Baritone Ukulele]
+# Same as the top four strings of a guitar
 }}}
 
 # Dulcimer tunings are labelled low-high (like guitar tunings) even though
@@ -645,7 +705,7 @@ C#dim   123
 }}}
 {{{ tuning: DAG       [Dulcimer: Dorian]
 }}}
-{{{ tuning: AAA       [Dulcimer: Bagpipe]
+{{{ tuning: AAA       [Dulcimer: Galax/Unison/Bagpipe]
 }}}
 {{{ tuning: CDD       [Dulcimer: Open C2]
 }}}
