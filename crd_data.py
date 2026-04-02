@@ -2958,6 +2958,17 @@ class CRD_data():
 
                         if len(matching_songs) == 0:
                             print("No song matching comment_link: " + ldict["song"])
+                            print("ldict string:", ldict["text"])
+                            print("All matches:")
+                            for msong in msongs:
+                                artist = msong.artist.name
+                                misca = ""
+                                if msong.misc_artist:
+                                    artist = msong.misc_artist
+                                    misca = " (via misc_artist)"
+                                print(f"   {{{artist}|{msong.album.title}|{msong.title}}}{misca}")
+                            raise Exception("Unpopulated link dict")
+
                         elif len(matching_songs) > 1:
                             print("Ambiguous song comment_link: " + ldict["song"])
                             for ms in matching_songs:
