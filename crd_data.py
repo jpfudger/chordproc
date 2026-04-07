@@ -4,6 +4,7 @@ import pickle
 import re
 import subprocess
 import datetime
+import copy
 
 from .crd_chord import CRD_chord, CRD_get_chord, CRD_tuning
 
@@ -565,6 +566,13 @@ class CRD_artist():
                     
                 link_list_string = ", ".join(links)
                 lines += [ '<br>Related artists: ' + link_list_string ]
+        else:
+            lines += [ '<hr>' ]
+            lines += [ '<a href="%s">Song Index</a>' % self.index_fname ]
+            with open(self.data.opts["html_root"] + self.index_fname, 'w') as f:
+                allsongs = self.all_songs()
+                for l in CRD_html.song_index(allsongs, self):
+                    f.write(l + '\n')
 
         col_class = "col2" if self.too_many_albums else "col1"
         lines += [ '<hr>' ]
@@ -2975,7 +2983,6 @@ class CRD_data():
                                 print( "  ", ms.album.fname + "#" + ms.link )
 
                         for ms in matching_songs:
-
                             #if ldict["version"]:
                                 #ms = ms.versions[ldict["version"]-1]
 
@@ -2989,7 +2996,8 @@ class CRD_data():
                             
                             ldict["url"] = url
                             ldict["link"] = s_link
-                            ldict["object"] = ms
+                            # copy the object so they can have multiple playlist occurrences:
+                            ldict["object"] = copy.copy(ms)
 
     def make_playlist_html(self):
         print("Processing playlists...")
@@ -3048,7 +3056,7 @@ class CRD_data():
         for playlist_name in playlists:
             #print(playlist_name)
 
-            pl_artist = CRD_artist(name=playlist_name)
+            pl_artist = CRD_artist(name=playlist_name, data=self)
             pl_artist.fname = "playlists_" + pl_artist.fname
 
             link = "<a href=%s>%s</a>" %  (pl_artist.fname, playlist_name)
@@ -3079,7 +3087,9 @@ class CRD_data():
                     orig_link = sdict["url"]
                     orig_link = f'<a class=cover href="%s">%s</a>' % ( orig_link, sdict["artist"] )
                     sdict["object"].misc_artist = orig_link
-                    
+                    # set pl_album so the playlist song index links to the playlist:
+                    sdict["object"].album = pl_album
+
                     #if not sdict["object"].misc_artist:
                         #sdict["object"].misc_artist = sdict["artist"] # always show artist
 
