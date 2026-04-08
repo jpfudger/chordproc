@@ -1116,7 +1116,7 @@ class CRD_song():
         elif line.lower().strip().startswith( 'key:' ):
             key = line.strip()[4:].split()[0]
             return key, "key"
-        elif line.lower().strip().startswith( 'tuning' ):
+        elif line.lower().strip().startswith( 'tuning:' ):
             if self.tuning:
                 link = "<a href=\"tunings.html#%s\">%s</a>" % ( self.tuning.offset(), line )
                 return link, "tuning"
@@ -1694,7 +1694,7 @@ class CRD_song():
 
         self.lines.append(line)
         if not self.tuning:
-            if 'tuning:' in line.lower():
+            if line.strip().lower().startswith('tuning:'):
                 self.tuning = CRD_tuning(line, [], self.artist.stock_tunings)
                 if self.tuning.standard():
                     self.tuning = None
