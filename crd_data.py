@@ -2535,6 +2535,7 @@ class CRD_data():
         lines.append("<div class=tuning-map>")
         lines.append('    <img src="tuning_map.png">' )
                           
+        lines.append('    <a class="tuning-EADGBE"    href=#55545  title="EADGBE">' )
         lines.append('    <a class="tuning-DADGBE"    href=#75545  title="DADGBE">' )
         lines.append('    <a class="tuning-EADGBD"    href=#55543  title="EADGBD">' )
         lines.append('    <a class="tuning-DADGBD"    href=#75543  title="DADGBD">' )
@@ -2584,11 +2585,17 @@ class CRD_data():
         lines += [ '<ul>' ]
 
         # dummy entry for standard tuning - link to fingerings
-        standard_link = 'fingerings.html#55545'
+        standard_offset = '55545'
         standard = 'EADGBE----(Standard)-----------------------------'
-        lines += [ f'<li><a class=tuning href={standard_link}>{standard}</a>' ]
+        lines += [ f'<li><a class=tuning href=#{standard_offset}>{standard}</a>' ]
 
         body = []
+        body.append(f'<hr> <a name={standard_offset}></a>' )
+        body.append(f'<h3><a href=fingerings.html#{standard_offset}>EADGBE (Standard)</a></h3>')
+        body.append( '<ul>' )
+        body.append( '<li> All the others!' )
+        body.append( '</ul>' )
+        body.append( '<br>' )
 
         fingerings_lines = []
 
