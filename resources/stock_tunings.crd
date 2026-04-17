@@ -6,7 +6,18 @@
 G   000000
 }}}
 {{{ tuning: DGDGBD    [Open G]
-G   000000
+
+G       000000
+Gsus4   000010
+A       222222
+C       xx2010
+C(v)    555555
+D       xx0234
+D(vii)  777777
+Em      202000
+E       999999
+F       AAAAAA / x5756x
+
 }}}
 {{{ tuning: DGDGCD    [Open Gsus4] [Sawmill/D]
 # This is Sawmill with a low D. 
@@ -16,7 +27,7 @@ G   000000
 {{{ tuning: EAC#EAE   [Open A]
 # Sometimes "Open A" is used to EAEAC#E, which is Open G two steps up.
 }}}
-{{{ --- tuning: EBEAC#E   [Open Add9]
+{{{ tuning: EBEAC#E   [Open Aadd9]
 # Referred to in the "Robert Johnson: New Transcriptions" book.
 # Drop D (= open Gadd9), two steps up
 }}}
@@ -24,19 +35,41 @@ G   000000
 Gm  000000
 }}}
 {{{ tuning: DADF#AD   [Open D]
+
 D       000000
+D5      050300
+Dmaj7   040300
 F(iii)  333333
+G       020120
 G(v)    555555
+A       x02342
 A(vii)  777777
+Bm      020020
+
 }}}
 {{{ tuning: DADFAD    [Open Dm]
 Dm  000000
 }}}
-{{{ tuning: CGCGCD    [Open Cadd9] [Open C Modal]
+{{{ tuning: CGCGCD    [Open Cadd9]
 C   000000
 }}}
 {{{ tuning: CGCGCE    [Open C]
 C9  000000
+
+C       000000
+Csus4   000001
+Cmaj7   044000
+C7      004300
+
+Dm7     xx2201
+Em      404040
+F       555555
+G       777777
+Am      x20200
+Am7     x20000
+Am11    x20020
+Bdim    xx0421
+
 }}}
 {{{ tuning: CGCGGE    [Open C5]
 }}}
@@ -46,43 +79,108 @@ C9  000000
 {{{ tuning: DABEAE    [Modal D6/9]
 # Used a lot by The Tallest Man On Earth. Not sure of the name!
 }}}
-{{{ tuning: DADGBD    [Double Drop D] [Open Gadd9]
+{{{ tuning: DADGBD    [Double Drop D]
 # Neil Young has called this "D Modal"
 # Robert Johnson transciptions call it "Open Gadd9"
 
-D       0xx230
+D       0xx230  # actually D5
+D5      0xx230
+Dsus2   0xx232
+Dm      0xx233
+D7      0xx210
+
+G       550000 / 5x0005
+G5      555xxx
+
+Bm      x24400
+C       x32010  # actually Cadd9
+
+Em      22200x
+
+F       3x321x
+Fmaj7   3x3212
+
+A       x02222  # actually Aadd4
+Am      x02212
+Am7     x02012
+
+Bb      x13333
 
 }}}
 {{{ tuning: DADDAD    [Open D5] [D Modal]
 # Dulcimer Mixolydian for Guitar (as used by Laura Marling)
 }}}
 {{{ tuning: DADGBE    [Drop D]
-A       202220
+
+A       x02220
+Asus2   x02200
+A7      x02020 / x02223
+Asus4   x02230
+A7sus4  x02030
+Am      x02210
+Am7     x02010
 A/e     202220
+Amaj7   x02120
+
+Bb      x13331
+
+B       x24442
+B7      x21200
+Bm      x24432
+
 C       x32010
+Cadd9   x32030
+Cmaj7   x32000
+C7      x32310
+
+C#      x46664
+C#7     x4342x
+
 D       0xx232
 D/c     x30030
 D/b     x20030
-Dsus2   000230
-Dsus4   000233
-D7      000210
+Dadd9   0x0230
+Dsus2   0x0230
+Dsus4   0x0233
+D6      0x0202
+D7      0x0212
 D/c     030030
 Dm      0xx231
+Dm7     0xx211
+Dmaj7   0x0222
+
+Eb      x6564x
+Eb7     x6504x
+
 E       222100
+E7      220100
 Em      222000
+Em7     220000 / 222030
+Em9     220002
+
 F       3x321x
+F6      3302xx
+
 F#m     444222
+F#      444322
+
 G       5xx003
 G/d     020003
 G/b     x20033
+Gm      555333
+G6      520000
+
 }}}
 {{{ tuning: CGDGBE    [Drop C/g]
+
 G   x00033
 C   002010
 Am  x22210
 A   x22220
 D   2xx232
+D7  2xx212
 Em  4x2000
+
 }}}
 {{{ tuning: CADGBE    [Drop C]
 
@@ -93,10 +191,11 @@ G7sus4  330001
 G7sus2  300001
 G       220003
 E       x22100
+Em      422000
 Em/b    x22000
 Dm      xx0231    or 200231
 F       033211 or 003211
-Am      x22210
+Am      x02210
 
 }}}
 {{{ tuning: EADGBE    [Standard]
@@ -110,102 +209,294 @@ Edim    x7898x
 Fdim    x89A9x / 1231xx
 F#dim   x9ABAx / 2342xx
 Gdim    xABCBx / 3453xx
-G#dim   4564Xx
-Adim    5675Xx
-C#dim   6786Xx
+G#dim   4564xx
+Adim    5675xx
+Bbdim   x1232x
+C#dim   6786xx
 Bdim    x2343x
 
-Cdim7   xxABAB
+Bdim7   xx0101 / xx9A9A / 789797
 Ddim7   xx0101
+Ebdim7  xx1212
 Edim7   xx2323
 Fdim7   xx3434 / 123131
 Gdim7   xx5656 / 345353
 Adim7   xx7878 / 567575
-Bdim7   xx0101 / xx9A9A / 789797
+F#dim7  x97878
+Cdim7   xxABAB
 
 A       x02220 / x02225
+A(v)    577655
+A(ix)   x0x9A9
+A(b5)   x0122x
 A/e     002220
 Asus4   x02230
 Asus2   x02200
 Amaj7   x02120 / x02224
+Amaj9   x02100
+A5      x022xx
 A6      x02222
+A7      x02020 / x02223 / x02023
+A7+     x0x021
+A7sus4  x02030
+A7sus2  x02203
 Am      x02210
+Am(v)   577555
 Am6     x02212
 Am7     x02010 / x02223
+Am7+    x03011
+Am7b5   x0101x
+Am(maj7) x02110
+Am(add9) x32200
+Am9     575557 / x07500
 Aadd9   x02420
 A9      x02423
 A+      x02221
 
-Bb      113331
-Bbm     113321
+Bb      x13331
+Bb5     x133xx
+Bb(vi)  688766
+Bb6     x13333
+Bb7     x13131
+Bb9     x10111
+Bb9(vi) 686768
+Bbm     x13321
+Bbm6    x13333
+Bbm7    x13121
+Bbmaj7  x13231
+Bbsus2  x13311
+Bbsus4  x13341
+Bb+     xx4332
+Bb(add9)  x10311
+Bbm7b5  x1212x
+Bb7sus4 x13141
 
-B       224442
+B       x24442
+B(ii)   x24442
+B(vii)  799877
+B5      x244xx
+Bsus2   x24422
+Bsus4   x24452
+B6      x23333
 B7      x21200
-Bm      224432
-Bm7     224232
+B7#9    x2123x
+B7sus4  x22200
+B9      x21222
+B+      x2100x
+Bm      x24432
+Bm(vii) 799777
+Bm6     x20102 / x2x132
+Bm7     x24232
+Bm9     x20222
+Bmaj7   x24342
+Bm7b5   x20231
 
 C       x32010
+C(iii)  x35553
+C+      x32110
+C(v)    x35553
+C(viii) 8AA988
 Cmaj7   x32000
+Cmaj9   x3243x
+Cadd9   x32030
+Cm      x35543
+Cm6     x31213
+Cm7     x35343
+Cm9     x3133x
 C/g     332010
 C/e     032010
 Csus4   x33010
 Csus2   x30010
+Cadd2   x30010
+C5      x355xx
 C6      x32210
 C7      x32310
+C7(iii) x35353
+C9      x32333
+C7sus4  x33310
+C7#9    x3234x
+Csus4add9  x33030
+Cmaj7sus4  x33000
+Cm(maj7)   x35443
+Cm7b5   x3434x
+C7b5    x3435x
+C7+     x3x354
+C11     x33333
 
-C#      446664
-C#7     446464
-C#m     446654
-C#m7    446454
+C#      x46664
+C#5     x466xx
+C#7     x46464
+C#7sus4 x46474
+C#9     x43444
+C#m     x46654
+C#m(iv) x46654
+C#m6    x423x4
+C#m7    x46454
+C#m9    x42444 / 9798xx / 9B999B
+C#maj7  x46564
+C#sus2  x46644
+C#sus4  x46674
+C#m7b5  x4545x
+C#dim7  xx2323 / x45353
 
 D       xx0232
+D(v)    x57775
+D(vii)  xx077A / xx777A
+D(x)    ACCBAA
 D/f#    2x0232
+D5      xx023x
 D6      xx0202
 D7      xx0212
+D7sus2  xx0210
+D7+     xx0312
+D9      x5455x
+Dadd4   x5403x # C-shape
 Dsus4   xx0233
 Dsus2   xx0230
+Dadd9   xx0230
 Dm      xx0231
+Dm(v)   x57775
 Dm6     xx0201
 Dm7     xx0211
+Dm7b5   xx0111
+Dm9     x5355x
 Dmaj7   xx0222
+Dmaj9   xx0220
 D11     xx0010
+D7sus4  xx0213
+D7b5    xx0112
+D+      xx0332
 
-Eb      66504x
-Ebm     668876
+Eb      x6504x
+Eb5     x65566
+Eb/bb   66504x
+Eb6     xx1313 / x6554x
+Eb7     x6564x
+Ebmaj7  x68786
+Ebmaj9  x6576x
+Ebm     x68876
+Ebm7    x68676
+Ebm9    x6466x
+Eb9     x6566x
+Ebsus2  xx1341
+Ebsus4  xx1344
+Ebm6    xx1312
+Ebm7b5  xx1222
 
 E       022100
-Em      022000
+E(vii)  x79997
+Eadd9   022102
+E5      022xxx
+E6      022120
 E7      020100 / 022130
+E7+     022110
+E7sus4  022230
+E7#9    020103 / 076780
+E7b9    020101
+E9      022102 / 076770
+E11     022232
+Em      022000
+Em(vii) x79987
+Em6     022020
+Em7     020000 / 022030
+Em7b5   xx2333 / x7878x
+Em9     020002
+Em(add9)  022002
 Emaj7   021100
+Emaj9   021102
+Em(maj7)  021000
+Esus4   022200
+Esus2   024100
+E+      043110
+Em+     0320xx
 
 F       133211
+F(viii) x89998
+F5      133xxx
+F6      1302xx
 F7      131211
+F7sus4  131311
+F9      x87888
 Fm      133111
+Fm6     2x022x / xx3534 / x8678
 Fm7     131111
-Fmaj7   x33210
+Fm9     131113
+Fmaj7   133210
+Fmaj7b5 133200
+Fmaj9   103020
+Fsus2   133011
+Fsus4   133311
+Fadd9   133213
+F+      143221
+F(b5)   1x320x
+Fm7b5   121141
+F11     10131x / 13131x
 
 F#      244322
+F#5     244xxx
+F#6     x9BBBB
 F#7     242322
+F#9     242324 / x98999
+F#11    242422
 F#m     244222
+F#m6    20122x
 F#m7    242222
+F#m9    202120
+F#sus4  244422
+F#7sus4 242422
+F#maj7  243322
+F#m7b5  xx2242
 
-G       320003
-G7      320001
+G       320003 / 320033
+G(iii)  355433
+G(vii)  xx0787
+G(x)    AABBBA
+G5      355xxx
 G6      320000
-Gsus4   3x2013
+G7      320001
+G9      300201
+G11     3x3211
+G13     323000 / 3x345x
+Gadd9   32020x
+Gsus4   3x0013
+Gsus2   300003
+G7sus4  330011
+Gmaj7   320002
 Gmaj9   3x0202
+Gm      355333
+Gm6     3x2330
+Gm7     353333
+Gm9     353335
+G+      321003 / 320043
+G7+     321001 / 320041
+Gm(maj7)  354333
+G7#9    323333
 
 G#      466544
+G#5     466xxx
+G#6     431111
 G#7     464544
 G#m     466444
+G#m6    466464
 G#m7    464444
+G#9     43434x
+G#maj7  465544
+G#m7b5  xx4434
 
 }}}
 {{{ tuning: EADGBD    [Drop High D]
+
+G   32000x / 320005
+Em  x2200x
+C   x3201x
+Am  x0221x
+
 }}}
 {{{ tuning: EADF#BE   [Lute]
 }}}
 {{{ tuning: EBEG#BE   [Open E]
+E   000000
+A   020120
 }}}
 {{{ tuning: CGCFAD    [Metal Drop C]
 # This is Drop D, down two steps.
@@ -216,10 +507,22 @@ G#m7    464444
 {{{ tuning: EBEGBE    [Open Em]
 }}}
 {{{ tuning: DADGAD    [Open Dsus4]
+
+D   000200
+Dm  000203
+Em  220000
+G   020020
+A   002002
+Am  002232
+C   032000
+
 }}}
 {{{ tuning: CFCFCF    [Open F5]
 }}}
 {{{ tuning: DADEAD    [Open Dsus2]
+
+D   000200
+
 }}}
 {{{ tuning: CGDGCD    [Orkney] [Sawmill/C]
 # This is DADGAD with Capo V and the strings moved over.
@@ -286,6 +589,8 @@ Em9     504000
 }}}
 {{{ tuning: CGDAEG    [Robert Fripp New Standard Tuning]
 # C2-G2-D3-A3-E4-G4
+}}}
+{{{ tuning: CGDFAC    [Madison Cunningham "Ace"]
 }}}
 
 {{{ tuning: GDGBD     [Banjo: Open G]
@@ -425,7 +730,8 @@ E       x4445 / x4142
 E7      xx233 / x2420
 Em      x4445
 
-F       x0203 / x5557
+F       x0203
+F(v)    x5557
 F7      x0201 / x0233
 Fm      x0103
 F6      x0223
