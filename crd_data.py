@@ -1134,7 +1134,7 @@ class CRD_song():
                     return line, "comment"
 
         n_strings = self.tuning.n_strings if self.tuning else 6
-        finger_regex = '([0-9xXA-G]{%d,})' % n_strings
+        finger_regex = '([0-9xXA-G()]{%d,})' % n_strings
         if '---' in line:
             pass # line is probably a tab
         elif re.search(finger_regex, line):
@@ -2338,6 +2338,31 @@ class CRD_data():
                     chord = splits[0]
                     fingering = splits[1]
                     current_tuning.fingerings[chord] = fingering
+
+                    if True:
+                        # duplicate enharmonics
+                        enharmonics = {}
+                        enharmonics["Ab"] = "G#"
+                        enharmonics["Bb"] = "A#"
+                        enharmonics["Db"] = "C#"
+                        enharmonics["Eb"] = "D#"
+                        enharmonics["Gb"] = "F#"
+
+                        if len(chord) > 1:
+                            root = chord[:2]
+                            echord = None
+
+                            for en1, en2 in enharmonics.items():
+                                if root == en1:
+                                    echord = en2 + chord[2:]
+                                    break
+                                elif root == en2:
+                                    echord = en1 + chord[2:]
+                                    break
+
+                            if echord:
+                                #print(f"duplicating {chord} -> {echord}")
+                                current_tuning.fingerings[echord] = fingering
 
         # for t in tunings:
         #     names = ", ".join(("\"%s\"" % n) for n in t.names)
