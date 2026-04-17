@@ -1803,8 +1803,6 @@ class CRD_song():
                 else:
                     year = f" <div class=year>{y}</div>"
 
-            #style = ' style="display:block"'
-
             lines += [ '<hr> <a name=%s></a>' % self.link ] 
             name = self.title
             if self.misc_artist:
@@ -3110,9 +3108,19 @@ class CRD_data():
                         print("No object!")
                         print(sdict)
 
+                    default_version = sdict["version"] - 1
+
                     sdict["object"].gap_before = sdict["gap"]
                     sdict["object"].date = None # never want song year 
-                    sdict["object"].default_version = sdict["version"] - 1
+                    sdict["object"].default_version = default_version
+
+                    # I'm not entirely sure why this is necessary, but it seems
+                    # plausible that when the versions were originally added
+                    # the default_version was propagated correctly, so we need
+                    # keep them in sync:
+                    for version in sdict["object"].versions:
+                        version.default_version = default_version
+                        version.version_of.default_version = default_version
 
                     # use misc_artist to link to the original
                     #orig_link = sdict["object"].get_link()
