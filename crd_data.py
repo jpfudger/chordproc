@@ -2610,14 +2610,15 @@ class CRD_data():
         # dummy entry for standard tuning - link to fingerings
         standard_offset = '55545'
         standard = 'EADGBE----(Standard)-----------------------------'
-        lines += [ f'<li><a class=tuning href=#{standard_offset}>{standard}</a>' ]
+        zero_count = '<div class=count>0</div>'
+        lines += [ f'<li><a class=tuning href=#{standard_offset}>{standard}</a> {zero_count}' ]
 
         body = []
         body.append(f'<hr> <a name={standard_offset}></a>' )
         body.append(f'<h3><a href=fingerings.html#{standard_offset}>EADGBE (Standard)</a></h3>')
-        body.append( '<ul>' )
-        body.append( '<li> All the others!' )
-        body.append( '</ul>' )
+        #body.append( '<ul>' )
+        #body.append( '<li> All the others!' )
+        #body.append( '</ul>' )
         body.append( '<br>' )
 
         fingerings_lines = []
