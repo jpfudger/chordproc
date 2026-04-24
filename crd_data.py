@@ -401,7 +401,7 @@ class CRD_html():
                 if entries:
                     entries.append("<br>")
                 y_songs = versions[year]
-                y_songs.sort(key=lambda s: (s.title_sort,s.album.artist.name))
+                y_songs.sort(key=lambda s: (s.version_of.title_sort,s.version_of.album.artist.name))
                 for song in y_songs:
                     s_link = song.album.fname + f"?v={song.version_index+1}" + "#" + song.version_of.link
                     s_class = ' class=cover' # if song.cover else ''
