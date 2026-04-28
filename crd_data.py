@@ -5,6 +5,7 @@ import re
 import subprocess
 import datetime
 import copy
+import math
 
 from .crd_chord import CRD_chord, CRD_get_chord, CRD_tuning
 
@@ -77,9 +78,6 @@ def set_title_and_date(title):
     title  = " ".join( x[0].upper() + x[1:] for x in title.strip().split())
 
     return title, date, artist
-
-def count(string):
-    return f"<div class=count>{string}</div>"
 
 class CRD_song_link():
     def __init__(self, text):
@@ -266,7 +264,7 @@ class CRD_html():
         lines += [ '</body>', '</html>' ]
         return lines
 
-    def year_index(allsongs):
+    def year_index(allsongs, plot_path):
         lines  = [ '<html>' ]
         lines += CRD_html.header("ChordProc: Year Index")
         lines += ["<body>"]
@@ -274,6 +272,7 @@ class CRD_html():
         lines += [ '<h2>%s</h2>' % title_link ]
 
         lines += [ '<hr>' ]
+        lines += [ '<div class="songindex col2">', '<br>', '<span>' ]
 
         songs = {}
         albums = {}
@@ -341,18 +340,18 @@ class CRD_html():
             all_years.insert(0, min(all_years)-1)
 
         year_link_string = ""
-        for year in all_years:
-            if not year_link_string:
-                year_link_string += "&nbsp;" * 5
-            elif year % 10 == 0:
-                year_link_string += '\n<br>' + ( "&nbsp;" * 5 )
-
+        for i, year in enumerate(all_years):
+            if i and year % 10 == 0:
+                year_link_string += '\n'
+            
             if year not in year_list:
                 year_link_string += f'<div class=dummy>{year}</div>&nbsp; '
             else:
                 year_link_string += f'<a href="#{year}">{year}</a>&nbsp; '
-
-        lines += [ year_link_string, "<hr>" ]
+        
+        lines += [ year_link_string, "</span>" ]
+        lines += [ f"<div class=years-plot><img src={os.path.basename(plot_path)}></div>" ]
+        lines += [ "</div>", "<hr>" ]
 
         for year in (year_list + [0]):
             lines.append(f'<a name="{year}"></a>')
@@ -362,7 +361,9 @@ class CRD_html():
             n_versions = len(versions[year]) if year in versions else 0
 
             title = str(year) if year > 0 else "Albums Containing Songs With No Year"
-            lines.append(f'<b>{title}</b> <div class=count>{n_songs}/{n_albums}</div>')
+            count = f"{n_albums}/{n_songs}"
+            if n_versions: count += f"/{n_versions}"
+            lines.append(f'<b>{title}</b> <div class=count>{count}</div>')
 
             entries = []
             
@@ -436,7 +437,53 @@ class CRD_html():
 
         summary = str(len(year_list))
 
+        CRD_html.plot_year_totals(songs, albums, versions, plot_path)
+
         return lines, summary
+
+    def plot_year_totals(songs, albums, versions, plot_path):
+        year_list = list(songs.keys()) + list(albums.keys()) + list(versions.keys())
+        year_list.remove(0) # remove placeholder for yearless songs
+        year_list = list(range(min(year_list),max(year_list)+1))
+
+        song_totals = []
+
+        for year in year_list:
+            song_total = 0
+            song_total += len(songs.get(year,[]))
+            song_total += len(versions.get(year,[]))
+
+            album_total = 0
+            for album in albums.get(year, []):
+                song_total += len(album.songs)
+
+            song_totals.append(song_total)
+        
+        import matplotlib.pyplot as plt
+
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+
+        tick_start = math.floor(min(year_list)/10) * 10
+        tick_end = round(max(year_list), -1)
+        ticks = range(tick_start, tick_end+10, 10)
+
+        colour1  = '#153E7E' # blue
+        colour2  = '#C9BE62' # yellow
+        colour3  = '#CCCCCC' # grey
+        colour4  = '#8B0000' # red
+
+        bar_songs = ax.plot(year_list, song_totals, color=colour1)
+        plt.legend((bar_songs[0],), ("Total songs",), loc="upper left")
+        ax.fill_between(year_list, 0, song_totals, color=colour1)
+
+        ax.set_xlim(tick_start, tick_end)
+        ax.set_xticks(ticks)
+        ax.grid(True)
+        ax.set_axisbelow(True)
+
+        fig.tight_layout()
+        plt.savefig(plot_path)
 
 class CRD_artist():
     def __init__(self,name,index=0,data=None):
@@ -2740,7 +2787,8 @@ class CRD_data():
                 for l in CRD_html.song_index(allsongs):
                     f.write('\n' + l)
             with open(self.opts["html_root"] + 'years.html', 'w') as f:
-                years_lines, years_summary = CRD_html.year_index(allsongs)
+                plot_path = self.opts["html_root"] + "years_plot.png"
+                years_lines, years_summary = CRD_html.year_index(allsongs, plot_path)
                 for l in years_lines:
                     f.write('\n' + l)
             #if self.playlists:
@@ -2758,6 +2806,8 @@ class CRD_data():
         folk_summary = self.make_folk_index()
         if self.playlists:
             playlists_summary = self.make_playlist_html()
+
+        def count(string): return f"<div class=count>{string}</div>"
 
         lines  = [ '<html>' ]
         lines += CRD_html.header("Chords", index_page=True)
@@ -2785,8 +2835,6 @@ class CRD_data():
 
         lines += [ '</div>' ] 
         #lines += [ '<hr>' ]
-
-        lines += [ '<hr>' ]
         lines += [ '<br>', '<br>', '<br>' ]
         lines += [ '</body>', '</html>' ]
 
