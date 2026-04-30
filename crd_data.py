@@ -373,11 +373,12 @@ class CRD_html():
                 for album in y_albums:
                     alink = f'<a class=highlight href="{album.fname}">{album.title}</a>'
                     # note: highlight => red, to disambiguate albums from songs
+                    alink += f' <div class=count>{len(album.songs)}</div>'
                     source = album.artist.name
                     if album.misc_artist:
                         source = album.misc_artist
 
-                    alink += f' ({source})</a>'
+                    alink += f' ({source})'
                     entries.append(alink)
 
             if n_songs:
@@ -468,14 +469,11 @@ class CRD_html():
         tick_end = round(max(year_list), -1)
         ticks = range(tick_start, tick_end+10, 10)
 
-        colour1  = '#153E7E' # blue
-        colour2  = '#C9BE62' # yellow
-        colour3  = '#CCCCCC' # grey
-        colour4  = '#8B0000' # red
+        colour1  = 'blue'
 
         bar_songs = ax.plot(year_list, song_totals, color=colour1)
         plt.legend((bar_songs[0],), ("Total songs",), loc="upper left")
-        ax.fill_between(year_list, 0, song_totals, color=colour1)
+        #ax.fill_between(year_list, 0, song_totals, color=colour1)
 
         ax.set_xlim(tick_start, tick_end)
         ax.set_xticks(ticks)
