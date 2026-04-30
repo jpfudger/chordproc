@@ -963,7 +963,11 @@ function navigate_up()
         return;
         }
 
-    if ( subs.length > 1 && !not_artists.includes(filename) )
+    if ( subs.length > 2 && subs[0] == "playlists" )
+        {
+        back = subs[0] + "_" + subs[1] + ".html";
+        }
+    else if ( subs.length > 1 && !not_artists.includes(filename) )
         {
         back = subs[0] + ".html";
         }

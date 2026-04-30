@@ -613,9 +613,10 @@ class CRD_artist():
                 lines += [ '<br>Related artists: ' + link_list_string ]
         else:
             lines += [ '<hr>' ]
-            lines += [ '<a href="%s">Song Index</a>' % self.index_fname ]
+            allsongs = self.all_songs()
+            count_string = f'<div class=count>{len(allsongs)}</div>'
+            lines += [ f'<a href="{self.index_fname}">Song Index</a> {count_string}' ]
             with open(self.data.opts["html_root"] + self.index_fname, 'w') as f:
-                allsongs = self.all_songs()
                 for l in CRD_html.song_index(allsongs, self):
                     f.write(l + '\n')
 
