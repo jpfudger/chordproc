@@ -196,6 +196,7 @@ h3 {
 .dummy {
     color: grey;
     display: inline;
+    visibility: hidden;
     }
 
 .songindex {
@@ -266,6 +267,11 @@ button {
     .fingering_button { visibility: hidden; display: none; }
     .fingerings { visibility: hidden; display: none; }
     .fingering { visibility: hidden; display: none; }
+    }
+
+.years-plot img {
+    width: 50%;
+    border-radius: 10px;
     }
 
 /* overridden later for larger screens */
@@ -387,7 +393,7 @@ br.col-divider { display: none; }
     }
 
 .count, .year {
-    display: inline-block;
+    display: inline;
     font-family: monospace;
     min-width: 75;
     font-size: small;
