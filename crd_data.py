@@ -3136,6 +3136,7 @@ class CRD_data():
 
             pl_artist = CRD_artist(name=playlist_name, data=self)
             pl_artist.fname = "playlists_" + pl_artist.fname
+            pl_artist.index_fname = "playlists_" + pl_artist.index_fname
 
             link = "<a href=%s>%s</a>" %  (pl_artist.fname, playlist_name)
             link += " <div class=count>%d</div>" % len(playlists[playlist_name])
